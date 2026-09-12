@@ -91,7 +91,13 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
       expect(rejected.read()).toMatchObject({ creation: 1, prompt: 0, expired: false });
       expect(await readSessions()).toEqual(sessionsBefore);
       expect(await world.requests()).toHaveLength(0);
-      await user.screenshot();
+      await user.looks(newerDraft ? [
+        `The New task hero shows the creation error "Session creation rejected by OPE-51 fixture." and the composer contains "${newerDraft}".`,
+        "The action 'Clear the current draft to restore the unsent message' is visible below the error; there is no submitted user-message bubble or Starting indicator.",
+      ] : [
+        "The New task hero shows the creation error 'Session creation rejected by OPE-51 fixture.' and the original prompt beginning 'Summarize this workspace in one sentence.' is restored inside the composer.",
+        "There is no submitted user-message bubble, Starting indicator, or 'Clear the current draft to restore the unsent message' action.",
+      ]);
       await user.click({ placeholder: "Describe your task..." });
       await user.press(world.app.handle.hostKind !== "daytona" && process.platform === "darwin" ? "Meta+A" : "Control+A");
       await user.press("Backspace");
@@ -99,7 +105,10 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
         await user.click({ role: "button", label: "Clear the current draft to restore the unsent message" });
         await user.see("composer", { text: prompt, editable: true });
         expect((await world.recovery()).restoreVisible).toBe(false);
-        await user.screenshot();
+        await user.looks([
+          "The original prompt beginning 'Summarize this workspace in one sentence.' is visible inside the New task composer, with the creation error still visible above it.",
+          "The newer text 'Keep this newer continuation intact.' and the 'Clear the current draft to restore the unsent message' action are absent; there is no submitted user-message bubble or Starting indicator.",
+        ]);
         await user.click({ placeholder: "Describe your task..." });
         await user.press(world.app.handle.hostKind !== "daytona" && process.platform === "darwin" ? "Meta+A" : "Control+A");
         await user.press("Backspace");
@@ -126,7 +135,10 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
 
   await using transition = await world.transition(evidence.dir);
   evidence.recordJsonArtifact("Sessionless transition recording", { engine, path: transition.filmPath });
-  await user.screenshot();
+  await user.looks([
+    "The 'What do you need done?' hero heading is visible above a composer containing the prompt beginning 'Summarize this workspace in one sentence.'.",
+    "There is no creation error, Starting indicator, or submitted user-message bubble above the populated composer.",
+  ]);
   await user.press("Enter");
   await user.press("Enter");
   await step("slow session creation keeps Starting above an unmoved hero composer without a temporary user row", async () => {
@@ -142,7 +154,10 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     }).finally(async () => {
       evidence.recordJsonArtifact("Immediate sessionless RAF and mutation observations", await transition.samples());
     });
-    await user.screenshot();
+    await user.looks([
+      "The 'What do you need done?' hero remains visible, with 'Starting…' immediately above the empty composer showing 'Describe your task...'.",
+      "There is no submitted user-message bubble between the hero heading and the composer, and the Starting text does not overlap the composer input.",
+    ]);
     expect(transition.read()).toMatchObject({ creation: 1, prompt: 0, held: 1, expired: false });
     const baseline = samples[0]!;
     expect(baseline.width).toBeGreaterThan(0);
@@ -208,7 +223,10 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     expect((await probe.composer()).userMessageCount).toBe(1);
     expect(transition.read()).toMatchObject({ creation: 1, prompt: 1, expired: false });
     expect(await world.requests()).toHaveLength(1);
-    await user.screenshot();
+    await user.looks([
+      `The conversation transcript shows exactly one user-message bubble containing the prompt beginning 'Summarize this workspace in one sentence.' and an assistant reply reading '${world.reply}'.`,
+      "An empty composer is visible below the transcript; the 'What do you need done?' hero and Starting indicator are absent.",
+    ]);
     const handoff = await transition.samples();
     evidence.recordJsonArtifact("Hero to persisted session DOM ownership", handoff);
     const baseline = handoff[0]!;
