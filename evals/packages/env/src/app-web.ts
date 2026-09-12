@@ -21,6 +21,7 @@ import { launchHeadlessWeb, resolveHeadlessWorldRuntimePaths } from "@openwork/w
 import { resolveEvalEngine } from "./eval-engine.ts";
 import type { MockBoot, MockHandle } from "./mock.ts";
 import type { Place } from "./place.ts";
+import { seedSyntheticPreactivatedDen } from "./app-web-bootstrap.ts";
 
 const REPO_ROOT = fileURLToPath(new URL("../../../..", import.meta.url));
 const REMOTE_REPO_ROOT = "/workspace";
@@ -29,6 +30,7 @@ const EXECUTABLE_ENV_KEYS = ["PATH", "PNPM_HOME", "TMPDIR", "SHELL", "SYSTEMROOT
 
 export interface SeedAppWebOptions {
   workspacePath: string;
+  syntheticPreactivatedDenOrigin?: string;
   name?: string;
   mocks?: Record<string, MockBoot>;
   headless?: boolean;
@@ -180,7 +182,7 @@ async function cleanupAppWeb(input: {
   if (errors.length > 0) throw new AggregateError(errors, "Hermetic app-web cleanup failed");
 }
 
-async function startLocalRuntime(worldName: string, workspaceRoot: string): Promise<AppWebRuntime> {
+async function startLocalRuntime(worldName: string, workspaceRoot: string, syntheticPreactivatedDenOrigin?: string): Promise<AppWebRuntime> {
   const fixtureRoot = await mkdtemp(join(tmpdir(), "openwork-eval-app-web-"));
   const runtimeDirectory = resolveHeadlessWorldRuntimePaths(REPO_ROOT, worldName).directory;
   try {
@@ -188,12 +190,13 @@ async function startLocalRuntime(worldName: string, workspaceRoot: string): Prom
       mkdir(workspaceRoot, { recursive: true }),
       ...runtimeDirectories(fixtureRoot).map((path) => mkdir(path, { recursive: true })),
     ]);
+    const bootstrapEnv = await seedSyntheticPreactivatedDen(fixtureRoot, syntheticPreactivatedDenOrigin);
     const runtime = await launchHeadlessWeb({
       repoRoot: REPO_ROOT,
       name: worldName,
       state: "isolated",
       workspace: workspaceRoot,
-      env: { ...executableEnvironment(process.env), ...isolatedRuntimeEnvironment(fixtureRoot) },
+      env: { ...executableEnvironment(process.env), ...isolatedRuntimeEnvironment(fixtureRoot), ...bootstrapEnv },
     });
     return {
       webUrl: runtime.manifest.webUrl,
@@ -256,6 +259,7 @@ const REMOTE_LAUNCH_SOURCE = `
 import { constants } from "node:fs";
 import { access, mkdir, readdir, symlink } from "node:fs/promises";
 import { launchHeadlessWeb } from "/workspace/packages/world/src/headless-web.ts";
+import { seedSyntheticPreactivatedDen } from "/workspace/evals/packages/env/src/app-web-bootstrap.ts";
 const input = JSON.parse(Buffer.from(process.argv[2], "base64url").toString("utf8"));
 await Promise.all(input.directories.map((path) => mkdir(path, { recursive: true })));
 const executable = {};
@@ -273,12 +277,13 @@ for (const tool of ["bun", "opencode"]) {
   }
 }
 executable.PATH = [toolBin, executable.PATH].filter(Boolean).join(":");
+const bootstrapEnv = await seedSyntheticPreactivatedDen(input.fixtureRoot, input.syntheticPreactivatedDenOrigin);
 const handle = await launchHeadlessWeb({
   repoRoot: input.repoRoot,
   name: input.name,
   state: "isolated",
   workspace: input.workspace,
-  env: { ...executable, ...input.env },
+  env: { ...executable, ...input.env, ...bootstrapEnv },
 });
 await handle.detach();
 console.log(JSON.stringify({
@@ -303,12 +308,14 @@ async function startRemoteRuntime(
   worldName: string,
   workspaceRoot: string,
   source: SandboxRepoSourceReceipt,
+  syntheticPreactivatedDenOrigin?: string,
 ): Promise<AppWebRuntime> {
   const fixtureRoot = `/tmp/openwork-eval-app-web-${worldName}`;
   const runtimeDirectory = posix.join(REMOTE_REPO_ROOT, "tmp", "worlds", "runtime", worldName);
   const launchModulePath = `/tmp/${worldName}-launch.mjs`;
   const stopModulePath = `/tmp/${worldName}-stop.mjs`;
   const output = await runRemoteModule(sandbox, launchModulePath, REMOTE_LAUNCH_SOURCE, {
+    syntheticPreactivatedDenOrigin,
     directories: [workspaceRoot, ...runtimeDirectories(fixtureRoot)],
     env: isolatedRuntimeEnvironment(fixtureRoot),
     executableEnvKeys: EXECUTABLE_ENV_KEYS,
@@ -461,7 +468,7 @@ export async function appWeb(options: SeedAppWebOptions & { place: Place }): Pro
         sourcePreparedFingerprint: source.preparedFingerprint,
       };
       mocks = await bootRemoteMocks(sandbox, options.mocks ?? {});
-      runtime = await startRemoteRuntime(sandbox, worldName, workspaceRoot, source);
+      runtime = await startRemoteRuntime(sandbox, worldName, workspaceRoot, source, options.syntheticPreactivatedDenOrigin);
       await navigate(browser.client, runtime.webUrl);
     } else {
       // Capture only the commit identity, before mocks or app processes launch.
@@ -480,7 +487,7 @@ export async function appWeb(options: SeedAppWebOptions & { place: Place }): Pro
         throw new Error("Invalid local app-web source SHA receipt.");
       }
       mocks = await bootLocalMocks(options.place, options.mocks ?? {});
-      runtime = await startLocalRuntime(worldName, workspaceRoot);
+      runtime = await startLocalRuntime(worldName, workspaceRoot, options.syntheticPreactivatedDenOrigin);
       browser = await chrome({
         name: worldName,
         host: options.place.host(),
