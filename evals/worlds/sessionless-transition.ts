@@ -1,7 +1,8 @@
-import { browserScript, captureBrowserFilm } from "@openwork/cdp";
+import { captureBrowserFilm } from "@openwork/cdp";
 import type { AppWeb, Seed } from "@openwork/env";
+import { join } from "node:path";
 
-type Sample = { elapsed: number; source: string; route: string; top: number; left: number; width: number; height: number; starting: boolean; users: number };
+type Sample = { elapsed: number; source: string; route: string; hero: boolean; persisted: string[]; totalUsers: number; top: number; left: number; width: number; height: number; starting: boolean; users: number };
 declare global {
   interface Window {
     __sessionlessTransition?: { samples: Sample[]; stop(): void };
@@ -12,7 +13,7 @@ function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId: string, engine: string) {
+export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId: string, engine: string, evidenceDirectory: string) {
   await using setup = new AsyncDisposableStack();
   const endpoint = app.client.webSocketDebuggerUrl;
   if (!endpoint) throw new Error("Sessionless transition requires browser CDP");
@@ -78,20 +79,32 @@ export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId
   setup.defer(async () => { await release(); await command("Fetch.disable"); });
   const timer = setTimeout(() => { expired = true; void release().catch((error: Error) => { failure = error; }); }, 30_000);
   setup.defer(() => clearTimeout(timer));
-  const filmPath = seed.tmpPath(`sessionless-transition-${engine}-film`);
+  const filmPath = join(evidenceDirectory, `sessionless-transition-${engine}-film-${Date.now()}`);
   setup.use(await captureBrowserFilm(app, filmPath));
-  await seed.evalIn(app, browserScript((workspaceId) => {
+  await seed.evalIn(app, () => {
     const samples: Sample[] = [];
     const start = performance.now();
     let frame = 0;
     const sample = (source: string) => {
-      if (location.hash !== `#/workspace/${workspaceId}/session` || samples.length >= 2000) return;
-      const editor = document.querySelector<HTMLElement>('[data-lexical-editor="true"]');
+      if (samples.length >= 6000) return;
+      const visible = (node: HTMLElement) => {
+        const rect = node.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight
+          && style.display !== "none" && style.visibility !== "hidden" && Number(style.opacity) > 0;
+      };
+      const heading = [...document.querySelectorAll<HTMLElement>("h2")]
+        .find((node) => node.textContent?.trim() === "What do you need done?" && visible(node));
+      const hero = heading?.closest("main");
+      const editor = hero?.querySelector<HTMLElement>('[data-lexical-editor="true"]');
       const rect = editor?.getBoundingClientRect();
-      samples.push({ elapsed: performance.now() - start, source, route: location.hash,
+      const rows = [...document.querySelectorAll<HTMLElement>('[data-message-role="user"]')].filter(visible);
+      samples.push({ elapsed: performance.now() - start, source, route: location.hash || `#${location.pathname}`,
+        hero: Boolean(hero), users: rows.filter((node) => hero?.contains(node)).length, totalUsers: rows.length,
+        persisted: [...document.querySelectorAll<HTMLElement>("[data-session-surface-id]")].filter(visible)
+          .flatMap((node) => node.dataset.sessionSurfaceId ? [node.dataset.sessionSurfaceId] : []),
         top: rect?.top ?? -1, left: rect?.left ?? -1, width: rect?.width ?? 0, height: rect?.height ?? 0,
-        starting: [...document.querySelectorAll('[role="status"]')].some((node) => node.textContent?.includes("Starting")),
-        users: document.querySelectorAll('[data-message-role="user"]').length });
+        starting: [...document.querySelectorAll<HTMLElement>('[role="status"]')].some((node) => visible(node) && node.textContent?.includes("Starting")) });
     };
     const observer = new MutationObserver(() => sample("mutation"));
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
@@ -99,9 +112,9 @@ export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId
     sample("baseline");
     frame = requestAnimationFrame(tick);
     const stop = () => { observer.disconnect(); cancelAnimationFrame(frame); };
-    setTimeout(stop, 30_000);
+    setTimeout(stop, 60_000);
     window.__sessionlessTransition = { samples, stop };
-  }, [workspaceId]));
+  });
   setup.defer(async () => {
     await seed.evalIn(app, () => { window.__sessionlessTransition?.stop(); delete window.__sessionlessTransition; });
   });

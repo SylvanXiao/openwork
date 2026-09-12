@@ -228,7 +228,8 @@ export async function sessionlessFirstSendWorld(seed: Seed) {
     engine,
     prompt,
     reply,
-    transition: () => sessionlessTransition(seed, app, workspace.workspaceId, engine),
+    transition: (evidenceDirectory: string) => sessionlessTransition(seed, app, workspace.workspaceId, engine, evidenceDirectory),
+    route: () => seed.evalIn(app, () => location.hash || `#${location.pathname}`),
     recovery: () => seed.evalIn(app, () => {
       const restore = [...document.querySelectorAll<HTMLButtonElement>("button")]
         .find((button) => button.textContent?.includes("Clear the current draft to restore the unsent message"));

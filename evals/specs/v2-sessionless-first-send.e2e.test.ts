@@ -56,7 +56,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     expect(routing.status).toBe(200);
     expect(routing.body).toMatchObject({ chatRouting: engine === "v2" });
     if (engine === "v2") expect(routing.body).toMatchObject({ enabled: true, running: true });
-    expect(await probe.hash()).toBe(world.sessionlessRoute);
+    expect(await world.route()).toBe(world.sessionlessRoute);
     await user.see("composer", { editable: true });
     const composer = await probe.eventually(() => probe.composer(), {
       within: 60_000,
@@ -70,7 +70,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
   for (const newerDraft of ["", "Keep this newer continuation intact."]) {
     await step(newerDraft ? "creation failure preserves a newer draft and guards restoration of the unsent prompt" : "creation failure restores the unsent prompt without creating a session", async () => {
       await user.type("composer", prompt);
-      await using rejected = await world.transition();
+      await using rejected = await world.transition(evidence.dir);
       evidence.recordJsonArtifact("Creation failure recording", { engine, newerDraft: Boolean(newerDraft), path: rejected.filmPath });
       await user.press("Enter");
       await probe.eventually(() => rejected.read(), {
@@ -84,7 +84,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
           && !state.recovery.starting && state.recovery.error.length > 0,
       });
       evidence.recordJsonArtifact("Creation failure restoration", recovered);
-      expect(recovered.composer.route).toBe(world.sessionlessRoute);
+      expect(await world.route()).toBe(world.sessionlessRoute);
       expect(recovered.composer.userMessageCount).toBe(0);
       expect(recovered.recovery.restoreVisible).toBe(Boolean(newerDraft));
       expect(recovered.recovery.restoreDisabled).toBe(Boolean(newerDraft));
@@ -121,10 +121,10 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
       label: "enabled Run task",
       until: (state) => state.runTaskEnabled && state.draftText.trim() === prompt,
     });
-    expect(composer.route).toBe(world.sessionlessRoute);
+    expect(await world.route()).toBe(world.sessionlessRoute);
   });
 
-  await using transition = await world.transition();
+  await using transition = await world.transition(evidence.dir);
   evidence.recordJsonArtifact("Sessionless transition recording", { engine, path: transition.filmPath });
   await user.screenshot();
   await user.press("Enter");
@@ -149,7 +149,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     expect(baseline.height).toBeGreaterThan(0);
     expect(samples.some((sample) => sample.source === "mutation" && sample.starting)).toBe(true);
     expect(samples.slice(samples.findIndex((sample) => sample.starting)).every((sample) => sample.starting)).toBe(true);
-    expect(samples.every((sample) => sample.users === 0)).toBe(true);
+    expect(samples.every((sample) => sample.users === 0 && sample.totalUsers === 0)).toBe(true);
     for (const sample of samples) {
       expect(sample.route).toBe(world.sessionlessRoute);
       expect(Math.abs(sample.top - baseline.top)).toBeLessThanOrEqual(1);
@@ -161,7 +161,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
       `${samples.length} immediate RAF/mutation observations preserve the editor rect within one pixel and contain zero user rows; Starting persists for at least 1500ms; duplicate Enter admits one creation and no prompt before release.`, true);
   });
   await transition.release();
-  const hash = await probe.eventually(() => probe.hash(), {
+  const hash = await probe.eventually(() => world.route(), {
     within: 30_000,
     label: "navigation to the created session",
     until: (value) => value.startsWith(persistedPrefix) && value.slice(persistedPrefix.length).startsWith("ses_"),
@@ -196,7 +196,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     const messages = nativeMessages(native.value.body);
     expect(messages.filter((message) => message.role === "user" && message.text.includes(prompt))).toHaveLength(1);
     const composer = await probe.composer();
-    expect(composer.route).toBe(`${persistedPrefix}${sessionId}`);
+    expect(await world.route()).toBe(`${persistedPrefix}${sessionId}`);
     expect(composer.draftText.trim()).toBe("");
     expect(composer.userMessageCount).toBe(1);
   });
@@ -204,11 +204,23 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
   await step("exactly one session was created and the engine reply arrives in it", async () => {
     await user.see({ text: world.reply }, { timeoutMs: 120_000 });
     expect(await readSessions()).toEqual([...sessionsBefore, sessionId].sort());
-    expect(await probe.hash()).toBe(`${persistedPrefix}${sessionId}`);
+    expect(await world.route()).toBe(`${persistedPrefix}${sessionId}`);
     expect((await probe.composer()).userMessageCount).toBe(1);
     expect(transition.read()).toMatchObject({ creation: 1, prompt: 1, expired: false });
     expect(await world.requests()).toHaveLength(1);
     await user.screenshot();
+    const handoff = await transition.samples();
+    evidence.recordJsonArtifact("Hero to persisted session DOM ownership", handoff);
+    const baseline = handoff[0]!;
+    const heroSamples = handoff.filter((sample) => sample.hero);
+    expect(heroSamples.length).toBeGreaterThan(20);
+    expect(heroSamples.every((sample) => sample.users === 0 && sample.totalUsers === 0 && sample.persisted.length === 0)).toBe(true);
+    expect(heroSamples.every((sample) => Math.abs(sample.top - baseline.top) <= 1
+      && Math.abs(sample.left - baseline.left) <= 1 && Math.abs(sample.width - baseline.width) <= 1
+      && Math.abs(sample.height - baseline.height) <= 1)).toBe(true);
+    expect(handoff.some((sample) => !sample.hero && sample.persisted.includes(sessionId) && sample.totalUsers === 1)).toBe(true);
+    evidence.recordAssertionEvidence("DOM ownership stays with the unchanged hero until the persisted thread takes over",
+      `${heroSamples.length} hero observations retain zero user rows and a stable editor rectangle independently of URL changes; the created session surface then owns exactly one visible user row.`, true);
     evidence.recordAssertionEvidence(
       `${engine} creates exactly one session without replaying the first send`,
       "After the real engine reply, the session inventory is the original inventory plus exactly the routed session; one user row remains and the composer is empty.",

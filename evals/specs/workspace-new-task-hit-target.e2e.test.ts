@@ -350,7 +350,7 @@ test("workspace New task is instantly typable and every v1 send paints before en
         const requestBeforeSend = readFaults();
         const createGate = faults.holdNext("creation", "request");
         const promptGate = faults.holdNext("prompt", "request");
-        const rowObserver = await world.observeRenderer("user-row", scenario.marker, true);
+        const rowObserver = await world.observeRenderer("hero-starting", scenario.marker);
         await user.press("Enter");
         if (index === 0) await user.press("Enter");
         const lazySample = sample(index + 1, await rowObserver.read(), {
@@ -362,6 +362,7 @@ test("workspace New task is instantly typable and every v1 send paints before en
         pendingMeasurement.current = { observer: rowObserver, sample: lazySample };
         const creationHeld = await waitHeld(createGate);
         expect(await visibleFacts(scenario.marker)).toMatchObject({
+          rowCount: 0, markerOccurrences: 0,
           starting: [{ role: "status", text: "Starting…" }], workingCount: 0,
         });
         const beforeEngineState = await rowObserver.read();
@@ -594,8 +595,8 @@ test("workspace New task is instantly typable and every v1 send paints before en
       || entry.firstHeldCount !== 1 || entry.secondHeldCount !== 1 || !entry.exact || !entry.typedWithoutClick)
       .map((entry) => entry.index);
     evidence.recordAssertionEvidence(
-      "Twelve lazy first sends paint their user row and Starting before engine work within 100 ms",
-      JSON.stringify({ metric: "trusted Enter to second consecutive user-row and Starting frame before held engine requests", limitMs: sendLimitMs, count: lazyTiming.count, expectedCount: sampleCount, p50Ms: lazyTiming.p50Ms, p95Ms: lazyTiming.p95Ms, maxMs: lazyTiming.maxMs, failureIndices: lazyFailureIndices }),
+      "Twelve lazy first sends paint hero Starting without user rows or editor movement before engine work within 100 ms",
+      JSON.stringify({ metric: "trusted Enter to second consecutive hero-owned Starting frame with zero user rows, no Working, and unchanged editor rect before held engine requests", limitMs: sendLimitMs, count: lazyTiming.count, expectedCount: sampleCount, p50Ms: lazyTiming.p50Ms, p95Ms: lazyTiming.p95Ms, maxMs: lazyTiming.maxMs, failureIndices: lazyFailureIndices }),
       lazyTiming.count === sampleCount && lazyFailureIndices.length === 0,
     );
 
@@ -721,10 +722,17 @@ test("workspace New task is instantly typable and every v1 send paints before en
       await world.insertFocusedText(world.failure.creationA);
       await accessibleRunTask(world.failure.creationA, "the failed-creation payload has an enabled Run task control before Enter");
       const creationGate = faults.holdNext("creation", "request");
-      const creationRow = await world.observeRenderer("user-row", world.failure.creationA);
+      const creationRow = await world.observeRenderer("hero-starting", world.failure.creationA);
       await user.press("Enter");
       await waitHeld(creationGate);
+      const creationStarting = await probe.eventually(() => creationRow.read(), {
+        within: 10_000, label: "failed creation paints hero Starting", until: (state) => state.consecutiveFrames >= 2,
+      });
+      expect(creationStarting).toMatchObject({ kind: "hero-starting", trusted: true, consecutiveFrames: 2 });
+      expect(creationStarting.elapsedMs).not.toBeNull();
+      expect(creationStarting.elapsedMs).toBeLessThan(sendLimitMs);
       expect(await visibleFacts(world.failure.creationA)).toMatchObject({
+        rowCount: 0, markerOccurrences: 0,
         starting: [{ role: "status", text: "Starting…" }], workingCount: 0,
       });
       await world.insertFocusedText(world.failure.creationB);
