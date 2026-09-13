@@ -229,7 +229,7 @@ effortTest("MODEL-01 selected reasoning effort survives reload and reaches the n
     await user.type("composer", world.prompt);
     await user.click("Run task");
     await probe.eventually(() => world.requests(), { within: 90_000, label: "Default plus Fast reaches provider", until: (requests) => requests.length === 7 });
-    expect((await world.requests())[6]).toMatchObject({ model: world.fastModelId, reasoningEffort: null });
+    expect((await world.requests())[6]).toMatchObject({ model: world.fastModelId, reasoningEffort: "medium" });
     const native = await world.readNative(`${prefix}/session/${world.session.sessionId}`);
     expect(native.body).toMatchObject({ data: { model: { id: world.fastModelId, providerID: world.fastProviderId, variant: world.fastDefaultVariant } } });
     evidence.recordJsonArtifact("MODEL-01 Default plus Fast native request", { native, requests: await world.requests() });
