@@ -212,7 +212,7 @@ effortTest("MODEL-01 selected reasoning effort survives reload and reaches the n
     await user.see({ role: "button", label: "Change model" }, { text: /^Fast witness$/ });
     await user.click({ role: "button", label: "Change model" });
     await user.click({ role: "button", label: /^Effort/ });
-    await user.click({ role: "button", label: "Fast Off" });
+    await user.click({ role: "button", label: /^Fast\s+Off$/ });
     await user.see({ role: "button", label: "Change model" }, { text: /^Fast witness\s*· Fast$/ });
     await user.reload();
     await user.see("Run task", { timeoutMs: 60_000 });
@@ -220,7 +220,7 @@ effortTest("MODEL-01 selected reasoning effort survives reload and reaches the n
     await user.looks(["The closed composer model trigger shows Fast witness followed by a middle-dot separator and Fast with a dropdown chevron. It does not show Default or Default + Fast."]);
     await user.click({ role: "button", label: "Change model" });
     await user.click({ role: "button", label: /^Effort/ });
-    await user.see({ role: "button", label: "Fast On" });
+    await user.see({ role: "button", label: /^Fast\s+On$/ });
     await user.see({ role: "button", label: "Default" });
     const pressed = await probe.dom('[data-slot="model-thinking-submenu"] button[aria-pressed="true"]');
     expect(pressed.elements.map((button) => button.text.replace(/\s/g, ""))).toEqual(["FastOn", "Default"]);
