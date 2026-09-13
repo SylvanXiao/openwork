@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { FAST_DEFAULT_VARIANT } from "@openwork/types/cloud-model-fast";
 import { Check, ChevronDown, ChevronLeft, ChevronRight, Settings2, Star } from "lucide-react";
 
 import type { ModelBehaviorOption, ModelOption, ModelRef } from "@/app/types";
@@ -328,6 +329,7 @@ export function ModelSelect({
   }, [favoriteOptions, modelOptions, recentOptions]);
   const selectedThinkingOptions = selectedOption ? thinkingOptionsFor(selectedOption) : [];
   const effectiveBehaviorLabel = selectedOption?.behaviorLabel ?? behaviorLabel ?? "Default";
+  const triggerBehaviorLabel = selectedOption?.behaviorValue === FAST_DEFAULT_VARIANT ? "Fast" : effectiveBehaviorLabel;
   const currentFavorite = favoriteOptions.find((option) => isSameModel(value, option)) ?? favoriteOptions[0] ?? null;
   const nextFavorite = nextFavoriteModel(favorites, value);
   const showBehavior = !hideValue
@@ -429,7 +431,7 @@ export function ModelSelect({
                 : (selectedOption?.title ?? value.modelID ?? "Select model")}
             </span>
             {showBehavior ? (
-              <span className="shrink-0 text-gray-9">· {effectiveBehaviorLabel}</span>
+              <span className="shrink-0 text-gray-9">· {triggerBehaviorLabel}</span>
             ) : null}
           </span>
           <ChevronDown className="h-3 w-3" />
