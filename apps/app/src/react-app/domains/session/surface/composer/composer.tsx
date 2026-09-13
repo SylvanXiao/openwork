@@ -531,7 +531,11 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
     if (!mentionOpen) return;
     let cancelled = false;
     setMentionItems(COMPUTER_MENTIONS);
-    void Promise.all([props.listAgents(), props.searchFiles(mentionQuery), listRunningAppsForMention()]).then(([agentList, files, apps]) => {
+    void Promise.all([
+      props.listAgents().catch(() => []),
+      props.searchFiles(mentionQuery).catch(() => []),
+      listRunningAppsForMention(),
+    ]).then(([agentList, files, apps]) => {
       if (cancelled) return;
       const recent = props.recentFiles.slice(0, 8);
       const next: MentionItem[] = [

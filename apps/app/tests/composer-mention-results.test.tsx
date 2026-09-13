@@ -52,6 +52,7 @@ async function mounted(options: {
   mentions?: Props["mentions"];
   attachments?: Props["attachments"];
   search?: Props["searchFiles"];
+  listAgents?: Props["listAgents"];
   newTask?: boolean;
 } = {}) {
   runningApps = options.apps ?? [];
@@ -66,7 +67,7 @@ async function mounted(options: {
     queries.push(query);
     return options.search ? options.search(query) : options.files ?? ["notes.md", "docs/start.md", "src/openwork.ts", "docs/cloud-notes.md"];
   };
-  const listAgents = async () => defaultAgents;
+  const listAgents = options.listAgents ?? (async () => defaultAgents);
   const listCommands = async () => [];
   const attachments = options.attachments ?? [];
   const recentFiles: string[] = [];
@@ -351,6 +352,41 @@ test("ordinary text after an existing semantic app mention does not reopen sugge
     await composer.type("summarize");
     expect(composer.labels()).toEqual([]);
     expect(composer.queries).toEqual([]);
+  } finally { await composer.close(); }
+});
+
+test("agent mentions remain selectable when file lookup rejects", async () => {
+  const composer = await mounted({ search: async () => { throw new Error("File lookup failed"); } });
+  try {
+    await composer.type("@");
+    expect(composer.labels()[0]?.startsWith("@cloud")).toBe(true);
+    expect(composer.labels()[1]?.startsWith("@desktop")).toBe(true);
+    await composer.type("openwork");
+    expect(composer.queries.at(-1)).toBe("openwork");
+    expect(composer.labels()[0]?.startsWith("@openwork")).toBe(true);
+    await composer.press("Enter");
+    expect(composer.selectedAgent).toHaveBeenCalledWith("openwork");
+    expect(composer.draft()).toBe("");
+    expect(composer.labels()).toEqual([]);
+    expect(composer.sent).not.toHaveBeenCalled();
+  } finally { await composer.close(); }
+});
+
+test("file mentions remain selectable when agent lookup rejects", async () => {
+  const composer = await mounted({
+    files: ["notes.md"],
+    listAgents: async () => { throw new Error("Agent lookup failed"); },
+  });
+  try {
+    await composer.type("@notes");
+    expect(composer.queries.at(-1)).toBe("notes");
+    expect(composer.labels()[0]?.startsWith("@notes.md")).toBe(true);
+    await composer.press("Enter");
+    expect(composer.draft()).toBe("@notes.md ");
+    expect(composer.tokenTitles()).toContain("@notes.md");
+    expect(composer.labels()).toEqual([]);
+    expect(composer.selectedAgent).not.toHaveBeenCalled();
+    expect(composer.sent).not.toHaveBeenCalled();
   } finally { await composer.close(); }
 });
 
