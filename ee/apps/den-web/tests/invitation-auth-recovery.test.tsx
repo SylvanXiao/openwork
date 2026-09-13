@@ -31,9 +31,10 @@ async function withAuth(input: { invite?: string; signup?: Reply; signin?: Reply
   let signedIn = false;
   spyOn(requests, "requestJson").mockImplementation(async (path, init) => {
     calls.push({ path, body: typeof init?.body === "string" ? JSON.parse(init.body) : null });
-    const reply = path.startsWith("/api/auth/sign-up/email") ? input.signup ?? { status: 200, payload: { token: null, user: verified } }
+    const reply = path.startsWith("/api/auth/sign-up/email") ? input.signup ?? { status: 200, payload: { token: null, user: { ...verified, emailVerified: false } } }
       : path === "/api/auth/sign-in/email" ? input.signin ?? { status: 200, payload: { token: "session-token", user: verified } }
       : path.startsWith("/api/auth/sso-resolve") ? { status: 200, payload: { method: "password" } }
+      : path === "/api/auth/email-otp/send-verification-otp" ? { status: 200, payload: {} }
       : path === "/v1/me" && signedIn ? { status: 200, payload: { user: verified } }
       : { status: 401, payload: {} };
     if (path === "/api/auth/sign-in/email" && reply.status === 200) signedIn = true;
@@ -64,13 +65,14 @@ async function withAuth(input: { invite?: string; signup?: Reply; signin?: Reply
   }
 }
 
-test("tokenless invited signup attempts password sign-in with the raw invite in the signup query", async () => {
+test("tokenless invited signup requires OTP without password sign-in or joining", async () => {
   await withAuth({ invite: "raw-token" }, async ({ submit, state, calls }) => {
     await submit();
     expect(calls.some(({ path }) => path === "/api/auth/sign-up/email?invite=raw-token")).toBe(true);
-    expect(calls.filter(({ path }) => path === "/api/auth/sign-in/email")).toHaveLength(1);
-    expect(state().verificationRequired).toBe(false);
-    expect(window.localStorage.getItem(requests.AUTH_TOKEN_STORAGE_KEY)).toBe("session-token");
+    expect(calls.filter(({ path }) => path === "/api/auth/sign-in/email")).toHaveLength(0);
+    expect(state().verificationRequired).toBe(true);
+    expect(state().user).toBeNull();
+    expect(window.localStorage.getItem(requests.AUTH_TOKEN_STORAGE_KEY)).toBeNull();
     expect(calls.some(({ path }) => path.includes("invitations/accept"))).toBe(false);
   });
 });
@@ -78,14 +80,16 @@ test("tokenless invited signup attempts password sign-in with the raw invite in 
 test.each(["signup", "signin"])("generic %s 403 stays on auth instead of OTP", async (failure) => {
   const denied = { status: 403, payload: { code: "ACCESS_DENIED", message: "Blocked by policy." } };
   await withAuth({ invite: "raw-token", ...(failure === "signup" ? { signup: denied } : { signin: denied }) }, async ({ submit, state }) => {
+    if (failure === "signin") await act(async () => state().setAuthMode("sign-in"));
     await submit();
     expect(state().verificationRequired).toBe(false);
     expect(state().authError).toBe("Blocked by policy.");
   });
 });
 
-test("unproven invite opens real OTP only after sign-in reports EMAIL_NOT_VERIFIED", async () => {
+test("invited password sign-in opens OTP on EMAIL_NOT_VERIFIED", async () => {
   await withAuth({ invite: "stale-token", signin: { status: 403, payload: { code: "EMAIL_NOT_VERIFIED", message: "Email not verified" } } }, async ({ submit, state }) => {
+    await act(async () => state().setAuthMode("sign-in"));
     await submit();
     expect(state().verificationRequired).toBe(true);
     expect(state().user).toBeNull();
@@ -107,11 +111,28 @@ test("recovery page restores locked code entry without verifying, signing in, or
     expect(state().verificationRequired).toBe(true);
     expect(state().email).toBe(email);
     expect(container.textContent).toContain("Verification code");
-    expect(container.textContent).toContain(email);
+    expect(container.innerHTML).not.toContain(email);
+    expect(container.textContent).toContain("Enter the six-digit code from your inbox.");
+    expect(container.querySelector('input[autocomplete="one-time-code"]')).not.toBeNull();
     expect(container.textContent).not.toContain("Change email");
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.querySelector('input[type="email"]')).toBeNull();
     expect(state().user).toBeNull();
     expect(calls.some(({ path }) => path.startsWith("/api/auth/"))).toBe(false);
+    expect(state().authInfo).toContain(email);
+    await act(async () => {
+      const resend = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Resend code");
+      if (!resend) throw new Error("Missing resend button");
+      resend.click();
+    });
+    expect(calls.filter(({ path }) => path === "/api/auth/email-otp/send-verification-otp")).toEqual([
+      { path: "/api/auth/email-otp/send-verification-otp", body: { email, type: "email-verification" } },
+    ]);
+    expect(state().email).toBe(email);
+    expect(state().authInfo).toBe(`We sent a fresh verification code to ${email}.`);
+    expect(state().user).toBeNull();
+    expect(container.innerHTML).not.toContain(email);
+    expect(container.textContent).toContain("Check your inbox for a verification code.");
+    expect(container.querySelector('input[autocomplete="one-time-code"]')).not.toBeNull();
   });
 });

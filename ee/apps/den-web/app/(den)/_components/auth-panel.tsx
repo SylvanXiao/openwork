@@ -216,6 +216,7 @@ export function AuthPanel({
   hideSocialAuth = false,
   hideEmailField = false,
   hideLockedEmailSummary = false,
+  genericRecoveryFeedback = false,
   emailFirstFlow = false,
   emailFirstInvitationId,
   resolveEmailFirstOnPrefill = false,
@@ -233,6 +234,7 @@ export function AuthPanel({
   hideSocialAuth?: boolean;
   hideEmailField?: boolean;
   hideLockedEmailSummary?: boolean;
+  genericRecoveryFeedback?: boolean;
   emailFirstFlow?: boolean;
   emailFirstInvitationId?: string;
   resolveEmailFirstOnPrefill?: boolean;
@@ -1151,8 +1153,8 @@ export function AuthPanel({
           className="den-frame-inset grid gap-1 rounded-[1.5rem] px-4 py-3 text-center text-[13px] text-[var(--dls-text-secondary)]"
           aria-live="polite"
         >
-          <p>{authInfo}</p>
-          {authError ? <p className="font-medium text-rose-600">{authError}</p> : null}
+          <p>{genericRecoveryFeedback ? "Check your inbox for a verification code." : authInfo}</p>
+          {authError ? <p className="font-medium text-rose-600">{genericRecoveryFeedback ? "Could not complete verification. Check your code or request a new one and try again." : authError}</p> : null}
           {!authError && verificationRequired && !isSingleOrgMode ? (
             <div className="mt-1 inline-flex items-center justify-center gap-1 text-emerald-600">
               <CheckCircle2 className="h-3.5 w-3.5" />

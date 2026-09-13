@@ -23,10 +23,7 @@ export function VerificationRecoveryScreen({ email }: { email: string }) {
     <OnboardingShell state="verification">
       <OnboardingCard organization={null}>
         {email ? (
-          <div className="grid gap-4">
-            <p className="m-0 text-sm font-medium">{email}</p>
-            <AuthPanel bare prefilledEmail={email} lockEmail hideEmailField hideLockedEmailSummary />
-          </div>
+          <AuthPanel bare prefilledEmail={email} lockEmail hideEmailField hideLockedEmailSummary genericRecoveryFeedback />
         ) : (
           <p role="alert">Open the recovery link from your verification email to enter your code.</p>
         )}

@@ -378,8 +378,8 @@ function readRequestQueryParam(request: Request | undefined, propertyName: strin
   return value || null;
 }
 
-async function hasPendingInvitationForEmail(input: { inviteToken: string | null; email: string | null }) {
-  if (!input.inviteToken || !input.email) {
+async function hasPendingInvitationForEmail(input: { invitationIdOrToken: string | null; email: string | null }) {
+  if (!input.invitationIdOrToken || !input.email) {
     return false;
   }
 
@@ -387,14 +387,14 @@ async function hasPendingInvitationForEmail(input: { inviteToken: string | null;
     .select({ inviteToken: schema.InvitationTable.inviteToken })
     .from(schema.InvitationTable)
     .where(and(
-      eq(schema.InvitationTable.inviteToken, input.inviteToken),
+      sql`(${schema.InvitationTable.id} = ${input.invitationIdOrToken} or ${schema.InvitationTable.inviteToken} = ${input.invitationIdOrToken})`,
       eq(schema.InvitationTable.status, "pending"),
       gt(schema.InvitationTable.expiresAt, new Date()),
       sql`lower(${schema.InvitationTable.email}) = ${normalizeLoginEmail(input.email)}`,
     ))
     .limit(1);
 
-  return invitation?.inviteToken === input.inviteToken;
+  return Boolean(invitation);
 }
 
 function normalizeRawRoleValue(roleValue: string) {
@@ -650,17 +650,10 @@ export const auth = betterAuth({
           if (ssoProviderId && await isScimDeprovisionedEmailForSsoProvider({ ssoProviderId, email })) {
             throw new APIError("FORBIDDEN", { message: SCIM_DEPROVISIONED_SIGN_IN_MESSAGE });
           }
-          const emailVerified = context?.path === "/sign-up/email"
-            ? await hasPendingInvitationForEmail({
-              inviteToken: readRequestQueryParam(context.request, "invite"),
-              email,
-            })
-            : user.emailVerified;
           return {
             data: {
               ...user,
               email,
-              emailVerified,
             },
           };
         },
@@ -909,7 +902,7 @@ export const auth = betterAuth({
       const email = getAuthBodyEmail(ctx.body);
       if (ctx.path === "/sign-up/email") {
         const invitationAllowsSignup = await hasPendingInvitationForEmail({
-          inviteToken: readRequestQueryParam(ctx.request, "invite") ?? readStringProperty(ctx.query, "invite") ?? readStringProperty(ctx.body, "invite"),
+          invitationIdOrToken: readRequestQueryParam(ctx.request, "invite") ?? readStringProperty(ctx.query, "invite") ?? readStringProperty(ctx.body, "invite"),
           email,
         });
         const bootstrapGrant = readInitialAdminBootstrapGrantFromBody(ctx.body);

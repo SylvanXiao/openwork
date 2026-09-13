@@ -1321,9 +1321,6 @@ export function DenFlowProvider({ children }: { children: ReactNode }) {
 
       if (submitMode === "sign-up" && !token) {
         setUser(null);
-        if (pendingInvitationId) {
-          return await finalizeEmailPasswordSignIn(submitMode, trimmedEmail, payload);
-        }
         openVerificationStep(trimmedEmail, `We emailed a 6-digit verification code to ${trimmedEmail}. Enter it below to finish creating your account.`);
         appendEvent("info", "Verification code sent", trimmedEmail);
         trackPosthogEvent("den_signup_verification_sent", {

@@ -28,7 +28,7 @@ test("OPE-82: cloud invitations retain identity and organization through authent
     await noCrossOrg();
   };
 
-  await step("OPE-82: an email/password invite proves the mailbox and joins without another verification challenge", async () => {
+  await step("OPE-82: password invite signup requires mailbox OTP before explicit Join", async () => {
     const person = identity("password-invitee");
     const invite = await witnesses.invite(person.email, orgId);
     const verificationBefore = await witnesses.emails("verification", person.email);
@@ -42,13 +42,28 @@ test("OPE-82: cloud invitations retain identity and organization through authent
     await user.type({ role: "textbox", label: /^name$/i }, person.name);
     await user.type({ role: "textbox", label: /^password$/i }, person.password);
     await user.click({ role: "button", label: "Create account" });
+    await user.see({ role: "textbox", label: /^verification code$/i });
+    await probe.eventually(() => witnesses.emails("verification", person.email), {
+      within: 15_000, label: "one invitation signup verification challenge", until: (emails) => emails.length === verificationBefore.length + 1,
+    });
+    const code = await witnesses.otp(person.email);
+    await pending(person.email);
+    expect(await probe.storage("openwork:web:auth-token")).toBeNull();
+    await user.type({ role: "textbox", label: /^verification code$/i }, code === "000000" ? "000001" : "000000");
+    await user.click({ role: "button", label: "Verify and join" });
+    await user.see({ text: /invalid.*(code|otp)|(code|otp).*invalid/i });
+    await user.notSee({ role: "button", label: `Join ${text(world.organization.name)}` });
+    expect(await probe.storage("openwork:web:auth-token")).toBeNull();
+    await pending(person.email);
+    await user.type({ role: "textbox", label: /^verification code$/i }, code, { replace: true });
+    await user.click({ role: "button", label: "Verify and join" });
     await user.see({ role: "button", label: `Join ${text(world.organization.name)}` });
     await pending(person.email);
     await user.click({ role: "button", label: `Join ${text(world.organization.name)}` });
     await joined(person.email);
-    await user.notSee({ role: "textbox", label: "Verification code" });
+    await user.notSee({ role: "textbox", label: /^verification code$/i });
     await user.notSee({ role: "button", label: "Resend code" });
-    expect(await witnesses.emails("verification", person.email)).toEqual(verificationBefore);
+    expect(await witnesses.emails("verification", person.email)).toHaveLength(verificationBefore.length + 1);
     await ownerActor.see({ text: person.email });
     await ownerActor.notSee({ text: "Pending" }, { timeoutMs: 30_000 });
     await user.reload();
@@ -76,12 +91,20 @@ test("OPE-82: cloud invitations retain identity and organization through authent
     const verificationBefore = await witnesses.emails("verification", person.email);
     await actor.type({ role: "textbox", label: /^password$/i }, person.password);
     await actor.click({ role: "button", label: "Create account" });
+    await actor.see({ role: "textbox", label: /^verification code$/i });
+    await probe.eventually(() => witnesses.emails("verification", person.email), {
+      within: 15_000, label: "switched account verification challenge", until: (emails) => emails.length === verificationBefore.length + 1,
+    });
+    expect(await probe.on(surface).storage("openwork:web:auth-token")).toBeNull();
+    await pending(person.email);
+    await actor.type({ role: "textbox", label: /^verification code$/i }, await witnesses.otp(person.email));
+    await actor.click({ role: "button", label: "Verify and join" });
     await actor.see({ role: "button", label: `Join ${text(world.organization.name)}` });
     await pending(person.email);
     await actor.click({ role: "button", label: `Join ${text(world.organization.name)}` });
     await joined(person.email, "admin");
-    await actor.notSee({ role: "textbox", label: "Verification code" });
-    expect(await witnesses.emails("verification", person.email)).toEqual(verificationBefore);
+    await actor.notSee({ role: "textbox", label: /^verification code$/i });
+    expect(await witnesses.emails("verification", person.email)).toHaveLength(verificationBefore.length + 1);
     expect(membersFor(await witnesses.org(orgId), world.other.email).map((member) => member.id)).toEqual(wrongAccountMembershipIds);
   });
 
@@ -103,7 +126,7 @@ test("OPE-82: cloud invitations retain identity and organization through authent
         const actor = user.on(surface);
         await actor.see({ text: state === "blocked" ? "This invite needs a different email domain." : "This invite was canceled." }, { timeoutMs: 90_000 });
         await actor.notSee({ role: "textbox", label: /^password$/i });
-        await actor.notSee({ role: "textbox", label: "Verification code" });
+        await actor.notSee({ role: "textbox", label: /^verification code$/i });
         await actor.notSee({ role: "button", label: `Join ${text(world.organization.name)}` });
         const org = await witnesses.org(orgId);
         expect(membersFor(org, person.email)).toHaveLength(0);
@@ -133,7 +156,7 @@ test("OPE-82: cloud invitations retain identity and organization through authent
     await actor.click({ role: "button", label: "Create account" });
     await probe.eventually(() => proxy.requestLog(), { within: 15_000, label: "the submitted form received the generic 403", until: (requests) => requests.some((request) => request.faulted && request.status === 403) });
     await actor.see({ text: "Account registration is blocked by policy." });
-    await actor.notSee({ role: "textbox", label: "Verification code" });
+    await actor.notSee({ role: "textbox", label: /^verification code$/i });
     await actor.notSee({ role: "button", label: "Resend code" });
     expect(await witnesses.emails("verification", person.email)).toEqual(before);
     await pending(person.email);

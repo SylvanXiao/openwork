@@ -57,7 +57,7 @@ describe("join organization invite clean layout contract", () => {
     expect(source).toContain("isEmailNotVerified(payload) && !isSingleOrgMode");
     expect(source).toContain("isEmailNotVerified(signInResult.payload) && !isSingleOrgMode");
     expect(source).not.toContain("response.status === 403 && !isSingleOrgMode");
-    expect(source).toMatch(/if \(submitMode === "sign-up" && !token\) \{[\s\S]*?if \(pendingInvitationId\) \{\s*return await finalizeEmailPasswordSignIn\(submitMode, trimmedEmail, payload\);/);
+    expect(source).toMatch(/if \(submitMode === "sign-up" && !token\) \{\s*setUser\(null\);\s*openVerificationStep/);
   });
 
   test("verification recovery route only restores code entry for the query email", () => {

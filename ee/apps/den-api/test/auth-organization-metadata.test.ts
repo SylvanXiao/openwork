@@ -16,12 +16,12 @@ const rows = {
     return Object.assign(Promise.resolve([{ id: "fixture-resource" }]), {
       limit: async () => {
         expect(query.sql).toContain("`invite_token` = ?")
-        expect(query.sql).not.toContain(" or ")
+        expect(query.sql).toContain(" or ")
         expect(query.sql).toContain("`status` = ?")
         expect(query.sql).toContain("`expires_at` > ?")
         expect(query.sql).toContain("lower(")
-        const [token, status, expiresAt, email] = query.params
-        return token === invitation.inviteToken && status === invitation.status
+        const [id, token, status, expiresAt, email] = query.params
+        return (id === invitation.id || token === invitation.inviteToken) && status === invitation.status
           && typeof expiresAt === "string" && invitation.expiresAt > new Date(expiresAt)
           && email === invitation.email ? [invitation] : []
       },
@@ -44,7 +44,8 @@ beforeAll(async () => {
   process.env.DEN_DB_ENCRYPTION_KEY ??= "x".repeat(32)
   process.env.BETTER_AUTH_SECRET ??= "y".repeat(32)
   process.env.BETTER_AUTH_URL ??= "http://127.0.0.1:8790"
-  process.env.DEN_ORG_MODE = "multi_org"
+  process.env.DEN_ORG_MODE = "single_org"
+  process.env.DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP = "false"
   process.env.DEN_REQUIRE_EMAIL_VERIFICATION = "true"
   auth = (await import("../src/auth.js")).auth
   await auth.$context
@@ -110,16 +111,16 @@ test("public organization updates cannot replace capability metadata", async () 
 })
 
 test.each([
-  { name: "valid raw token", token: "raw-invitation-token", email: " Member@Example.Test ", status: "pending", expired: false, verified: true },
+  { name: "copied raw token", token: "raw-invitation-token", email: " Member@Example.Test ", status: "pending", expired: false, verified: false },
   { name: "public invitation id", token: "public-invitation-id", email: "member@example.test", status: "pending", expired: false, verified: false },
   { name: "wrong email", token: "raw-invitation-token", email: "other@example.test", status: "pending", expired: false, verified: false },
   { name: "expired", token: "raw-invitation-token", email: "member@example.test", status: "pending", expired: true, verified: false },
   { name: "canceled", token: "raw-invitation-token", email: "member@example.test", status: "canceled", expired: false, verified: false },
   { name: "ordinary signup", token: "", email: "member@example.test", status: "pending", expired: false, verified: false },
-])("password signup email proof: $name", async ({ token, email, status, expired, verified }) => {
+])("invitation possession cannot verify password signup: $name", async ({ token, email, status, expired, verified }) => {
   invitation = { ...invitation, status, expiresAt: new Date(Date.now() + (expired ? -60_000 : 60_000)) }
   const invoke = createAuthMiddleware(async (context) => auth.options.databaseHooks.user.create.before({
-    id: "test-user", name: "Member", email, emailVerified: true, createdAt: new Date(), updatedAt: new Date(),
+    id: "test-user", name: "Member", email, emailVerified: false, createdAt: new Date(), updatedAt: new Date(),
   }, context))
   const result = await invoke({
     path: "/sign-up/email",
@@ -130,7 +131,26 @@ test.each([
   expect(result.data.email).toBe(email.trim().toLowerCase())
 })
 
-test("SSO requirement still rejects password signup with valid invitation proof", async () => {
+test.each([
+  { token: "raw-invitation-token", email: " Member@Example.Test ", status: "pending", expired: false, allowed: true },
+  { token: "public-invitation-id", email: "member@example.test", status: "pending", expired: false, allowed: true },
+  { token: "copied-other-token", email: "member@example.test", status: "pending", expired: false, allowed: false },
+  { token: "raw-invitation-token", email: "other@example.test", status: "pending", expired: false, allowed: false },
+  { token: "raw-invitation-token", email: "member@example.test", status: "pending", expired: true, allowed: false },
+  { token: "public-invitation-id", email: "member@example.test", status: "canceled", expired: false, allowed: false },
+  { token: "", email: "member@example.test", status: "pending", expired: false, allowed: false },
+])("private single-org signup admission: $token / $email / $status / expired=$expired", async ({ token, email, status, expired, allowed }) => {
+  invitation = { ...invitation, status, expiresAt: new Date(Date.now() + (expired ? -60_000 : 60_000)) }
+  const result = auth.options.hooks.before({
+    path: "/sign-up/email", body: { email },
+    request: new Request(`http://127.0.0.1:8790/api/auth/sign-up/email?invite=${token}`),
+    context: await auth.$context,
+  })
+  if (allowed) await expect(result).resolves.toBeUndefined()
+  else await expect(result).rejects.toMatchObject({ status: "FORBIDDEN", body: { message: "Email signup is disabled for this deployment. Use your organization's SSO or a pre-provisioned account to sign in." } })
+})
+
+test("SSO requirement still rejects password signup with a valid invitation", async () => {
   invitation = { ...invitation, status: "pending", expiresAt: new Date(Date.now() + 60_000) }
   requireSso = true
   try {
@@ -162,12 +182,12 @@ test("body-only invite claims do not prove email and non-password user creation 
         request: new Request(`http://127.0.0.1:8790/api/auth${path}`),
         context: await auth.$context,
       })
-      expect(result.data.emailVerified).toBe(path === "/sign-up/email" ? false : emailVerified)
+      expect(result.data.emailVerified).toBe(emailVerified)
     }
   }
 })
 
-test("verified invite signups skip verification email while ordinary signup gets canonical recovery URL", async () => {
+test("only independently verified users skip email; unverified users get canonical recovery URL", async () => {
   const authContext = await auth.$context
   const { env } = await import("../src/env.js")
   const findUser = spyOn(authContext.internalAdapter, "findUserByEmail")
