@@ -30,7 +30,7 @@ export interface StormPlan extends ShellSession, ShellWorkspace {
   finalReply: string;
 }
 
-type InstantMetricKind = "new-task" | "hero-starting" | "user-row";
+type InstantMetricKind = "new-task" | "hero-preparing" | "user-row";
 type InstantBoundaryKind = "creation" | "prompt";
 type InstantBoundaryStage = "request" | "response";
 
@@ -131,7 +131,7 @@ async function observeInstantRenderer(
         const hit = document.elementFromPoint(x, y);
         return hit instanceof Node && node.contains(hit);
       }
-      if (kind === "hero-starting") {
+      if (kind === "hero-preparing") {
         const composer = editor();
         const heading = [...surface.root.querySelectorAll<HTMLElement>("h2")]
           .find((node) => node.textContent?.trim() === "What do you need done?" && visibleInViewport(node));
@@ -143,10 +143,9 @@ async function observeInstantRenderer(
         const rect = composer.getBoundingClientRect();
         if (rect.x !== submittedEditorRect.x || rect.y !== submittedEditorRect.y
           || rect.width !== submittedEditorRect.width || rect.height !== submittedEditorRect.height) return false;
-        const starting = [...hero.querySelectorAll<HTMLElement>('[data-loading-message="starting"]')].filter(visibleInViewport);
-        return starting.length === 1 && starting[0]?.getAttribute("role") === "status"
-          && starting[0]?.innerText.trim() === "Starting…"
-          && !surface.root.querySelector('[data-loading-message="working"]');
+        return !surface.root.querySelector('[data-loading-message="starting"], [data-loading-message="working"]')
+          && [...hero.querySelectorAll<HTMLElement>('button[aria-label="Creating conversation..."][aria-busy="true"]')]
+            .some((node) => visibleInViewport(node) && Boolean(node.querySelector('.animate-spin')));
       }
       if (requireStarting) {
         const starting = [...surface.root.querySelectorAll<HTMLElement>('[data-loading-message="starting"]')].filter(visibleInViewport);
@@ -175,7 +174,7 @@ async function observeInstantRenderer(
         if (!(event instanceof KeyboardEvent) || event.key !== "Enter") return;
         const node = editor();
         if (!node || !(event.target instanceof Node) || !(event.target === node || node.contains(event.target))) return;
-        if (kind === "hero-starting") {
+        if (kind === "hero-preparing") {
           if (event.shiftKey || event.ctrlKey || event.altKey || event.metaKey || event.isComposing || event.repeat) return;
           const surface = surfaceRoot();
           const heading = [...(surface?.root.querySelectorAll<HTMLElement>("h2") ?? [])]
@@ -210,7 +209,7 @@ async function observeInstantRenderer(
   return {
     async read(): Promise<InstantRendererState> {
       const value = await seed.evalIn(app, () => window.__instantSendMetric?.state ?? null);
-      if (!isRecord(value) || (value.kind !== "new-task" && value.kind !== "hero-starting" && value.kind !== "user-row")
+      if (!isRecord(value) || (value.kind !== "new-task" && value.kind !== "hero-preparing" && value.kind !== "user-row")
         || typeof value.started !== "boolean" || typeof value.trusted !== "boolean"
         || !(value.elapsedMs === null || typeof value.elapsedMs === "number")
         || typeof value.frames !== "number" || typeof value.mutations !== "number"

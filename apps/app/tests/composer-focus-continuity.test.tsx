@@ -1410,12 +1410,12 @@ test("new-task composer keeps stable presentation and preserves submission owner
     button.click();
     button.click();
   };
-  const expectStarting = () => {
-    const indicators = container.querySelectorAll('[data-loading-message="starting"]');
-    expect(indicators).toHaveLength(1);
-    expect(indicators[0]?.getAttribute("role")).toBe("status");
-    expect(indicators[0]?.textContent).toBe("Starting…");
+  const expectPendingHero = () => {
+    expect(container.querySelector('[data-message-role="user"]')).toBeNull();
+    expect(container.querySelector('[data-loading-message="starting"]')).toBeNull();
+    expect(container.textContent).not.toContain("Starting");
     expect(container.querySelector('[data-loading-message="working"]')).toBeNull();
+    expect(container.querySelector('button[aria-label="Creating conversation..."]')?.getAttribute("aria-busy")).toBe("true");
   };
   const expectSettled = () => {
     expect(container.querySelector('[data-loading-message="starting"]')).toBeNull();
@@ -1443,7 +1443,6 @@ test("new-task composer keeps stable presentation and preserves submission owner
     const heroWrapper = container.firstElementChild;
     const heroEditor = container.querySelector<HTMLElement>('[contenteditable="true"][data-lexical-editor="true"]');
     if (!heroEditor) throw new Error("Expected the hero editor");
-    expect(heroWrapper?.classList.contains("relative")).toBe(true);
     const heroChildCount = container.childElementCount;
     await act(async () => send());
     expect(creations).toBe(1);
@@ -1453,12 +1452,8 @@ test("new-task composer keeps stable presentation and preserves submission owner
     expect(container.childElementCount).toBe(heroChildCount);
     expect(container.querySelector('[data-lexical-editor="true"]')).toBe(heroEditor);
     expect(heroEditor.getAttribute("contenteditable")).toBe("true");
-    const heroStarting = container.querySelector('[data-loading-message="starting"]');
-    expect(heroStarting?.parentElement).toBe(heroWrapper);
-    expect(heroStarting?.classList.contains("absolute")).toBe(true);
-    expect(heroStarting?.classList.contains("bottom-full")).toBe(true);
     expect(capturedHandoff?.submitted.draft).toBe("First hero message");
-    expectStarting();
+    expectPendingHero();
     expect(container.querySelector('button[aria-label="Creating conversation..."]')?.getAttribute("aria-busy")).toBe("true");
     expect(container.querySelector('button[aria-label="Preparing connected service tools…"]')).toBeNull();
     await act(async () => updateHeroDraft("Newer hero draft"));
@@ -1489,13 +1484,14 @@ test("new-task composer keeps stable presentation and preserves submission owner
     });
     await act(async () => send());
     expect(creations).toBe(2);
-    expect(container.querySelector('[role="status"]')?.textContent).toBe("Starting…");
+    expect(container.querySelector('[data-lexical-editor="true"]')).toBe(heroEditor);
+    expect(heroEditor.getAttribute("contenteditable")).toBe("true");
     expect(container.querySelector('button[aria-label="Creating conversation..."]')?.getAttribute("aria-busy")).toBe("true");
     expect(container.querySelector('button[aria-label="Preparing connected service tools…"]')).toBeNull();
     expect(container.querySelector('[data-lexical-editor="true"]')?.textContent).toBe("");
     expect(container.querySelector('[data-message-role="user"]')).toBeNull();
     expect(container.querySelector('img[alt="photo.png"]')).toBeNull();
-    expectStarting();
+    expectPendingHero();
     expect(container.querySelector("[data-attachment-id]")).toBeNull();
     expect(capturedHandoff?.getContinuation()).toEqual({ draft: "", attachments: [], mentions: {}, pasteParts: [], revertMessageId: null });
     expect(capturedHandoff?.submitted.attachments[0]?.file).toBe(attachment.file);

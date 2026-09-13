@@ -141,22 +141,22 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
   ]);
   await user.press("Enter");
   await user.press("Enter");
-  await step("slow session creation keeps Starting above an unmoved hero composer without a temporary user row", async () => {
+  await step("slow session creation keeps an unmoved busy hero composer without intermediate labels or a temporary user row", async () => {
     await probe.eventually(() => transition.read(), {
       within: 10_000, label: "one held session creation", until: (state) => state.held === 1,
     });
     const samples = await probe.eventually(() => transition.samples(), {
-      within: 10_000, label: "Starting sampled across the slow creation interval",
+      within: 10_000, label: "busy creating control sampled across the slow creation interval",
       until: (values) => {
-        const starting = values.filter((sample) => sample.submitted && sample.starting && sample.source === "raf");
-        return starting.length >= 20 && starting[starting.length - 1]!.elapsed - starting[0]!.elapsed >= 1500;
+        const preparing = values.filter((sample) => sample.submitted && sample.preparing && sample.source === "raf");
+        return preparing.length >= 20 && preparing[preparing.length - 1]!.elapsed - preparing[0]!.elapsed >= 1500;
       },
     }).finally(async () => {
       evidence.recordJsonArtifact("Immediate sessionless RAF and mutation observations", await transition.samples());
     });
     await user.looks([
-      "The 'What do you need done?' hero remains visible, with 'Starting…' immediately above the empty composer showing 'Describe your task...'.",
-      "There is no submitted user-message bubble between the hero heading and the composer, and the Starting text does not overlap the composer input.",
+      "The 'What do you need done?' hero remains visible above the stationary empty composer showing 'Describe your task...', with a visible busy spinner in its send control.",
+      "There is no submitted user-message bubble, Starting indicator, or Working indicator between the hero heading and the composer.",
     ]);
     expect(transition.read()).toMatchObject({ creation: 1, prompt: 0, held: 1, expired: false });
     const submissionIndex = samples.findIndex((sample) => sample.submitted);
@@ -170,16 +170,18 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     expect(baseline.width).toBeGreaterThan(0);
     expect(baseline.height).toBeGreaterThan(0);
     expect(heldSamples.filter((sample) => sample.source === "raf").length).toBeGreaterThanOrEqual(20);
-    expect(heldSamples.some((sample) => sample.source === "mutation" && sample.starting)).toBe(true);
-    const firstStarting = heldSamples.findIndex((sample) => sample.starting);
-    expect(firstStarting).toBeGreaterThanOrEqual(0);
-    expect(heldSamples.slice(firstStarting).every((sample) => sample.starting)).toBe(true);
+    expect(heldSamples.some((sample) => sample.source === "mutation" && sample.preparing)).toBe(true);
+    const firstPreparing = heldSamples.findIndex((sample) => sample.preparing);
+    expect(firstPreparing).toBeGreaterThanOrEqual(0);
+    expect(heldSamples.slice(firstPreparing).every((sample) => sample.preparing)).toBe(true);
     for (const [offset, sample] of heldSamples.entries()) {
       expect(sample.index).toBe(submissionIndex + offset);
       expect(sample.submitted).toBe(true);
       expect(sample.submissionIndex).toBe(submissionIndex);
       expect(sample.submittedAt).toBe(baseline.submittedAt);
       expect(sample.hero).toBe(true);
+      expect(sample.starting).toBe(false);
+      expect(sample.working).toBe(false);
       expect(sample.persisted).toEqual([]);
       expect(sample.users).toBe(0);
       expect(sample.totalUsers).toBe(0);
@@ -189,7 +191,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
       expect(Math.abs(sample.height - baseline.height)).toBeLessThanOrEqual(1);
     }
     evidence.recordAssertionEvidence("Slow creation preserves hero layout without a temporary user bubble",
-      `${heldSamples.length} contiguous observations from trusted submission preserve the visible hero and editor rect within one pixel with no user rows or persisted surfaces; Starting persists without gaps once shown for at least 1500ms; duplicate Enter admits one creation and no prompt before release.`, true);
+      `${heldSamples.length} contiguous observations from trusted submission preserve the visible hero and editor rect within one pixel with no user rows, persisted surfaces, Starting or Working; the busy creating spinner persists without gaps once shown for at least 1500ms; duplicate Enter admits one creation and no prompt before release.`, true);
   });
   await transition.release();
   const hash = await probe.eventually(() => world.route(), {
@@ -263,9 +265,10 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     expect(heroSamples.every((sample, offset) => sample.index === submissionIndex + offset
       && sample.submitted && sample.submissionIndex === submissionIndex && sample.submittedAt === baseline.submittedAt
       && sample.hero && sample.users === 0 && sample.totalUsers === 0 && sample.persisted.length === 0)).toBe(true);
-    const firstStarting = heroSamples.findIndex((sample) => sample.starting);
-    expect(firstStarting).toBeGreaterThanOrEqual(0);
-    expect(heroSamples.slice(firstStarting).every((sample) => sample.starting)).toBe(true);
+    expect(heroSamples.every((sample) => !sample.starting && !sample.working)).toBe(true);
+    const firstPreparing = heroSamples.findIndex((sample) => sample.preparing);
+    expect(firstPreparing).toBeGreaterThanOrEqual(0);
+    expect(heroSamples.slice(firstPreparing).every((sample) => sample.preparing)).toBe(true);
     expect(heroSamples.every((sample) => Math.abs(sample.top - baseline.top) <= 1
       && Math.abs(sample.left - baseline.left) <= 1 && Math.abs(sample.width - baseline.width) <= 1
       && Math.abs(sample.height - baseline.height) <= 1)).toBe(true);
@@ -275,7 +278,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     expect(persistedSamples.every((sample) => !sample.hero && sample.persisted.length === 1 && sample.persisted[0] === sessionId)).toBe(true);
     expect(persistedSamples.some((sample) => sample.totalUsers === 1)).toBe(true);
     evidence.recordAssertionEvidence("DOM ownership stays with the unchanged hero until the persisted thread takes over",
-      `${heroSamples.length} contiguous observations from trusted submission index ${submissionIndex} to first visible persisted surface index ${takeoverIndex} retain the hero, zero user rows, no persisted surfaces and a stable editor rectangle; Starting has no gaps once shown. The first takeover is exactly the created session, which then owns one visible user row.`, true);
+      `${heroSamples.length} contiguous observations from trusted submission index ${submissionIndex} to first visible persisted surface index ${takeoverIndex} retain the hero, zero user rows, no persisted surfaces and a stable editor rectangle; Starting and Working remain absent and the busy creating spinner has no gaps once shown. The first takeover is exactly the created session, which then owns one visible user row.`, true);
     evidence.recordAssertionEvidence(
       `${engine} creates exactly one session without replaying the first send`,
       "After the real engine reply, the session inventory is the original inventory plus exactly the routed session; one user row remains and the composer is empty.",

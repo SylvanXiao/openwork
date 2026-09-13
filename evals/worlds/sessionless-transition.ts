@@ -2,7 +2,7 @@ import { captureBrowserFilm } from "@openwork/cdp";
 import type { AppWeb, Seed } from "@openwork/env";
 import { join } from "node:path";
 
-type Sample = { index: number; submitted: boolean; submissionIndex: number | null; submittedAt: number | null; elapsed: number; source: string; route: string; hero: boolean; persisted: string[]; totalUsers: number; top: number; left: number; width: number; height: number; starting: boolean; users: number };
+type Sample = { index: number; submitted: boolean; submissionIndex: number | null; submittedAt: number | null; elapsed: number; source: string; route: string; hero: boolean; persisted: string[]; totalUsers: number; top: number; left: number; width: number; height: number; starting: boolean; working: boolean; preparing: boolean; users: number };
 declare global {
   interface Window {
     __sessionlessTransition?: { samples: Sample[]; stop(): void };
@@ -107,7 +107,10 @@ export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId
         persisted: [...document.querySelectorAll<HTMLElement>("[data-session-surface-id]")].filter(visible)
           .flatMap((node) => node.dataset.sessionSurfaceId ? [node.dataset.sessionSurfaceId] : []),
         top: rect?.top ?? -1, left: rect?.left ?? -1, width: rect?.width ?? 0, height: rect?.height ?? 0,
-        starting: [...document.querySelectorAll<HTMLElement>('[role="status"]')].some((node) => visible(node) && node.textContent?.includes("Starting")) });
+        starting: [...document.querySelectorAll<HTMLElement>('[data-loading-message="starting"], [role="status"]')].some((node) => visible(node) && node.textContent?.includes("Starting")),
+        working: [...document.querySelectorAll<HTMLElement>('[data-loading-message="working"], [role="status"]')].some((node) => visible(node) && node.textContent?.includes("Working")),
+        preparing: [...(hero?.querySelectorAll<HTMLElement>('button[aria-label="Creating conversation..."][aria-busy="true"]') ?? [])]
+          .some((node) => visible(node) && Boolean(node.querySelector('.animate-spin'))) });
     };
     const submit = (event: Event) => {
       if (!event.isTrusted || submissionIndex !== null || !(event.target instanceof Element)) return;
