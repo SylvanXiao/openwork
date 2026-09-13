@@ -600,7 +600,7 @@ test("Activity opens native private and Event mentions without losing another di
     await user.notSee({ role: "button", label: /^Open conversation\..*The launch decision stays/s });
     expect((await notification(activityOutcome.summary)).readAt).toBeNull();
     await user.click(eventRow);
-    await user.see({ testId: "group-chat" }, { text: activityOutcome.summary });
+    await user.see({ testId: "group-chat" }, { text: /@you, please choose the next launch follow-up from this check-in\./ });
     await expect.poll(async () => (await probe.dom(`[data-testid="group-chat"] [data-event-id="${source.id}"]:focus`)).elements, { timeout: 15_000 }).toEqual([expect.objectContaining({ text: expect.stringContaining(activityOutcome.summary) })]);
     await expect.poll(async () => (await notification(activityOutcome.summary)).readAt, { timeout: 10_000 }).toEqual(expect.any(Number));
     expect((await items()).filter((item) => item.preview !== activityOutcome.summary)).toEqual(otherNotifications);
