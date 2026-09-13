@@ -3214,6 +3214,9 @@ export function SessionSurface(props: SessionSurfaceProps) {
       onFocusCapture={handleFindSurfaceInteraction}
       className="flex h-full min-h-0 flex-col"
     >
+      <SessionHistoryStatus key={sessionOwner} complete={hasFullHistory} pending={pendingSessionLoad}
+        loading={snapshotQuery.isFetching && openingHistory.partial}
+        failed={snapshotQuery.isError && !snapshotQuery.isFetching} onRetry={() => snapshotQuery.refetch()} />
       <div className="relative min-h-0 flex-1">
         <div
           ref={scrollRef}
@@ -3348,9 +3351,6 @@ export function SessionSurface(props: SessionSurfaceProps) {
             ) : null}
           </div>
         </div>
-        <SessionHistoryStatus key={sessionOwner} complete={hasFullHistory} pending={pendingSessionLoad}
-          loading={snapshotQuery.isFetching && openingHistory.partial}
-          failed={snapshotQuery.isError && !snapshotQuery.isFetching} onRetry={() => snapshotQuery.refetch()} />
         <SessionScrollOverlay
           sessionId={props.sessionId}
           owner={sessionOwner}

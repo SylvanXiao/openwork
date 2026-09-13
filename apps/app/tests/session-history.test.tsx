@@ -129,9 +129,12 @@ function fixture() {
     const messages = deriveRenderedSessionMessages({ snapshot: current, transcriptState: transcript.data, historyComplete: Boolean(full.data), latestHistory: opening.latestHistory });
     const pending = !current || (!full.data && Boolean(current.session.revert));
     const failed = full.isError && !full.isFetching;
-    return <><span>Composer {owner}</span><input aria-label="Draft" /><div className="relative"><div data-thread-scroll><SessionHistoryBoundary owner={cacheOwner} pending={pending} saved={opening.saved} failed={failed}>
-      <div>{current?.session.title}</div>{messages.map((message) => <div key={message.id} data-message-id={message.id}>{message.parts.map((part) => part.type === "text" ? part.text : part.type === "dynamic-tool" ? `${part.state}:${JSON.stringify({ input: part.input, output: "output" in part ? part.output : null })}` : "").join(" ")}</div>)}
-    </SessionHistoryBoundary></div><SessionHistoryStatus key={cacheOwner} complete={Boolean(full.data)} pending={pending} loading={full.isFetching && opening.partial} failed={failed} onRetry={() => full.refetch()} /></div></>;
+    return <><span>Composer {owner}</span><input aria-label="Draft" /><div className="flex min-h-0 flex-col">
+      <SessionHistoryStatus key={cacheOwner} complete={Boolean(full.data)} pending={pending} loading={full.isFetching && opening.partial} failed={failed} onRetry={() => full.refetch()} />
+      <div className="relative min-h-0 flex-1"><div data-thread-scroll><SessionHistoryBoundary owner={cacheOwner} pending={pending} saved={opening.saved} failed={failed}>
+        <div>{current?.session.title}</div>{messages.map((message) => <div key={message.id} data-message-id={message.id}>{message.parts.map((part) => part.type === "text" ? part.text : part.type === "dynamic-tool" ? `${part.state}:${JSON.stringify({ input: part.input, output: "output" in part ? part.output : null })}` : "").join(" ")}</div>)}
+      </SessionHistoryBoundary></div></div>
+    </div></>;
   }
   async function renderInput(options: ReturnType<typeof input>, mount: { strict?: boolean; onMount?: (ensure: () => Promise<OpenworkSessionHistory>) => void } = {}) {
     const tree = <QueryClientProvider client={client}><Harness options={options} onMount={mount.onMount} /></QueryClientProvider>;
@@ -403,7 +406,7 @@ describe("opening a thread", () => {
     expect(cancel).toHaveBeenCalledTimes(2);
   });
 
-  test("partial, failed, retrying, and complete history status stays outside the reader's scroll geometry", async () => {
+  test("partial, failed, retrying, and complete history status reserves a row above the reader", async () => {
     const view = fixture();
     await view.render();
     await view.resolve(0, snapshot("a", "Reading preview", [...fullWindow, "anchor"]));
@@ -419,7 +422,9 @@ describe("opening a thread", () => {
       const element = view.host.querySelector("[data-thread-history-status]");
       if (status === null) expect(element).toBeNull();
       else {
-        expect(element?.className).toContain("absolute");
+        expect(element?.classList.contains("absolute")).toBe(false);
+        expect(element?.classList.contains("shrink-0")).toBe(true);
+        expect(element?.nextElementSibling).toBe(scroller.parentElement);
         expect(element?.textContent).toContain(status);
       }
     };
@@ -654,7 +659,8 @@ describe("opening a thread", () => {
     expect(view.reads.map((read) => read.window)).toEqual([{ limit: 24 }, undefined]);
     expect(view.host.querySelector('[role="status"]')?.textContent).toBe("Loading earlier messages…");
     expect(view.host.querySelector('[data-thread-scroll] [data-thread-history-status]')).toBeNull();
-    expect(view.host.querySelector('[data-thread-history-status]')?.className).toContain("absolute");
+    expect(view.host.querySelector('[data-thread-history-status]')?.classList.contains("absolute")).toBe(false);
+    expect(view.host.querySelector('[data-thread-history-status]')?.classList.contains("shrink-0")).toBe(true);
     expect(view.host.textContent).toContain("Latest messages");
     await view.resolve(1, "Complete history");
     expect(view.host.textContent).toContain("Complete history");
