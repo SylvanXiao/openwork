@@ -2,7 +2,7 @@ import { captureBrowserFilm } from "@openwork/cdp";
 import type { AppWeb, Seed } from "@openwork/env";
 import { join } from "node:path";
 
-type Sample = { elapsed: number; source: string; route: string; hero: boolean; persisted: string[]; totalUsers: number; top: number; left: number; width: number; height: number; starting: boolean; users: number };
+type Sample = { index: number; submitted: boolean; submissionIndex: number | null; submittedAt: number | null; elapsed: number; source: string; route: string; hero: boolean; persisted: string[]; totalUsers: number; top: number; left: number; width: number; height: number; starting: boolean; users: number };
 declare global {
   interface Window {
     __sessionlessTransition?: { samples: Sample[]; stop(): void };
@@ -85,6 +85,8 @@ export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId
     const samples: Sample[] = [];
     const start = performance.now();
     let frame = 0;
+    let submissionIndex: number | null = null;
+    let submittedAt: number | null = null;
     const sample = (source: string) => {
       if (samples.length >= 6000) return;
       const visible = (node: HTMLElement) => {
@@ -99,19 +101,39 @@ export async function sessionlessTransition(seed: Seed, app: AppWeb, workspaceId
       const editor = hero?.querySelector<HTMLElement>('[data-lexical-editor="true"]');
       const rect = editor?.getBoundingClientRect();
       const rows = [...document.querySelectorAll<HTMLElement>('[data-message-role="user"]')].filter(visible);
-      samples.push({ elapsed: performance.now() - start, source, route: location.hash || `#${location.pathname}`,
+      samples.push({ index: samples.length, submitted: submissionIndex !== null, submissionIndex, submittedAt,
+        elapsed: performance.now() - start, source, route: location.hash || `#${location.pathname}`,
         hero: Boolean(hero), users: rows.filter((node) => hero?.contains(node)).length, totalUsers: rows.length,
         persisted: [...document.querySelectorAll<HTMLElement>("[data-session-surface-id]")].filter(visible)
           .flatMap((node) => node.dataset.sessionSurfaceId ? [node.dataset.sessionSurfaceId] : []),
         top: rect?.top ?? -1, left: rect?.left ?? -1, width: rect?.width ?? 0, height: rect?.height ?? 0,
         starting: [...document.querySelectorAll<HTMLElement>('[role="status"]')].some((node) => visible(node) && node.textContent?.includes("Starting")) });
     };
+    const submit = (event: Event) => {
+      if (!event.isTrusted || submissionIndex !== null || !(event.target instanceof Element)) return;
+      const editor = event.target.closest('[data-lexical-editor="true"]');
+      const button = event.target.closest("button");
+      const enter = event instanceof KeyboardEvent && event.key === "Enter" && !event.isComposing
+        && !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey && Boolean(editor);
+      const click = event.type === "click" && button instanceof HTMLButtonElement && !button.disabled
+        && (button.getAttribute("aria-label") ?? button.textContent)?.trim() === "Run task";
+      if (!enter && !click) return;
+      submissionIndex = samples.length;
+      submittedAt = performance.now() - start;
+      sample(enter ? "trusted-submit-enter" : "trusted-submit-click");
+    };
+    window.addEventListener("keydown", submit, true);
+    window.addEventListener("click", submit, true);
     const observer = new MutationObserver(() => sample("mutation"));
     observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
     const tick = () => { sample("raf"); frame = requestAnimationFrame(tick); };
     sample("baseline");
     frame = requestAnimationFrame(tick);
-    const stop = () => { observer.disconnect(); cancelAnimationFrame(frame); };
+    const stop = () => {
+      observer.disconnect(); cancelAnimationFrame(frame);
+      window.removeEventListener("keydown", submit, true);
+      window.removeEventListener("click", submit, true);
+    };
     setTimeout(stop, 60_000);
     window.__sessionlessTransition = { samples, stop };
   });

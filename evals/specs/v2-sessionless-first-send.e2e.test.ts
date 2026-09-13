@@ -148,7 +148,7 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     const samples = await probe.eventually(() => transition.samples(), {
       within: 10_000, label: "Starting sampled across the slow creation interval",
       until: (values) => {
-        const starting = values.filter((sample) => sample.starting && sample.source === "raf");
+        const starting = values.filter((sample) => sample.submitted && sample.starting && sample.source === "raf");
         return starting.length >= 20 && starting[starting.length - 1]!.elapsed - starting[0]!.elapsed >= 1500;
       },
     }).finally(async () => {
@@ -159,21 +159,37 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
       "There is no submitted user-message bubble between the hero heading and the composer, and the Starting text does not overlap the composer input.",
     ]);
     expect(transition.read()).toMatchObject({ creation: 1, prompt: 0, held: 1, expired: false });
-    const baseline = samples[0]!;
+    const submissionIndex = samples.findIndex((sample) => sample.submitted);
+    expect(submissionIndex).toBeGreaterThanOrEqual(0);
+    const baseline = samples[submissionIndex]!;
+    const heldSamples = samples.slice(submissionIndex);
+    evidence.recordJsonArtifact("Trusted submission through held creation", { submissionIndex, submittedAt: baseline.submittedAt, samples: heldSamples });
+    expect(baseline.source).toMatch(/^trusted-submit-(enter|click)$/);
+    expect(baseline.submissionIndex).toBe(submissionIndex);
+    expect(baseline.submittedAt).not.toBeNull();
     expect(baseline.width).toBeGreaterThan(0);
     expect(baseline.height).toBeGreaterThan(0);
-    expect(samples.some((sample) => sample.source === "mutation" && sample.starting)).toBe(true);
-    expect(samples.slice(samples.findIndex((sample) => sample.starting)).every((sample) => sample.starting)).toBe(true);
-    expect(samples.every((sample) => sample.users === 0 && sample.totalUsers === 0)).toBe(true);
-    for (const sample of samples) {
-      expect(sample.route).toBe(world.sessionlessRoute);
+    expect(heldSamples.filter((sample) => sample.source === "raf").length).toBeGreaterThanOrEqual(20);
+    expect(heldSamples.some((sample) => sample.source === "mutation" && sample.starting)).toBe(true);
+    const firstStarting = heldSamples.findIndex((sample) => sample.starting);
+    expect(firstStarting).toBeGreaterThanOrEqual(0);
+    expect(heldSamples.slice(firstStarting).every((sample) => sample.starting)).toBe(true);
+    for (const [offset, sample] of heldSamples.entries()) {
+      expect(sample.index).toBe(submissionIndex + offset);
+      expect(sample.submitted).toBe(true);
+      expect(sample.submissionIndex).toBe(submissionIndex);
+      expect(sample.submittedAt).toBe(baseline.submittedAt);
+      expect(sample.hero).toBe(true);
+      expect(sample.persisted).toEqual([]);
+      expect(sample.users).toBe(0);
+      expect(sample.totalUsers).toBe(0);
       expect(Math.abs(sample.top - baseline.top)).toBeLessThanOrEqual(1);
       expect(Math.abs(sample.left - baseline.left)).toBeLessThanOrEqual(1);
       expect(Math.abs(sample.width - baseline.width)).toBeLessThanOrEqual(1);
       expect(Math.abs(sample.height - baseline.height)).toBeLessThanOrEqual(1);
     }
     evidence.recordAssertionEvidence("Slow creation preserves hero layout without a temporary user bubble",
-      `${samples.length} immediate RAF/mutation observations preserve the editor rect within one pixel and contain zero user rows; Starting persists for at least 1500ms; duplicate Enter admits one creation and no prompt before release.`, true);
+      `${heldSamples.length} contiguous observations from trusted submission preserve the visible hero and editor rect within one pixel with no user rows or persisted surfaces; Starting persists without gaps once shown for at least 1500ms; duplicate Enter admits one creation and no prompt before release.`, true);
   });
   await transition.release();
   const hash = await probe.eventually(() => world.route(), {
@@ -229,16 +245,37 @@ test(`${resolveEvalEngine()}: Run task on the sessionless New task route creates
     ]);
     const handoff = await transition.samples();
     evidence.recordJsonArtifact("Hero to persisted session DOM ownership", handoff);
-    const baseline = handoff[0]!;
-    const heroSamples = handoff.filter((sample) => sample.hero);
+    const submissionIndex = handoff.findIndex((sample) => sample.submitted);
+    expect(submissionIndex).toBeGreaterThanOrEqual(0);
+    const takeoverIndex = handoff.findIndex((sample, index) => index >= submissionIndex && sample.persisted.length > 0);
+    expect(takeoverIndex).toBeGreaterThan(submissionIndex);
+    const baseline = handoff[submissionIndex]!;
+    const takeover = handoff[takeoverIndex]!;
+    const heroSamples = handoff.slice(submissionIndex, takeoverIndex);
+    evidence.recordJsonArtifact("Trusted submission and first persisted takeover boundaries", {
+      submissionIndex, submittedAt: baseline.submittedAt, takeoverIndex, takeoverAt: takeover.elapsed,
+      submission: baseline, takeover, samples: heroSamples,
+    });
+    expect(baseline.source).toMatch(/^trusted-submit-(enter|click)$/);
+    expect(baseline.submissionIndex).toBe(submissionIndex);
+    expect(baseline.submittedAt).not.toBeNull();
     expect(heroSamples.length).toBeGreaterThan(20);
-    expect(heroSamples.every((sample) => sample.users === 0 && sample.totalUsers === 0 && sample.persisted.length === 0)).toBe(true);
+    expect(heroSamples.every((sample, offset) => sample.index === submissionIndex + offset
+      && sample.submitted && sample.submissionIndex === submissionIndex && sample.submittedAt === baseline.submittedAt
+      && sample.hero && sample.users === 0 && sample.totalUsers === 0 && sample.persisted.length === 0)).toBe(true);
+    const firstStarting = heroSamples.findIndex((sample) => sample.starting);
+    expect(firstStarting).toBeGreaterThanOrEqual(0);
+    expect(heroSamples.slice(firstStarting).every((sample) => sample.starting)).toBe(true);
     expect(heroSamples.every((sample) => Math.abs(sample.top - baseline.top) <= 1
       && Math.abs(sample.left - baseline.left) <= 1 && Math.abs(sample.width - baseline.width) <= 1
       && Math.abs(sample.height - baseline.height) <= 1)).toBe(true);
-    expect(handoff.some((sample) => !sample.hero && sample.persisted.includes(sessionId) && sample.totalUsers === 1)).toBe(true);
+    expect(takeover.hero).toBe(false);
+    expect(takeover.persisted).toEqual([sessionId]);
+    const persistedSamples = handoff.slice(takeoverIndex);
+    expect(persistedSamples.every((sample) => !sample.hero && sample.persisted.length === 1 && sample.persisted[0] === sessionId)).toBe(true);
+    expect(persistedSamples.some((sample) => sample.totalUsers === 1)).toBe(true);
     evidence.recordAssertionEvidence("DOM ownership stays with the unchanged hero until the persisted thread takes over",
-      `${heroSamples.length} hero observations retain zero user rows and a stable editor rectangle independently of URL changes; the created session surface then owns exactly one visible user row.`, true);
+      `${heroSamples.length} contiguous observations from trusted submission index ${submissionIndex} to first visible persisted surface index ${takeoverIndex} retain the hero, zero user rows, no persisted surfaces and a stable editor rectangle; Starting has no gaps once shown. The first takeover is exactly the created session, which then owns one visible user row.`, true);
     evidence.recordAssertionEvidence(
       `${engine} creates exactly one session without replaying the first send`,
       "After the real engine reply, the session inventory is the original inventory plus exactly the routed session; one user row remains and the composer is empty.",
