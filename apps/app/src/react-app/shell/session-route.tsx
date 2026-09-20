@@ -110,6 +110,8 @@ import { encodeConnectSkillToken } from "@/react-app/domains/session/surface/com
 import { AutomationsPage } from "@/react-app/domains/automations/automations-page";
 import { AppsPage } from "@/react-app/domains/apps/apps-page";
 import { DashboardPage } from "@/react-app/domains/dashboard/dashboard-page";
+import { ConnectorsPage } from "@/react-app/domains/connectors/connectors-page";
+import { useConnectorsMcp } from "@/react-app/domains/connectors/use-connectors-mcp";
 import { useDashboardDeploymentAvailability } from "@/react-app/domains/dashboard/dashboard-availability";
 import { useAutomationDeploymentEnabled } from "@/react-app/domains/automations/automation-availability";
 import { automationsStateChangedEvent } from "@/react-app/domains/automations/automation-events";
@@ -268,6 +270,7 @@ import {
   mergeWorkspaceRouteSession,
   automationsRoute,
   dashboardRoute,
+  connectorsRoute,
   workspaceExtensionsRoute,
   workspaceSessionRoute,
   workspaceSettingsRoute,
@@ -393,6 +396,8 @@ export function SessionRoute() {
   const automationsRouteRequested = /^\/automations(?:\/|$)/.test(location.pathname);
   const dashboardRouteRequested = /^\/dashboard(?:\/|$)/.test(location.pathname);
   const activityRouteRequested = location.pathname === "/activity";
+  const connectorsRouteRequested = /^\/workspace\/[^/]+\/connectors$/.test(location.pathname);
+  const connectorsRouteActive = connectorsRouteRequested;
   const {
     enabled: mcpAppsDashboardEnabled,
     loading: dashboardAvailabilityLoading,
@@ -535,7 +540,7 @@ export function SessionRoute() {
   } = useWorkspaceRouteState({
     preservePendingConversationRoute: Boolean(requestedPendingId && pendingConversations[requestedPendingId]?.scope === sessionDraftScope),
     developerMode,
-    workspaceRoute: activityRouteActive ? "activity" : appsRouteActive ? "apps" : automationsRouteActive ? "automations" : dashboardWorkspaceRoute ? "dashboard" : "session",
+    workspaceRoute: activityRouteActive ? "activity" : appsRouteActive ? "apps" : automationsRouteActive ? "automations" : dashboardWorkspaceRoute ? "dashboard" : connectorsRouteActive ? "connectors" : "session",
     onServerSettingsChanged: () => undefined,
     onHostInfo: setOpenworkServerHostInfoState,
   });
@@ -912,6 +917,11 @@ export function SessionRoute() {
   }));
 
   const mcpConnectedCount = useMcpConnectedCount(opencodeClient, selectedWorkspaceRoot);
+  const connectorsMcp = useConnectorsMcp({
+    client: selectedWorkspaceEndpoint?.client ?? null,
+    workspaceId: selectedWorkspaceEndpoint?.workspaceId ?? null,
+    isRemoteWorkspace: selectedWorkspace?.workspaceType === "remote",
+  });
   const providerListQuery = useProviderListQuery({
     client: opencodeClient,
     baseUrl: opencodeBaseUrl,
@@ -3655,9 +3665,9 @@ export function SessionRoute() {
         />
       }
       // Page titles match their sidebar labels.
-      primaryTitle={activityRouteActive ? t("activity.title") : appsRouteActive ? "Dashboard" : automationsRouteActive ? "Automations" : dashboardRouteActive ? "Dashboard" : undefined}
+      primaryTitle={activityRouteActive ? t("activity.title") : appsRouteActive ? "Dashboard" : automationsRouteActive ? "Automations" : dashboardRouteActive ? "Dashboard" : connectorsRouteActive ? "Connectors" : undefined}
       // Dashboard, Automations and Library share one flat page surface.
-      primarySurface={activityRouteActive || dashboardRouteActive || automationsRouteActive || extensionsMainOpen ? "flat" : undefined}
+      primarySurface={activityRouteActive || dashboardRouteActive || automationsRouteActive || connectorsRouteActive || extensionsMainOpen ? "flat" : undefined}
       primarySlotIsConversation={!activityRouteActive && Boolean(pendingConversation)}
       primarySlot={activityRouteActive ? <ActivityPage onTrySkill={trySkillInNewSession} /> : pendingConversation ? <PendingConversationView conversation={pendingConversation} composer={newTaskComposerContext} /> : appsRouteActive ? (
         <WorkspaceProvider
@@ -3691,6 +3701,17 @@ export function SessionRoute() {
             onSignIn={() => handleOpenSettings("/settings/cloud-account")}
           />
         </WorkspaceProvider>
+      ) : connectorsRouteActive ? (
+        <ConnectorsPage
+          mcpServers={connectorsMcp.mcpServers}
+          mcpStatuses={connectorsMcp.mcpStatuses}
+          connectMcp={connectorsMcp.connectMcp}
+          setMcpEnabled={connectorsMcp.setMcpEnabled}
+          removeMcp={connectorsMcp.removeMcp}
+          testMcp={connectorsMcp.testMcp}
+          isRemoteWorkspace={selectedWorkspace?.workspaceType === "remote"}
+          busy={connectorsMcp.busy}
+        />
       ) : undefined}
       terminalOpen={terminalOpen}
       onTerminalOpenChange={setTerminalOpen}
@@ -3723,6 +3744,10 @@ export function SessionRoute() {
               navigate(dashboardRoute());
             }
           : undefined,
+        connectorsActive: connectorsRouteActive,
+        onOpenConnectors: () => {
+          navigate(connectorsRoute(selectedWorkspaceId));
+        },
         onSelectWorkspace: async (workspaceId) => {
           if (workspaceId === selectedWorkspaceId) return true;
           setLegacySelectedWorkspaceId(workspaceId);
