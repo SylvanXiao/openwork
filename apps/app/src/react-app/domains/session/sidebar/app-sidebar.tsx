@@ -20,6 +20,7 @@ import {
   PinOff,
   PanelRightOpen,
   Plus,
+  Plug,
   Search,
   Share2,
   Trash2,
@@ -812,6 +813,8 @@ export type AppSidebarProps = {
   onOpenAutomations?: () => void;
   dashboardActive?: boolean;
   onOpenDashboard?: () => void;
+  connectorsActive?: boolean;
+  onOpenConnectors?: () => void;
   /** Opens the cross-session message search dialog (Cmd/Ctrl+Shift+F). */
   onOpenSessionSearch?: () => void;
   /** Back/forward across recently viewed conversations, rendered at the top of the sidebar. */
@@ -1062,6 +1065,14 @@ export function AppSidebar(props: AppSidebarProps) {
                   </span>
                 )}
                 onSelect={props.onOpenAutomations}
+              />
+            ) : null}
+            {props.onOpenConnectors ? (
+              <SidebarDestination
+                active={props.connectorsActive === true}
+                icon={Plug}
+                label={t("connectors.sidebar_title")}
+                onSelect={props.onOpenConnectors}
               />
             ) : null}
             <SidebarDestination

@@ -518,6 +518,14 @@ export function AppRoot() {
                 }
               />
               <Route
+                path="/workspace/:workspaceId/connectors"
+                element={
+                  <DevProfiler id="SessionRoute">
+                    <SessionRoute />
+                  </DevProfiler>
+                }
+              />
+              <Route
                 path="/workspace/:workspaceId/extensions/*"
                 element={
                   <DevProfiler id="SessionRoute">
@@ -546,6 +554,14 @@ export function AppRoot() {
                 element={
                   <DevProfiler id="SettingsRoute">
                     <SettingsRoute />
+                  </DevProfiler>
+                }
+              />
+              <Route
+                path="/connectors"
+                element={
+                  <DevProfiler id="SessionRoute">
+                    <SessionRoute />
                   </DevProfiler>
                 }
               />
