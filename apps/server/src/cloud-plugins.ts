@@ -1,5 +1,5 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { dirname, resolve, sep } from "node:path";
 import type { ServerConfig } from "./types.js";
 import { ApiError } from "./errors.js";
 import { parseFrontmatter, buildFrontmatter } from "./frontmatter.js";
@@ -505,7 +505,11 @@ function resolveWorkspaceInstallPath(workspaceRoot: string, relativePath: string
   }
   const root = resolve(workspaceRoot);
   const candidate = resolve(root, normalized);
-  if (candidate !== root && !candidate.startsWith(`${root}/`)) {
+  // resolve() emits platform separators (backslashes on Windows), so the
+  // containment check must join with sep — a hardcoded "/" rejected every
+  // install on win32 as invalid_cloud_plugin_path.
+  const rootWithSeparator = root.endsWith(sep) ? root : `${root}${sep}`;
+  if (candidate !== root && !candidate.startsWith(rootWithSeparator)) {
     throw new ApiError(400, "invalid_cloud_plugin_path", `Invalid cloud plugin path: ${relativePath}`);
   }
   return candidate;

@@ -37,7 +37,10 @@ async function withWorkspace(fn: (input: { root: string; config: ServerConfig })
   } finally {
     if (previousDb === undefined) delete process.env.OPENWORK_RUNTIME_DB;
     else process.env.OPENWORK_RUNTIME_DB = previousDb;
-    await rm(root, { recursive: true, force: true });
+    // Windows: the server can hold handles briefly after the test body.
+    // Best-effort cleanup — a leftover temp dir is harmless; never fail the
+    // test on EBUSY.
+    await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }).catch(() => undefined);
   }
 }
 
