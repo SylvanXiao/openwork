@@ -1,17 +1,23 @@
 # Handoff — RESOLVED (2026-10-06)
 
 The work described below landed on `dev` via **PR #3866** (`ecf5549af` —
-`feat(app): unify Library with composer Connections`). Every file the branch
-added exists on `dev` (`composer-connections.ts`, `library-add-control.tsx`,
-`add-library-item-modal.tsx`, plus the `composer-connections` /
-`library-destination` / `connect-capability-inventory` tests); later dev
-commits have evolved them further.
+`feat(app): unify Library with composer Connections`). Commit-by-commit
+verification of the branch's six commits against `dev`:
 
-The branch `feat/library-composer-connections` is therefore obsolete and safe
-to delete — do not rebase or open a PR from it. Follow-up items listed in the
-original "Next" section (long-list scroll proof, sign-in from `+`, Library
-filter merge decision, e2e tape) are tracked with the feature itself, not
-here.
+- `80f494408` (feature) — landed; every file it added exists on `dev`.
+- `449e4619b` (handoff docs) — superseded by this file.
+- `05e1ff8a4` (drop OpenWork Models promo) — landed in evolved form; the
+  promo module survives only as provider constants.
+- `b1a6b906a` + `78ac56d65` (tests) — landed: `composer-connections-menu.e2e.test.ts`
+  exists and the subtitle/description expectations match `dev` verbatim.
+- `d1a377025` (two specs) — `composer-model-picker-no-subscribe-promo.e2e.test.ts`
+  landed; **`library-authoring-routes` did not**. It is written against the
+  retired pre-`spec.world` testkit API and cannot merge as-is; the 475-line
+  spec is preserved in the archive tag below if anyone wants to port it.
+
+The branch was deleted on 2026-10-06. Its full history stays reachable as the
+tag **`archive/library-composer-connections`** (`78ac56d65`). Do not rebase or
+open a PR from it.
 
 <details>
 <summary>Original handoff (kept for reference, stale)</summary>
