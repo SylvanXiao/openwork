@@ -241,6 +241,11 @@ function PlatformConnectorCard({
           ) : null}
         </div>
       </div>
+      {connector.descriptionKey ? (
+        <p className="mb-3 text-xs text-dls-secondary">
+          {t(connector.descriptionKey)}
+        </p>
+      ) : null}
 
       <div className="grid grid-cols-2 gap-3">
         {connector.fields.map((field) => {

@@ -51,6 +51,7 @@ function entryToConfig(entry: McpDirectoryInfo): Record<string, unknown> {
   const base: Record<string, unknown> = { type: entry.type ?? "remote", enabled: true };
   if (entry.url) base.url = entry.url;
   if (entry.command) base.command = entry.command;
+  if (entry.environment) base.environment = entry.environment;
   if (entry.oauthConfig) {
     base.oauth = entry.oauthConfig;
   }

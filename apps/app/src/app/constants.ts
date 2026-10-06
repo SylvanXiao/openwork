@@ -37,6 +37,8 @@ export type McpDirectoryInfo = {
   url?: string;
   type?: "remote" | "local";
   command?: string[];
+  /** Extra environment variables handed to a local stdio server process. */
+  environment?: Record<string, string>;
   oauth: boolean;
   /** Route OAuth through the local OpenWork gateway instead of delegating it to OpenCode. */
   managedOAuth?: boolean;

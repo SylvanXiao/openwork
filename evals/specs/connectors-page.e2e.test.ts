@@ -51,6 +51,23 @@ test(title, async ({ world, user }) => {
   });
   expect(registerState).toEqual({ found: true, disabled: true });
 
+  // Second registry instance: the GitHub card renders with a masked PAT
+  // field and its register action locked while the token is empty.
+  const githubState = await evalIn(app, () => {
+    const card = document.querySelector<HTMLElement>('[data-platform-connector="github"]');
+    const button = card
+      ? [...card.querySelectorAll("button")]
+          .find((entry) => (entry.textContent ?? "").trim() === "Register GitHub MCP")
+      : null;
+    const secretInput = card?.querySelector<HTMLInputElement>('input[type="password"]');
+    return {
+      found: card instanceof HTMLElement,
+      registerDisabled: button instanceof HTMLButtonElement ? button.disabled : null,
+      tokenMasked: secretInput !== null && secretInput.type === "password",
+    };
+  });
+  expect(githubState).toEqual({ found: true, registerDisabled: true, tokenMasked: true });
+
   // My MCPs starts empty.
   await user.see({ text: "No MCP servers yet" });
 

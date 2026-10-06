@@ -43,6 +43,8 @@ export type PlatformConnector = {
   id: string;
   /** 卡片标题（i18n key）。 */
   titleKey: string;
+  /** 标题下的一行说明（i18n key，可无）。 */
+  descriptionKey?: string;
   /** 标题旁的小徽标（字面量，如 "user-level"）。 */
   badge?: string;
   /** 用户需要填写的凭据字段；注册按钮在全部字段非空前保持禁用。 */

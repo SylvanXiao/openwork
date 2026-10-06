@@ -59,7 +59,7 @@ export const feishuConnector: PlatformConnector = {
   },
   registerButtonKey: "connectors.feishu_register",
   statusKeys: {
-    connected: "connectors.feishu_connected",
-    connectFailed: "connectors.feishu_connect_failed",
+    connected: "connectors.connected",
+    connectFailed: "connectors.connect_failed",
   },
 };
