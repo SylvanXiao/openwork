@@ -40,7 +40,7 @@ test(title, async ({ world, user }) => {
   await user.see({ text: "Feishu / Lark" });
   await user.see({ text: "Step 1: Authorize in your browser" });
   const registerState = await evalIn(app, () => {
-    const card = document.querySelector<HTMLElement>("[data-feishu-connector]");
+    const card = document.querySelector<HTMLElement>('[data-platform-connector="feishu"]');
     const button = card
       ? [...card.querySelectorAll("button")]
           .find((entry) => (entry.textContent ?? "").trim() === "Register Feishu MCP")

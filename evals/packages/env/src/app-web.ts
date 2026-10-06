@@ -170,6 +170,9 @@ async function cleanupAppWeb(input: {
     }
     await cleanupMocks(input.mocks, errors);
     if (runtimeStopped && input.runtime) {
+      // OPENWORK_EVAL_KEEP_ARTIFACTS=1 keeps the runtime directory (server
+      // logs, runtime manifest) and fixture root for post-run diagnosis.
+      if (process.env.OPENWORK_EVAL_KEEP_ARTIFACTS === "1") return;
       for (const path of [input.runtime.runtimeDirectory, input.runtime.fixtureRoot]) {
         await rm(path, { recursive: true, force: true })
           .catch((error: unknown) => errors.push(cleanupError(`Temporary path cleanup failed for ${path}`, error)));

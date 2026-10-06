@@ -19,6 +19,13 @@ import { TextInput } from "@/react-app/design-system/text-input";
 import { AddMcpModal } from "@/react-app/domains/connections/modals/add-mcp-modal";
 import type { McpConnectResult } from "@/react-app/domains/connections/store";
 import type { ReactMcpStatus } from "@/react-app/domains/settings/pages/mcp-view";
+import {
+  connectorIsInstalled,
+  readStoredCreds,
+  writeStoredCreds,
+} from "./platform-connector";
+import type { PlatformConnector } from "./platform-connector";
+import { platformConnectors } from "./platform-connectors";
 
 // ---------------------------------------------------------------------------
 // 测试连接结果
@@ -41,80 +48,6 @@ type TestResultState =
   | { phase: "idle" }
   | { phase: "testing" }
   | { phase: "done"; result: McpTestResult };
-
-// ---------------------------------------------------------------------------
-// 飞书平台连接器
-// ---------------------------------------------------------------------------
-
-const FEISHU_MCP_NAME = "feishu";
-const FEISHU_NPM_PKG = "@larksuiteoapi/lark-mcp";
-const FEISHU_CREDS_KEY = "openwork.feishu-mcp.creds";
-
-type FeishuCreds = { appId: string; appSecret: string };
-
-function readFeishuCreds(): FeishuCreds {
-  try {
-    const raw = window.localStorage.getItem(FEISHU_CREDS_KEY);
-    if (!raw) return { appId: "", appSecret: "" };
-    const parsed = JSON.parse(raw) as Partial<FeishuCreds>;
-    return {
-      appId: typeof parsed.appId === "string" ? parsed.appId : "",
-      appSecret: typeof parsed.appSecret === "string" ? parsed.appSecret : "",
-    };
-  } catch {
-    return { appId: "", appSecret: "" };
-  }
-}
-
-function writeFeishuCreds(creds: FeishuCreds): void {
-  try {
-    window.localStorage.setItem(FEISHU_CREDS_KEY, JSON.stringify(creds));
-  } catch {
-    // 存储失败不影响连接
-  }
-}
-
-async function copyToClipboard(text: string): Promise<void> {
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch {
-    // 剪贴板不可用时静默失败
-  }
-}
-
-function buildFeishuLoginCommand(creds: FeishuCreds): string[] {
-  return ["npx", "-y", FEISHU_NPM_PKG, "login", "-a", creds.appId.trim(), "-s", creds.appSecret.trim()];
-}
-
-function buildFeishuCommand(creds: FeishuCreds): string[] {
-  return [
-    "npx",
-    "-y",
-    FEISHU_NPM_PKG,
-    "mcp",
-    "-a",
-    creds.appId.trim(),
-    "-s",
-    creds.appSecret.trim(),
-    "-l",
-    "zh",
-    "-m",
-    "stdio",
-    "--oauth",
-    "--token-mode",
-    "user_access_token",
-  ];
-}
-
-function feishuDirectoryEntry(creds: FeishuCreds): McpDirectoryInfo {
-  return {
-    name: FEISHU_MCP_NAME,
-    type: "local",
-    command: buildFeishuCommand(creds),
-    oauth: false,
-    description: "Feishu/Lark MCP (user-level)",
-  };
-}
 
 // ---------------------------------------------------------------------------
 // 状态展示（镜像 mcp-view.tsx 的 statusDot / friendlyStatus）
@@ -211,6 +144,228 @@ function TestResultLine({
 }
 
 // ---------------------------------------------------------------------------
+// 平台连接器卡片（由 PlatformConnector 插件描述驱动）
+// ---------------------------------------------------------------------------
+
+async function copyToClipboard(text: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    // 剪贴板不可用时静默失败
+  }
+}
+
+function CommandLine({ command }: { command: string }) {
+  return (
+    <>
+      <code className="min-w-0 flex-1 truncate rounded border border-dls-border bg-dls-surface px-2 py-1 font-mono text-[11px]">
+        {command}
+      </code>
+      <Button
+        size="xs"
+        variant="outline"
+        onClick={() => void copyToClipboard(command)}
+      >
+        {t("connectors.copy")}
+      </Button>
+    </>
+  );
+}
+
+function PlatformConnectorCard({
+  connector,
+  installed,
+  connectMcp,
+  onProbe,
+  testState,
+}: {
+  connector: PlatformConnector;
+  installed: boolean;
+  connectMcp: (entry: McpDirectoryInfo) => Promise<McpConnectResult>;
+  onProbe: () => void;
+  testState?: TestResultState;
+}) {
+  const [creds, setCreds] = useState<Record<string, string>>(() =>
+    readStoredCreds(connector),
+  );
+  const [secretVisible, setSecretVisible] = useState<Record<string, boolean>>({});
+  const [connectBusy, setConnectBusy] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+
+  const persist = (next: Record<string, string>) => {
+    setCreds(next);
+    writeStoredCreds(connector, next);
+  };
+
+  const ready = connector.fields.every(
+    (field) => (creds[field.key] ?? "").trim() !== "",
+  );
+
+  const register = async () => {
+    setConnectBusy(true);
+    setStatus(null);
+    try {
+      const result = await connectMcp(connector.directoryEntry(creds));
+      if (result.ok) {
+        setStatus(t(connector.statusKeys.connected));
+        // 注册后立即探活一次，确认引擎已拉起
+        onProbe();
+      } else {
+        setStatus(
+          result.error.trim() ? result.error : t(connector.statusKeys.connectFailed),
+        );
+      }
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : t(connector.statusKeys.connectFailed),
+      );
+    } finally {
+      setConnectBusy(false);
+    }
+  };
+
+  return (
+    <div
+      className="rounded-xl border border-dls-border bg-dls-surface p-4"
+      data-platform-connector={connector.id}
+    >
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-dls-text">
+            {t(connector.titleKey)}
+          </span>
+          {connector.badge ? (
+            <span className="rounded-full bg-dls-hover px-2 py-0.5 text-[10px] text-dls-secondary">
+              {connector.badge}
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {connector.fields.map((field) => {
+          const visible = Boolean(secretVisible[field.key]);
+          if (!field.secret) {
+            return (
+              <TextInput
+                key={field.key}
+                label={t(field.labelKey)}
+                placeholder={field.placeholder}
+                value={creds[field.key] ?? ""}
+                onChange={(event) =>
+                  persist({ ...creds, [field.key]: event.currentTarget.value })
+                }
+              />
+            );
+          }
+          return (
+            <div key={field.key}>
+              <div className="mb-1 text-xs font-medium text-dls-secondary">
+                {t(field.labelKey)}
+              </div>
+              <div className="relative">
+                <input
+                  className="w-full rounded-lg border border-dls-border bg-dls-surface px-3 py-2 pr-9 text-sm text-dls-text shadow-sm placeholder:text-dls-secondary focus:outline-none focus:ring-2 focus:ring-[rgba(var(--dls-accent-rgb),0.2)]"
+                  type={visible ? "text" : "password"}
+                  placeholder={field.placeholder ?? "••••••"}
+                  value={creds[field.key] ?? ""}
+                  onChange={(event) =>
+                    persist({ ...creds, [field.key]: event.currentTarget.value })
+                  }
+                />
+                <button
+                  type="button"
+                  aria-label={visible ? "Hide" : "Show"}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-dls-secondary hover:text-dls-text"
+                  onClick={() =>
+                    setSecretVisible((current) => ({
+                      ...current,
+                      [field.key]: !current[field.key],
+                    }))
+                  }
+                >
+                  {visible ? (
+                    <EyeOff className="size-3.5" />
+                  ) : (
+                    <Eye className="size-3.5" />
+                  )}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {installed ? (
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <Button size="sm" variant="outline" onClick={onProbe}>
+            <Zap className="size-3.5" data-icon="inline-start" />
+            {t("connectors.test")}
+          </Button>
+          {/* 状态徽标：仅展示单一当前状态，避免多状态堆叠 */}
+          <TestResultLine name={connector.id} state={testState} compact />
+        </div>
+      ) : (
+        <>
+          {connector.steps && connector.loginCommand ? (
+            <div className="mt-3 rounded-md border border-dls-border bg-dls-hover p-3">
+              <div className="mb-1 text-xs font-medium text-dls-text">
+                {t(connector.steps.loginTitleKey)}
+              </div>
+              <p className="mb-2 text-xs text-dls-secondary">
+                {t(connector.steps.loginDescKey)}
+              </p>
+              <div className="flex items-center gap-2">
+                <CommandLine command={connector.loginCommand(creds).join(" ")} />
+              </div>
+            </div>
+          ) : null}
+          <div className="mt-2 rounded-md border border-dls-border bg-dls-hover p-3">
+            {connector.steps ? (
+              <>
+                <div className="mb-1 text-xs font-medium text-dls-text">
+                  {t(connector.steps.registerTitleKey)}
+                </div>
+                <p className="mb-2 text-xs text-dls-secondary">
+                  {t(connector.steps.registerDescKey)}
+                </p>
+              </>
+            ) : null}
+            <div className="flex items-center gap-2">
+              <CommandLine command={connector.connectCommand(creds).join(" ")} />
+            </div>
+            {connector.steps?.registerHintKey ? (
+              <div className="mt-2 text-[11px] text-dls-secondary/70">
+                {t(connector.steps.registerHintKey)}
+              </div>
+            ) : null}
+          </div>
+          <div className="mt-3 flex items-center gap-3">
+            <Button
+              size="sm"
+              disabled={connectBusy || !ready}
+              onClick={() => void register()}
+            >
+              {connectBusy ? (
+                <Loader2 className="size-3.5 animate-spin" data-icon="inline-start" />
+              ) : (
+                <Plug className="size-3.5" data-icon="inline-start" />
+              )}
+              {connectBusy
+                ? t("connectors.connecting")
+                : t(connector.registerButtonKey)}
+            </Button>
+            {status ? (
+              <span className="text-xs text-dls-secondary">{status}</span>
+            ) : null}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // 页面
 // ---------------------------------------------------------------------------
 
@@ -234,52 +389,11 @@ export type ConnectorsPageProps = {
 };
 
 export function ConnectorsPage(props: ConnectorsPageProps) {
-  const [feishuCreds, setFeishuCreds] = useState<FeishuCreds>(() =>
-    readFeishuCreds(),
-  );
-  const [secretVisible, setSecretVisible] = useState(false);
-  const [feishuBusy, setFeishuBusy] = useState(false);
-  const [feishuStatus, setFeishuStatus] = useState<string | null>(null);
-
   const [addMcpOpen, setAddMcpOpen] = useState(false);
   const [togglingMcp, setTogglingMcp] = useState<string | null>(null);
   const [testState, setTestState] = useState<Record<string, TestResultState>>(
     {},
   );
-
-  const persistCreds = (next: FeishuCreds) => {
-    setFeishuCreds(next);
-    writeFeishuCreds(next);
-  };
-
-  const feishuInstalled = props.mcpServers.some((entry) => entry.name === FEISHU_MCP_NAME);
-
-  const connectFeishu = async () => {
-    setFeishuBusy(true);
-    setFeishuStatus(null);
-    try {
-      const result = await props.connectMcp(feishuDirectoryEntry(feishuCreds));
-      if (result.ok) {
-        setFeishuStatus(t("connectors.feishu_connected"));
-        // 注册后立即探活一次，确认引擎已拉起
-        void probe(FEISHU_MCP_NAME);
-      } else {
-        setFeishuStatus(
-          result.error.trim()
-            ? result.error
-            : t("connectors.feishu_connect_failed"),
-        );
-      }
-    } catch (error) {
-      setFeishuStatus(
-        error instanceof Error
-          ? error.message
-          : t("connectors.feishu_connect_failed"),
-      );
-    } finally {
-      setFeishuBusy(false);
-    }
-  };
 
   const probe = (name: string) => {
     setTestState((current) => ({ ...current, [name]: { phase: "testing" } }));
@@ -326,151 +440,21 @@ export function ConnectorsPage(props: ConnectorsPageProps) {
         </h1>
       </header>
 
-      {/* ============ ① 平台连接器 ============ */}
+      {/* ============ ① 平台连接器（注册表驱动，可插拔） ============ */}
       <section className="mb-8" data-section="platform">
         <h2 className="mb-1 text-xs font-medium uppercase tracking-wide text-dls-secondary">
           {t("connectors.platform")}
         </h2>
-
-        <div
-          className="rounded-xl border border-dls-border bg-dls-surface p-4"
-          data-feishu-connector
-        >
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-dls-text">
-                {t("connectors.feishu_title")}
-              </span>
-              <span className="rounded-full bg-dls-hover px-2 py-0.5 text-[10px] text-dls-secondary">
-                user-level
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <TextInput
-              label={t("connectors.feishu_app_id")}
-              placeholder="cli_xxx"
-              value={feishuCreds.appId}
-              onChange={(event) =>
-                persistCreds({ ...feishuCreds, appId: event.currentTarget.value })
-              }
-            />
-            <div>
-              <div className="mb-1 text-xs font-medium text-dls-secondary">
-                {t("connectors.feishu_app_secret")}
-              </div>
-              <div className="relative">
-                <input
-                  className="w-full rounded-lg border border-dls-border bg-dls-surface px-3 py-2 pr-9 text-sm text-dls-text shadow-sm placeholder:text-dls-secondary focus:outline-none focus:ring-2 focus:ring-[rgba(var(--dls-accent-rgb),0.2)]"
-                  type={secretVisible ? "text" : "password"}
-                  placeholder="••••••"
-                  value={feishuCreds.appSecret}
-                  onChange={(event) =>
-                    persistCreds({
-                      ...feishuCreds,
-                      appSecret: event.currentTarget.value,
-                    })
-                  }
-                />
-                <button
-                  type="button"
-                  aria-label={secretVisible ? "Hide" : "Show"}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-dls-secondary hover:text-dls-text"
-                  onClick={() => setSecretVisible((current) => !current)}
-                >
-                  {secretVisible ? (
-                    <EyeOff className="size-3.5" />
-                  ) : (
-                    <Eye className="size-3.5" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {feishuInstalled ? (
-            <div className="mt-3 flex flex-wrap items-center gap-3">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => void probe(FEISHU_MCP_NAME)}
-              >
-                <Zap className="size-3.5" data-icon="inline-start" />
-                {t("connectors.test")}
-              </Button>
-              {/* 状态徽标：仅展示单一当前状态，避免多状态堆叠 */}
-              <TestResultLine name={FEISHU_MCP_NAME} state={testState[FEISHU_MCP_NAME]} compact />
-            </div>
-          ) : (
-            <>
-              <div className="mt-3 rounded-md border border-dls-border bg-dls-hover p-3">
-                <div className="mb-1 text-xs font-medium text-dls-text">
-                  {t("connectors.feishu_step1")}
-                </div>
-                <p className="mb-2 text-xs text-dls-secondary">
-                  {t("connectors.feishu_step1_desc")}
-                </p>
-                <div className="flex items-center gap-2">
-                  <code className="min-w-0 flex-1 truncate rounded border border-dls-border bg-dls-surface px-2 py-1 font-mono text-[11px]">
-                    {buildFeishuLoginCommand(feishuCreds).join(" ")}
-                  </code>
-                  <Button
-                    size="xs"
-                    variant="outline"
-                    onClick={() => void copyToClipboard(buildFeishuLoginCommand(feishuCreds).join(" "))}
-                  >
-                    {t("connectors.copy")}
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-2 rounded-md border border-dls-border bg-dls-hover p-3">
-                <div className="mb-1 text-xs font-medium text-dls-text">
-                  {t("connectors.feishu_step2")}
-                </div>
-                <p className="mb-2 text-xs text-dls-secondary">
-                  {t("connectors.feishu_step2_desc")}
-                </p>
-                <div className="flex items-center gap-2">
-                  <code className="min-w-0 flex-1 truncate rounded border border-dls-border bg-dls-surface px-2 py-1 font-mono text-[11px]">
-                    {buildFeishuCommand(feishuCreds).join(" ")}
-                  </code>
-                  <Button
-                    size="xs"
-                    variant="outline"
-                    onClick={() => void copyToClipboard(buildFeishuCommand(feishuCreds).join(" "))}
-                  >
-                    {t("connectors.copy")}
-                  </Button>
-                </div>
-                <div className="mt-2 text-[11px] text-dls-secondary/70">
-                  {t("connectors.feishu_step2_hint")}
-                </div>
-              </div>
-              <div className="mt-3 flex items-center gap-3">
-                <Button
-                  size="sm"
-                  disabled={
-                    feishuBusy || !feishuCreds.appId.trim() || !feishuCreds.appSecret.trim()
-                  }
-                  onClick={() => void connectFeishu()}
-                >
-                  {feishuBusy ? (
-                    <Loader2 className="size-3.5 animate-spin" data-icon="inline-start" />
-                  ) : (
-                    <Plug className="size-3.5" data-icon="inline-start" />
-                  )}
-                  {feishuBusy
-                    ? t("connectors.connecting")
-                    : t("connectors.feishu_register")}
-                </Button>
-                {feishuStatus ? (
-                  <span className="text-xs text-dls-secondary">{feishuStatus}</span>
-                ) : null}
-              </div>
-            </>
-          )}
-        </div>
+        {platformConnectors.map((connector) => (
+          <PlatformConnectorCard
+            key={connector.id}
+            connector={connector}
+            installed={connectorIsInstalled(connector, props.mcpServers)}
+            connectMcp={props.connectMcp}
+            onProbe={() => probe(connector.id)}
+            testState={testState[connector.id]}
+          />
+        ))}
       </section>
 
       {/* ============ ② 我的 MCP ============ */}
