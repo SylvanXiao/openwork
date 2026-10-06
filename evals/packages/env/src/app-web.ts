@@ -27,7 +27,6 @@ declare global {
 
 const REPO_ROOT = fileURLToPath(new URL("../../../..", import.meta.url));
 const MOCK_SCRIPT_PATH = join(REPO_ROOT, "scripts", "mock-oauth-mcp-server.mjs");
-const EXECUTABLE_ENV_KEYS = ["PATH", "PNPM_HOME", "TMPDIR", "SHELL", "SYSTEMROOT", "COMSPEC", "PATHEXT", "WINDIR", "npm_execpath", "npm_node_execpath"];
 
 export interface SeedAppWebOptions {
   workspacePath: string;

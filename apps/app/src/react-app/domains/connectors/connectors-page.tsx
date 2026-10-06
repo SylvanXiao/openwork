@@ -227,8 +227,6 @@ export type ConnectorsPageProps = {
   removeMcp: (name: string) => void;
   /** 测试一个 MCP 连接，返回结构化结果。 */
   testMcp: (name: string) => Promise<McpTestResult>;
-  /** 是否远程工作区（AddMcpModal 会据此禁用 local 类型）。 */
-  isRemoteWorkspace?: boolean;
   /** 是否有连接正在进行。 */
   busy?: boolean;
 };
@@ -570,7 +568,6 @@ export function ConnectorsPage(props: ConnectorsPageProps) {
         onClose={() => setAddMcpOpen(false)}
         onAdd={props.connectMcp}
         busy={props.busy ?? false}
-        isRemoteWorkspace={props.isRemoteWorkspace ?? false}
       />
     </div>
   );

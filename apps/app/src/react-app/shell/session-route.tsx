@@ -920,7 +920,6 @@ export function SessionRoute() {
   const connectorsMcp = useConnectorsMcp({
     client: selectedWorkspaceEndpoint?.client ?? null,
     workspaceId: selectedWorkspaceEndpoint?.workspaceId ?? null,
-    isRemoteWorkspace: selectedWorkspace?.workspaceType === "remote",
   });
   const providerListQuery = useProviderListQuery({
     client: opencodeClient,
@@ -3709,7 +3708,6 @@ export function SessionRoute() {
           setMcpEnabled={connectorsMcp.setMcpEnabled}
           removeMcp={connectorsMcp.removeMcp}
           testMcp={connectorsMcp.testMcp}
-          isRemoteWorkspace={selectedWorkspace?.workspaceType === "remote"}
           busy={connectorsMcp.busy}
         />
       ) : undefined}

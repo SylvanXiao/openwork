@@ -16,7 +16,6 @@ import type { McpTestResult } from "./connectors-page";
 type UseConnectorsMcpInput = {
   client: OpenworkServerClient | null;
   workspaceId: string | null;
-  isRemoteWorkspace?: boolean;
 };
 
 type UseConnectorsMcpReturn = {
