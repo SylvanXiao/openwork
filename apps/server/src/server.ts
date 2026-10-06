@@ -3876,14 +3876,23 @@ function createRoutes(
     });
     const result = await addMcp(config, workspace.id, name, configPayload);
     // Hot-add into the running engine so connect/auth works immediately,
-    // without waiting for an engine instance rebuild.
+    // without waiting for an engine instance rebuild. A failed hot-add must
+    // still return the added row (the runtime sync retries on its own), but
+    // it must leave a trail — the connectors page renders not_registered
+    // until the engine learns the server, and this warn is the first clue.
     await syncRuntimeMcpToOpencodeEngine(
       config,
       workspace,
       [name],
       undefined,
       engineMcpServerState,
-    ).catch(() => undefined);
+    ).catch((syncError: unknown) => {
+      createServerLogger(config).log("warn", `Engine MCP hot-add sync failed for ${name} in workspace ${workspace.id}`, {
+        "workspace.id": workspace.id,
+        "mcp.name": name,
+        "sync.error": syncError instanceof Error ? syncError.message : String(syncError),
+      });
+    });
     await recordAudit(workspace.path, {
       id: shortId(),
       workspaceId: workspace.id,

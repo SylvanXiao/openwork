@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, realpath, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -32,11 +32,19 @@ let nextTestProcessGeneration = 0;
 
 afterEach(async () => {
   while (stops.length) await stops.pop()?.();
-  while (roots.length) await rm(roots.pop()!, { recursive: true, force: true });
+  // Windows: the reload watcher can hold handles briefly after server.stop.
+  // Best-effort cleanup — a leftover temp dir is harmless; never fail the
+  // suite on EBUSY. Same pattern as mcp.test-endpoint.e2e.test.ts.
+  while (roots.length) {
+    await rm(roots.pop()!, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }).catch(() => undefined);
+  }
 });
 
 async function createWorkspaceRoot() {
-  const root = await mkdtemp(join(tmpdir(), "openwork-mcp-engine-sync-"));
+  // realpath: Windows tmpdir can surface as an 8.3 short path (ADMINI~1),
+  // while the server records the workspace's real path — the directory=
+  // query assertions below compare the two, so arrange the real form.
+  const root = await realpath(await mkdtemp(join(tmpdir(), "openwork-mcp-engine-sync-")));
   roots.push(root);
   return root;
 }
@@ -250,6 +258,39 @@ describe("runtime MCP engine sync", () => {
       if (previousDb === undefined) delete process.env.OPENWORK_RUNTIME_DB;
       else process.env.OPENWORK_RUNTIME_DB = previousDb;
     }
+  });
+
+  test("logs a warning but still returns the added row when the engine rejects the hot-add", async () => {
+    const workspaceRoot = await createWorkspaceRoot();
+    const previousDb = process.env.OPENWORK_RUNTIME_DB;
+    process.env.OPENWORK_RUNTIME_DB = join(workspaceRoot, "runtime.sqlite");
+    // The hot-add failure path must leave a trail: the connectors page renders
+    // not_registered until the engine learns the server, and the swallowed
+    // sync error is the first clue to look for.
+    const logged: string[] = [];
+    const originalWrite = process.stdout.write;
+    process.stdout.write = (chunk: Uint8Array | string): boolean => {
+      logged.push(typeof chunk === "string" ? chunk : Buffer.from(chunk).toString("utf8"));
+      return true;
+    };
+    try {
+      const mock = startMockOpencode({ failMcpNames: ["posthog"] });
+      const openwork = await startOpenworkServer(workspaceRoot, `http://127.0.0.1:${mock.server.port}`);
+
+      const response = await fetch(`${openwork.base}/workspace/ws_1/mcp`, {
+        method: "POST",
+        headers: auth(openwork.token),
+        body: JSON.stringify({ name: "posthog", config: POSTHOG_CONFIG }),
+      });
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.items.some((item: { name?: string }) => item.name === "posthog")).toBe(true);
+    } finally {
+      process.stdout.write = originalWrite;
+      if (previousDb === undefined) delete process.env.OPENWORK_RUNTIME_DB;
+      else process.env.OPENWORK_RUNTIME_DB = previousDb;
+    }
+    expect(logged.some((line) => line.includes("Engine MCP hot-add sync failed") && line.includes("posthog"))).toBe(true);
   });
 
   test("hot-syncs an external engine without treating its response as trusted registration evidence", async () => {
@@ -972,8 +1013,9 @@ describe("runtime MCP engine sync", () => {
           },
         }),
       });
-      expect(response.status).toBe(200);
-      const parsed: unknown = await response.json();
+      const responseText = await response.text();
+      expect(response.status, `cloud plugin install failed: ${responseText}`).toBe(200);
+      const parsed: unknown = JSON.parse(responseText);
       const body = requireRecord(parsed, "cloud plugin install response");
       const item = requireRecord(body.item, "cloud plugin install item");
       expect(item.pluginId).toBe("plugin_broken_mcp");
