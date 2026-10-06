@@ -81,3 +81,8 @@ evals/results/
 
 # Warden local run logs
 .warden/logs/
+
+# Personal working drafts & tooling state (repo is public; these stay local)
+harness-series/
+harness-teardown-draft.md
+.mimosa/
