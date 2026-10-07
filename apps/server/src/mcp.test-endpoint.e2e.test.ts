@@ -12,13 +12,17 @@ type Served = { port: number; stop: (closeActiveConnections?: boolean) => void |
 // Reuse the mock opencode harness pattern from mcp.engine-sync.e2e.test.ts:
 // a fake engine whose /mcp GET returns a per-name status map.
 
-function startMockOpencode(options?: { liveMcpStatusByName?: () => Record<string, unknown> }) {
+function startMockOpencode(options?: {
+  liveMcpStatusByName?: () => Record<string, unknown>;
+  mcpGetResponse?: (request: Request) => Response;
+}) {
   const server = Bun.serve({
     hostname: "127.0.0.1",
     port: 0,
     fetch(request: Request) {
       const url = new URL(request.url);
       if (url.pathname === "/mcp" && request.method === "GET") {
+        if (options?.mcpGetResponse) return options.mcpGetResponse(request);
         return Response.json(options?.liveMcpStatusByName?.() ?? {});
       }
       if (url.pathname === "/mcp" && request.method === "POST") {
@@ -221,6 +225,29 @@ describe("POST /workspace/:id/mcp/:name/test", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toEqual({ ok: false, status: "not_registered", reason: "engine has no status for this MCP" });
+  });
+
+  test("failed engine /mcp status probe reports unavailable, not not_registered", async () => {
+    const workspaceRoot = await createWorkspaceRoot();
+    await writeMcpConfig(workspaceRoot, { mockprobe: mockMcpConfig() });
+
+    // Simulate the engine's /mcp status probe failing (a 500 stands in for a
+    // probe that times out, e.g. during engine cold-start). A failed probe must
+    // be reported as "unavailable", never conflated with "engine has no entry
+    // for this MCP".
+    const mock = startMockOpencode({ mcpGetResponse: () => new Response("boom", { status: 500 }) });
+    stops.push(() => mock.stop(true));
+
+    const openwork = await startOpenworkServer(workspaceRoot, `http://127.0.0.1:${mock.port}`);
+    stops.push(() => openwork.server.stop(true));
+
+    const res = await fetch(`${openwork.base}/workspace/ws_1/mcp/mockprobe/test`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${openwork.token}`, "Content-Type": "application/json" },
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ ok: false, status: "unavailable", reason: "engine /mcp status probe did not complete" });
   });
 
   test("unknown MCP name returns 404", async () => {

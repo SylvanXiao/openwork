@@ -190,6 +190,11 @@ const AGENT_DIAGNOSTICS_ERROR_FLUSH_MS = 25;
 const COMMAND_ADMISSION_CAPACITY = 10_000;
 const COMMAND_ADMISSION_TTL_MS = 24 * 60 * 60 * 1_000;
 const MCP_TOOL_PROBE_TIMEOUT_MS = 10_000;
+// The engine's first /mcp call for a directory pays a one-shot lazy-init cost
+// (observed ~5.4–5.9s, and it scales with the number of freshly-registered
+// MCPs). Wait comfortably past that so the first "Test connection" right after
+// engine boot does not time out and misreport a registered MCP as not_registered.
+const MCP_ENGINE_STATUS_PROBE_TIMEOUT_MS = 12_000;
 
 function mcpProbeHeaders(value: unknown): Record<string, string> {
   if (!isRecord(value)) return {};
@@ -4311,26 +4316,37 @@ function createRoutes(
     }
 
     let engineStatus: { status: string; error?: unknown } | null = null;
+    let engineStatusFetchSucceeded = false;
     try {
       const url = new URL("/mcp", connection.baseUrl);
       const directory = resolveOpencodeDirectory(workspace);
       if (directory) url.searchParams.set("directory", directory);
       const headers: Record<string, string> = {};
       if (connection.authHeader) headers.Authorization = connection.authHeader;
-      const response = await loopbackFetch(url.toString(), { headers, signal: AbortSignal.timeout(5_000) });
+      const response = await loopbackFetch(url.toString(), {
+        headers,
+        signal: AbortSignal.timeout(MCP_ENGINE_STATUS_PROBE_TIMEOUT_MS),
+      });
       if (!response.ok) throw new Error("MCP status probe failed");
       const statuses: unknown = JSON.parse(await response.text());
+      engineStatusFetchSucceeded = true;
       if (isRecord(statuses)) {
         const entry = statuses[name];
         if (isRecord(entry)) engineStatus = entry as unknown as { status: string; error?: unknown };
       }
     } catch {
+      // A probe that timed out or errored is NOT the same as "the engine has
+      // no entry for this MCP": the engine may simply be mid cold-start. Keep
+      // engineStatus null but remember the fetch did not succeed, so the result
+      // below reports "unavailable" instead of "not_registered".
       engineStatus = null;
     }
 
     let result: { ok: boolean; status: string; reason?: string; toolCount?: number };
     if (engineStatus === null) {
-      result = { ok: false, status: "not_registered", reason: "engine has no status for this MCP" };
+      result = engineStatusFetchSucceeded
+        ? { ok: false, status: "not_registered", reason: "engine has no status for this MCP" }
+        : { ok: false, status: "unavailable", reason: "engine /mcp status probe did not complete" };
     } else if (engineStatus.status === "connected") {
       let toolCount = 0;
       try {
