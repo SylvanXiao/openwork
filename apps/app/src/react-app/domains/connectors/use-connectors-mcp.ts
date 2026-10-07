@@ -87,11 +87,19 @@ export function useConnectorsMcp(input: UseConnectorsMcpInput): UseConnectorsMcp
       if (id !== requestIdRef.current) return;
       setMcpServers(result.items.map(toMcpServerEntry));
     } catch {
-      if (id === requestIdRef.current) setMcpServers([]);
+      // A failed list fetch is NOT "no MCPs configured". Keep the last-known
+      // list so a transient error (including the refetch right after
+      // connect/enable/remove) can't wipe an already-populated "My MCP"
+      // section. The list is reset to empty only on client/workspace change.
     }
   }, [client, workspaceId]);
 
   useEffect(() => {
+    // New client/workspace: start from an empty list so a previous workspace's
+    // MCPs never show under the new one, then load. fetchServers is keyed on
+    // the same [client, workspaceId] boundary.
+    setMcpServers([]);
+    setMcpStatuses({});
     void fetchServers();
   }, [fetchServers]);
 
