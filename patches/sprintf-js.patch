@@ -1,0 +1,18 @@
+diff --git a/src/sprintf.js b/src/sprintf.js
+index 65d6324645ef1d0133614a71497751009dc5c912..85cb0ac537650de0fe06fa5a137a0069bf8e42d2 100644
+--- a/src/sprintf.js
++++ b/src/sprintf.js
+@@ -66,6 +66,13 @@
+                     is_positive = arg >= 0
+                 }
+ 
++                // [security GHSA-hp3w-g68c-fv3c] Cap the precision so a
++                // user/host-controlled `%.<huge>f|e|g` cannot allocate an
++                // unbounded decimal string (event-loop DoS). 100 also stays
++                // within Number.prototype.toFixed's native 0..100 digit limit,
++                // so an over-large specifier no longer throws a RangeError.
++                if (ph.precision) ph.precision = String(Math.min(parseInt(ph.precision, 10) || 0, 100));
++
+                 switch (ph.type) {
+                     case 'b':
+                         arg = parseInt(arg, 10).toString(2)

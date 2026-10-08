@@ -1,0 +1,31 @@
+diff --git a/lib/parse.js b/lib/parse.js
+index 3a6988e629f52aee6609dc5ec290a5e9ff47cecb..ea7480d92b746aba1228344162d2a4a0008770d7 100644
+--- a/lib/parse.js
++++ b/lib/parse.js
+@@ -24,6 +24,12 @@ const {
+   CHAR_ZERO_WIDTH_NOBREAK_SPACE
+ } = require('./constants');
+ 
++// [security GHSA-vfj7-8cjw-p6xm] Bound the nesting depth so a deeply nested
++// pattern cannot drive recursive stringify/expand/compile into a
++// stack-exhaustion DoS. 100 levels of brace nesting is far beyond any
++// legitimate glob/globby use.
++const MAX_DEPTH = 100;
++
+ /**
+  * parse
+  */
+@@ -197,6 +203,13 @@ const parse = (input, options = {}) => {
+     if (value === CHAR_LEFT_CURLY_BRACE) {
+       depth++;
+ 
++      if (depth > MAX_DEPTH) {
++        // Over-deep: treat this brace (and its matching close) as literal
++        // text so the stack/AST depth stays bounded against the DoS.
++        push({ type: 'text', value });
++        continue;
++      }
++
+       const dollar = prev.value && prev.value.slice(-1) === '$' || block.dollar === true;
+       const brace = {
+         type: 'brace',
