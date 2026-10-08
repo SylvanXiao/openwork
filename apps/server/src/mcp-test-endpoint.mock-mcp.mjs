@@ -29,9 +29,14 @@ rl.on("line", (line) => {
         },
       });
       break;
-    case "tools/list":
-      send({ jsonrpc: "2.0", id, result: { tools: TOOLS } });
+    case "tools/list": {
+      // Optional artificial delay so tests can hold a probe in flight.
+      const delayMs = Number(process.env.MOCK_MCP_TOOLS_LIST_DELAY_MS ?? 0);
+      const reply = () => send({ jsonrpc: "2.0", id, result: { tools: TOOLS } });
+      if (delayMs > 0) setTimeout(reply, delayMs);
+      else reply();
       break;
+    }
     case "tools/call":
       send({ jsonrpc: "2.0", id, result: { content: [{ type: "text", text: "mock ok" }] } });
       break;

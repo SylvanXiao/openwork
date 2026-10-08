@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { startServer } from "./server.js";
+import { probeMcpSettle, startServer } from "./server.js";
 import type { ServerConfig } from "./types.js";
 import { opencodeConfigPath } from "./workspace-files.js";
 
@@ -12,13 +12,17 @@ type Served = { port: number; stop: (closeActiveConnections?: boolean) => void |
 // Reuse the mock opencode harness pattern from mcp.engine-sync.e2e.test.ts:
 // a fake engine whose /mcp GET returns a per-name status map.
 
-function startMockOpencode(options?: { liveMcpStatusByName?: () => Record<string, unknown> }) {
+function startMockOpencode(options?: {
+  liveMcpStatusByName?: () => Record<string, unknown>;
+  mcpGetResponse?: (request: Request) => Response;
+}) {
   const server = Bun.serve({
     hostname: "127.0.0.1",
     port: 0,
     fetch(request: Request) {
       const url = new URL(request.url);
       if (url.pathname === "/mcp" && request.method === "GET") {
+        if (options?.mcpGetResponse) return options.mcpGetResponse(request);
         return Response.json(options?.liveMcpStatusByName?.() ?? {});
       }
       if (url.pathname === "/mcp" && request.method === "POST") {
@@ -223,6 +227,29 @@ describe("POST /workspace/:id/mcp/:name/test", () => {
     expect(body).toEqual({ ok: false, status: "not_registered", reason: "engine has no status for this MCP" });
   });
 
+  test("failed engine /mcp status probe reports unavailable, not not_registered", async () => {
+    const workspaceRoot = await createWorkspaceRoot();
+    await writeMcpConfig(workspaceRoot, { mockprobe: mockMcpConfig() });
+
+    // Simulate the engine's /mcp status probe failing (a 500 stands in for a
+    // probe that times out, e.g. during engine cold-start). A failed probe must
+    // be reported as "unavailable", never conflated with "engine has no entry
+    // for this MCP".
+    const mock = startMockOpencode({ mcpGetResponse: () => new Response("boom", { status: 500 }) });
+    stops.push(() => mock.stop(true));
+
+    const openwork = await startOpenworkServer(workspaceRoot, `http://127.0.0.1:${mock.port}`);
+    stops.push(() => openwork.server.stop(true));
+
+    const res = await fetch(`${openwork.base}/workspace/ws_1/mcp/mockprobe/test`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${openwork.token}`, "Content-Type": "application/json" },
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toEqual({ ok: false, status: "unavailable", reason: "engine /mcp status probe did not complete" });
+  });
+
   test("unknown MCP name returns 404", async () => {
     const workspaceRoot = await createWorkspaceRoot();
     await writeMcpConfig(workspaceRoot, { mockprobe: mockMcpConfig() });
@@ -263,6 +290,52 @@ describe("POST /workspace/:id/mcp/:name/test", () => {
     expect(body).toEqual({ ok: true, status: "connected", toolCount: 0 });
   });
 
+  test("saturated tool probe cap returns 429 mcp_probe_busy", async () => {
+    const workspaceRoot = await createWorkspaceRoot();
+    // Delay the fixture's tools/list so the first probe holds its in-flight
+    // slot long enough for the second request to hit the cap.
+    await writeMcpConfig(workspaceRoot, {
+      mockprobe: { ...mockMcpConfig(), environment: { MOCK_MCP_TOOLS_LIST_DELAY_MS: "2000" } },
+    });
+
+    const mock = startMockOpencode({ liveMcpStatusByName: () => ({ mockprobe: { status: "connected" } }) });
+    stops.push(() => mock.stop(true));
+
+    const previousCap = process.env.OPENWORK_MCP_TOOL_PROBE_MAX_IN_FLIGHT;
+    process.env.OPENWORK_MCP_TOOL_PROBE_MAX_IN_FLIGHT = "1";
+    try {
+      const openwork = await startOpenworkServer(workspaceRoot, `http://127.0.0.1:${mock.port}`);
+      stops.push(() => openwork.server.stop(true));
+
+      const url = `${openwork.base}/workspace/ws_1/mcp/mockprobe/test`;
+      const headers = { Authorization: `Bearer ${openwork.token}`, "Content-Type": "application/json" };
+      // Whichever request starts its probe first holds the single slot; the
+      // other must be rejected 429 mcp_probe_busy — not queued, not silently
+      // skipped.
+      const [first, second] = await Promise.all([
+        fetch(url, { method: "POST", headers }),
+        fetch(url, { method: "POST", headers }),
+      ]);
+      // cap=1 and the probe holds its slot for ~2s, so exactly one request
+      // starts its probe; the other must be rejected 429 mcp_probe_busy —
+      // not queued, not silently skipped.
+      const busy = first.status === 429 ? first : second;
+      const done = first.status === 429 ? second : first;
+      expect(busy.status).toBe(429);
+      const busyBody = await busy.json();
+      expect(busyBody).toEqual({
+        code: "mcp_probe_busy",
+        message: "Too many MCP tool probes in flight; retry shortly",
+      });
+      expect(done.status).toBe(200);
+      const doneBody = await done.json();
+      expect(doneBody).toEqual({ ok: true, status: "connected", toolCount: 3 });
+    } finally {
+      if (previousCap === undefined) delete process.env.OPENWORK_MCP_TOOL_PROBE_MAX_IN_FLIGHT;
+      else process.env.OPENWORK_MCP_TOOL_PROBE_MAX_IN_FLIGHT = previousCap;
+    }
+  });
+
   test("unauthenticated request is rejected", async () => {
     const workspaceRoot = await createWorkspaceRoot();
     await writeMcpConfig(workspaceRoot, { mockprobe: mockMcpConfig() });
@@ -278,5 +351,24 @@ describe("POST /workspace/:id/mcp/:name/test", () => {
       headers: { "Content-Type": "application/json" },
     });
     expect(res.status).toBe(401);
+  });
+});
+
+describe("probeMcpSettle", () => {
+  test("completes on time even when client/transport close hangs", async () => {
+    const never = new Promise<unknown>(() => undefined);
+    const started = Date.now();
+    await probeMcpSettle({ close: () => never }, { close: () => never }, 50);
+    // Two bounded closes: the settle must return within ~2x the bound, not
+    // wait on a transport that never settles.
+    expect(Date.now() - started).toBeLessThan(2_000);
+  });
+
+  test("swallows close errors", async () => {
+    await probeMcpSettle(
+      { close: () => Promise.reject(new Error("client close failed")) },
+      { close: () => Promise.reject(new Error("transport close failed")) },
+      50,
+    );
   });
 });

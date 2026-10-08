@@ -186,6 +186,21 @@ const AGENT_DIAGNOSTICS_ERROR_FLUSH_MS = 25;
 const COMMAND_ADMISSION_CAPACITY = 10_000;
 const COMMAND_ADMISSION_TTL_MS = 24 * 60 * 60 * 1_000;
 const MCP_TOOL_PROBE_TIMEOUT_MS = 10_000;
+// The engine's first /mcp call for a directory pays a one-shot lazy-init cost
+// (observed ~5.4–5.9s, and it scales with the number of freshly-registered
+// MCPs). Wait comfortably past that so the first "Test connection" right after
+// engine boot does not time out and misreport a registered MCP as not_registered.
+const MCP_ENGINE_STATUS_PROBE_TIMEOUT_MS = 12_000;
+// A tool-count probe spawns (or dials) a real MCP server and can hold for up to
+// MCP_TOOL_PROBE_TIMEOUT_MS. Bound how many can be in flight per server so a
+// user hammering "Test connection" cannot pile up expensive probes.
+const MCP_TOOL_PROBE_MAX_IN_FLIGHT_DEFAULT = 4;
+const mcpToolProbeInFlightByServer = new WeakMap<ServerConfig, number>();
+
+function mcpToolProbeMaxInFlight(): number {
+  const configured = Number(process.env.OPENWORK_MCP_TOOL_PROBE_MAX_IN_FLIGHT ?? String(MCP_TOOL_PROBE_MAX_IN_FLIGHT_DEFAULT));
+  return Number.isFinite(configured) && configured >= 1 ? Math.floor(configured) : MCP_TOOL_PROBE_MAX_IN_FLIGHT_DEFAULT;
+}
 
 function mcpProbeHeaders(value: unknown): Record<string, string> {
   if (!isRecord(value)) return {};
@@ -250,16 +265,30 @@ async function probeMcpToolCount(config: Record<string, unknown>): Promise<numbe
   }
 }
 
-async function probeMcpSettle(client: Client, transport: Transport): Promise<void> {
-  try {
-    await client.close();
-  } finally {
-    try {
-      await transport.close();
-    } catch {
-      undefined;
-    }
-  }
+const MCP_PROBE_SETTLE_TIMEOUT_MS = 5_000;
+
+// Structural close() so the timeout bound (and tests) do not need the SDK types.
+export async function probeMcpSettle(
+  client: { close(): Promise<unknown> },
+  transport: { close(): Promise<unknown> },
+  timeoutMs: number = MCP_PROBE_SETTLE_TIMEOUT_MS,
+): Promise<void> {
+  const bounded = (close: () => Promise<unknown>): Promise<void> =>
+    new Promise<void>((resolve) => {
+      const timer = setTimeout(resolve, timeoutMs);
+      close()
+        .catch(() => undefined)
+        .then(() => {
+          clearTimeout(timer);
+          resolve();
+        });
+    });
+  // A hung remote transport must not stall the fire-and-forget settle
+  // forever: bound each close. A stdio child is still reaped by the SDK's
+  // stdin.end → SIGTERM → SIGKILL escalation, which keeps running even after
+  // we stop awaiting it.
+  await bounded(() => client.close());
+  await bounded(() => transport.close());
 }
 
 function rethrowMcpAppHostError(error: unknown): never {
@@ -4050,31 +4079,54 @@ function createRoutes(
     }
 
     let engineStatus: { status: string; error?: unknown } | null = null;
+    let engineStatusFetchSucceeded = false;
     try {
       const url = new URL("/mcp", connection.baseUrl);
       const directory = resolveOpencodeDirectory(workspace);
       if (directory) url.searchParams.set("directory", directory);
       const headers: Record<string, string> = {};
       if (connection.authHeader) headers.Authorization = connection.authHeader;
-      const response = await loopbackFetch(url.toString(), { headers, signal: AbortSignal.timeout(5_000) });
+      const response = await loopbackFetch(url.toString(), {
+        headers,
+        signal: AbortSignal.timeout(MCP_ENGINE_STATUS_PROBE_TIMEOUT_MS),
+      });
       if (!response.ok) throw new Error("MCP status probe failed");
       const statuses: unknown = JSON.parse(await response.text());
+      engineStatusFetchSucceeded = true;
       if (isRecord(statuses)) {
         const entry = statuses[name];
         if (isRecord(entry)) engineStatus = entry as unknown as { status: string; error?: unknown };
       }
     } catch {
+      // A probe that timed out or errored is NOT the same as "the engine has
+      // no entry for this MCP": the engine may simply be mid cold-start. Keep
+      // engineStatus null but remember the fetch did not succeed, so the result
+      // below reports "unavailable" instead of "not_registered".
       engineStatus = null;
     }
 
     let result: { ok: boolean; status: string; reason?: string; toolCount?: number };
     if (engineStatus === null) {
-      result = { ok: false, status: "not_registered", reason: "engine has no status for this MCP" };
+      result = engineStatusFetchSucceeded
+        ? { ok: false, status: "not_registered", reason: "engine has no status for this MCP" }
+        : { ok: false, status: "unavailable", reason: "engine /mcp status probe did not complete" };
     } else if (engineStatus.status === "connected") {
       let toolCount = 0;
       try {
-        toolCount = await probeMcpToolCount(item.config);
+        const inFlight = mcpToolProbeInFlightByServer.get(config) ?? 0;
+        if (inFlight >= mcpToolProbeMaxInFlight()) {
+          throw new ApiError(429, "mcp_probe_busy", "Too many MCP tool probes in flight; retry shortly");
+        }
+        mcpToolProbeInFlightByServer.set(config, inFlight + 1);
+        try {
+          toolCount = await probeMcpToolCount(item.config);
+        } finally {
+          const remaining = (mcpToolProbeInFlightByServer.get(config) ?? 1) - 1;
+          if (remaining <= 0) mcpToolProbeInFlightByServer.delete(config);
+          else mcpToolProbeInFlightByServer.set(config, remaining);
+        }
       } catch (probeError) {
+        if (probeError instanceof ApiError) throw probeError;
         createServerLogger(config).log("warn", `MCP tool count probe failed for ${name}`, {
           "mcp.name": name,
           "workspace.id": workspace.id,
