@@ -91,6 +91,15 @@ export function writeStoredCreds(connector: PlatformConnector, creds: Record<str
   }
 }
 
+/** 清除该连接器存在 localStorage 的凭据（移除对应 MCP 时调用）；存储失败忽略。 */
+export function clearStoredCreds(connector: PlatformConnector): void {
+  try {
+    window.localStorage.removeItem(connector.credsStorageKey);
+  } catch {
+    // 存储不可用时忽略
+  }
+}
+
 /** 该连接器是否已作为 MCP 注册进当前工作区。 */
 export function connectorIsInstalled(connector: PlatformConnector, servers: McpServerEntry[]): boolean {
   return servers.some((entry) => entry.name === connector.id);

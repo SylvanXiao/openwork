@@ -391,6 +391,8 @@ export type ConnectorsPageProps = {
   isRemoteWorkspace?: boolean;
   /** 是否有连接正在进行。 */
   busy?: boolean;
+  /** 最近一次启用/移除失败（显示在对应行下）。 */
+  actionError?: { name: string; message: string } | null;
 };
 
 export function ConnectorsPage(props: ConnectorsPageProps) {
@@ -520,6 +522,13 @@ export function ConnectorsPage(props: ConnectorsPageProps) {
                       state={testState[entry.name]}
                       compact
                     />
+                    {props.actionError?.name === entry.name ? (
+                      <div className="mt-1 text-xs text-red-11">
+                        {t("connectors.action_failed", {
+                          message: props.actionError.message,
+                        })}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="ml-3 flex shrink-0 items-center gap-1">
                     <Button

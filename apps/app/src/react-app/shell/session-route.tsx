@@ -3524,6 +3524,7 @@ export function SessionRoute() {
           testMcp={connectorsMcp.testMcp}
           isRemoteWorkspace={selectedWorkspace?.workspaceType === "remote"}
           busy={connectorsMcp.busy}
+          actionError={connectorsMcp.actionError}
         />
       ) : undefined}
       terminalOpen={terminalOpen}
