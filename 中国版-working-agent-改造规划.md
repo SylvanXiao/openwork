@@ -129,6 +129,13 @@
   7. **类型校验**：`tsc --strict --noEmit` 对 `apps/app/src/app/extensions.ts` 单独验证 **exit 0**；`openwork-models.json` Node `JSON.parse` 通过。
   8. **未做的边界**：未改 `cloud-provider-config.ts`（默认 provider 编排的「可选化」已由 D1/D2 本地化实现，强行改易碰 EE/Cloud 路径）；`RECOMMENDED_MODEL_PATTERNS` 顺序按 D3 费用快照，真机上线前需双源核验当前价。
 
+**P2延伸（2026-10-09）✅ 已完成**：
+- **范围纠正（重要）**：`base.json` 顶层 provider 里，国产 provider 实际只就绪 **5 家**（火山方舟 `volcengine`、MiniMax `minimax-cn`、阶跃 `stepfun`、月之暗面 `moonshotai-cn`、腾讯 `tencent-tokenhub`）。`baichuan` / `qianfan` / `baidu` **均不在目录**（此前 grep 把模型 id 里的 `baichuan` 子串误判为顶层 provider，已纠正）。
+- **5 家 catalog 就绪 → 纯加 builtin 卡片**：在 `extensions.ts` 的 `BUILT_IN_OPENWORK_EXTENSION_MANIFESTS` 末尾镜像既有 3 张卡，新增 5 张（硬编中文、不碰 i18n、声明 `@ai-sdk/openai-compatible`、platform 桌面三端）。
+- **2 家需补 catalog 条目**：`baichuan`、`qianfan` 在 `base.json` 新增顶层 provider（api + npm + env + models 目录）；`models` 价格按 ~7.1 RMB/USD 折算 USD/1M，**属估算值，上线前需双源核验**。同步补 builtin 卡片。
+- **注意点**：`minimax-cn` 在 `base.json` 的 `api` 是 **Anthropic 兼容端点**（`/anthropic/v1`），与卡片声明的 openai-compatible 可能不符，真机验收需留意；百度的 ERNIE 模型也可经既有硅基流动卡片间接选用。
+- **验证**：apps/app 全量 `tsc --noEmit` exit 0；`diff-locales` 对齐；`provider-catalog.ts` 仅读 provider 顶层 npm/api/env，新增条目不影响网关解析。
+
 ### P3 — 连接器中国化（护城河之一）🚧 进行中（2026-10-08）
 
 - **目标**：中国生态连接器，且填上游历史缺口。
@@ -174,6 +181,11 @@
 ### P6 — 差异化护城河（AI×直播）
 
 - **目标**：你的独特价值，区别于通用 agent 工作台。
+
+**P6 起步（2026-10-09）**：
+- **话术生成 skill 已完成（第一个 wedge）**：`.opencode/skills/live-script-generator/SKILL.md`，把直播行业 6 类岗位（企宣/星探/摘星/前台/讲师/直播招募）经验固化为中文话术方法论，覆盖开场留人/互动破冰/产品FAB/逼单转化/结尾复购五大模块，内置《广告法》合规红线。话术属纯提示词 skill，无需外部直播 API。
+- **剩余三场景（待做）**：自动切片、智能场控、数字人。切片/场控需接具体直播平台实时/录制 API，适合做成 **MCP**（而非 skill）；数字人偏离纯 agent 工作台定位、风险最高，建议最后或仅做"数字人脚本/分镜生成"而非驱动渲染。
+- **打包方式待定**：当前话术 skill 放在本地 `.opencode/skills/`（agent 立即可用）；要作为产品差异点随产品分发，需提升为 builtin 扩展（extension manifest 的 `skill` 资源类型），待用户拍板。
 - **动作**：接直播平台 API；做自动切片 / 话术生成 / 智能场控 / 数据看板 等 MCP 与 skill；沉淀直播行业 6 类岗位链路经验为模板。
 - **涉及**：`packages/mcp-apps`、`packages/sdk`、skills 体系。
 - **产出**：直播行业专属 agent 能力。
