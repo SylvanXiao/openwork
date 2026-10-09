@@ -330,4 +330,172 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
     lifecycle: { reload: ["config"], detection: ["provider:zhipuai"] },
     platform: ["darwin", "linux", "windows"],
   },
+  {
+    schemaVersion: 1,
+    id: "volcengine",
+    name: "火山方舟 (Volcengine Ark)",
+    description: "火山引擎方舟大模型平台，兼容 OpenAI 接口。支持豆包 Doubao 全系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用火山方舟（Volcengine Ark）的模型来 " },
+    setup: {
+      instructions: "在火山引擎方舟控制台开通模型并获取 API Key，配置为火山方舟提供方的密钥后即可选用 Doubao 系列模型。",
+      primaryCta: "配置火山方舟",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "volcengine", providerId: "volcengine", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用火山方舟（Volcengine Ark）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "volcengine", label: "火山方舟 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:volcengine"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "minimax-cn",
+    name: "MiniMax (MiniMax)",
+    description: "MiniMax 开放平台，兼容 OpenAI 接口。支持 MiniMax 全系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用 MiniMax 的模型来 " },
+    setup: {
+      instructions: "在 MiniMax 开放平台获取 API Key，配置为 MiniMax 提供方的密钥后即可选用 MiniMax 系列模型。",
+      primaryCta: "配置 MiniMax",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "minimax-cn", providerId: "minimax-cn", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用 MiniMax 的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "minimax-cn", label: "MiniMax 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:minimax-cn"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "stepfun",
+    name: "阶跃星辰 (StepFun)",
+    description: "阶跃星辰开放平台，兼容 OpenAI 接口。支持 Step 系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用阶跃星辰（StepFun）的模型来 " },
+    setup: {
+      instructions: "在阶跃星辰开放平台获取 API Key，配置为阶跃星辰提供方的密钥后即可选用 Step 系列模型。",
+      primaryCta: "配置阶跃星辰",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "stepfun", providerId: "stepfun", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用阶跃星辰（StepFun）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "stepfun", label: "阶跃星辰 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:stepfun"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "moonshotai-cn",
+    name: "月之暗面 (Moonshot AI)",
+    description: "月之暗面开放平台，兼容 OpenAI 接口。支持 Kimi 系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用月之暗面（Moonshot AI）的模型来 " },
+    setup: {
+      instructions: "在月之暗面开放平台获取 API Key，配置为月之暗面提供方的密钥后即可选用 Kimi 系列模型。",
+      primaryCta: "配置月之暗面",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "moonshotai-cn", providerId: "moonshotai-cn", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用月之暗面（Moonshot AI）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "moonshotai-cn", label: "月之暗面 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:moonshotai-cn"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "tencent-tokenhub",
+    name: "腾讯混元 (Tencent TokenHub)",
+    description: "腾讯混元大模型，通过 TokenHub 接入，兼容 OpenAI 接口。支持 Hunyuan 系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用腾讯混元（Tencent TokenHub）的模型来 " },
+    setup: {
+      instructions: "在腾讯云混元或 TokenHub 获取 API Key，配置为腾讯混元提供方的密钥后即可选用 Hunyuan 系列模型。",
+      primaryCta: "配置腾讯混元",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "tencent-tokenhub", providerId: "tencent-tokenhub", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用腾讯混元（Tencent TokenHub）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "tencent-tokenhub", label: "腾讯混元 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:tencent-tokenhub"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "baichuan",
+    name: "百川智能 (Baichuan)",
+    description: "百川智能开放平台，兼容 OpenAI 接口。支持 Baichuan4 全系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用百川智能（Baichuan）的模型来 " },
+    setup: {
+      instructions: "在百川智能开放平台获取 API Key，配置为百川智能提供方的密钥后即可选用 Baichuan 系列模型。",
+      primaryCta: "配置百川智能",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "baichuan", providerId: "baichuan", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用百川智能（Baichuan）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "baichuan", label: "百川智能 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:baichuan"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "qianfan",
+    name: "百度千帆 (Baidu Qianfan)",
+    description: "百度智能云千帆大模型平台，兼容 OpenAI 接口。支持 ERNIE 文心全系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用百度千帆（Baidu Qianfan）的模型来 " },
+    setup: {
+      instructions: "在百度智能云千帆控制台开通模型并获取 API Key，配置为百度千帆提供方的密钥后即可选用 ERNIE 系列模型。",
+      primaryCta: "配置百度千帆",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "qianfan", providerId: "qianfan", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用百度千帆（Baidu Qianfan）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "qianfan", label: "百度千帆 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:qianfan"] },
+    platform: ["darwin", "linux", "windows"],
+  },
 ];
