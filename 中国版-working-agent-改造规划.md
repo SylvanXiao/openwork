@@ -185,7 +185,9 @@
 **P6 起步（2026-10-09）**：
 - **话术生成 skill 已完成（第一个 wedge）**：`.opencode/skills/live-script-generator/SKILL.md`，把直播行业 6 类岗位（企宣/星探/摘星/前台/讲师/直播招募）经验固化为中文话术方法论，覆盖开场留人/互动破冰/产品FAB/逼单转化/结尾复购五大模块，内置《广告法》合规红线。话术属纯提示词 skill，无需外部直播 API。
 - **剩余三场景（待做）**：自动切片、智能场控、数字人。切片/场控需接具体直播平台实时/录制 API，适合做成 **MCP**（而非 skill）；数字人偏离纯 agent 工作台定位、风险最高，建议最后或仅做"数字人脚本/分镜生成"而非驱动渲染。
-- **打包方式待定**：当前话术 skill 放在本地 `.opencode/skills/`（agent 立即可用）；要作为产品差异点随产品分发，需提升为 builtin 扩展（extension manifest 的 `skill` 资源类型），待用户拍板。
+- **话术系列深化（2026-10-09 晚）**：SKILL.md 新增「话术模板库（按品类速填）」——美妆/母婴/服饰/食品生鲜/3C数码/源头工厂六类骨架，以及「直播节奏变体」——平播/秒杀/专场三种节奏打法。
+- **已提升为内置扩展（2026-10-09 晚）**：`extensions.ts` 的 `BUILT_IN_OPENWORK_EXTENSION_MANIFESTS` 末尾新增 `live-script-generator` builtin 卡片（resources 用 `skill` 类型指向 `.opencode/skills/live-script-generator/SKILL.md`）。SKILL.md 仍保留在本地 `.opencode/skills/`（agent 真正加载处），内置卡片让它在产品「扩展」设置页作为预装中文差异点出现。验证：apps/app 全量 `tsc --noEmit` exit 0；`diff-locales` 对齐；`skill` 资源类型已在 `OpenWorkExtensionResourceType` 中，类型安全。
+  - 注：内置扩展卡片是 UI 展示 + 预装入口；agent 加载 skill 仍走 `installedSkills`（本地 `.opencode/skills/` 扫描）。要把话术 skill 真正"随产品分发"到终端用户，需确认 `.opencode/skills/` 是否被打包进分发包（属 P5 打包范畴）。
 - **动作**：接直播平台 API；做自动切片 / 话术生成 / 智能场控 / 数据看板 等 MCP 与 skill；沉淀直播行业 6 类岗位链路经验为模板。
 - **涉及**：`packages/mcp-apps`、`packages/sdk`、skills 体系。
 - **产出**：直播行业专属 agent 能力。

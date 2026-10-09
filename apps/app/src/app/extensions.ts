@@ -498,4 +498,28 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
     lifecycle: { reload: ["config"], detection: ["provider:qianfan"] },
     platform: ["darwin", "linux", "windows"],
   },
+  {
+    schemaVersion: 1,
+    id: "live-script-generator",
+    name: "直播话术生成 (Live Script Generator)",
+    description: "直播带货话术生成器：把企宣/星探/摘星/前台/讲师/直播招募六类岗位经验固化为话术方法论，覆盖开场留人/互动破冰/产品FAB/逼单转化/结尾复购。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用直播话术生成器来 " },
+    setup: {
+      instructions: "直播话术生成器为内置技能，无需额外配置。在对话中描述直播间定位、货品与人群，即可生成可直接口播的话术。",
+      primaryCta: "开始生成话术",
+    },
+    resources: [
+      { type: "skill", id: "live-script-generator", label: "直播话术生成", path: ".opencode/skills/live-script-generator/SKILL.md" },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用直播话术生成器来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "toggle-enabled", ref: "live-script-generator", label: "已启用" },
+    ],
+    lifecycle: { reload: ["skills"] },
+    defaultEnabled: true,
+    platform: ["darwin", "linux", "windows"],
+  },
 ];
