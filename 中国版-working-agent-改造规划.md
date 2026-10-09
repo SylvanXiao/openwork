@@ -262,3 +262,41 @@ P0 环境跑通 ──► P1 全中文 UI ──► P2 国产模型默认 ──
 ---
 
 *下一步：P1 全中文 UI（补全 `zh.ts` 至 100% 覆盖 + 默认中文）——可用直接 tsc 验证，不依赖起 server。*
+
+---
+
+## 11. P6 切片/场控 MCP 化（2026-10-09，已落地，待 commit）
+
+**决策（用户拍板 4 项，全选推荐）**
+1. 平台接入：**平台无关骨架 + Mock 适配器**（离线可跑，无需申请平台密钥）。
+2. MVP 边界：先**录播高光切片**（但四组工具面全部暴露）。
+3. 工具面：切片分析 / 场控监控 / 决策建议 / 素材复盘 **四组全做**。
+4. 打包：**`packages/live-control-mcp` 内置包 + `extensions.ts` 卡片**（镜像 openwork-ui-mcp 的 openwork-ui 模式）。
+
+**产物**
+- `packages/live-control-mcp/adapter.mjs`：`PlatformAdapter` 抽象类 + `MockAdapter`（确定性合成数据；hashSeed→mulberry32 保证同 id 同结果，便于复现/测试）。
+- `packages/live-control-mcp/index.mjs`：stdio MCP server（`McpServer` + `server.tool` + `StdioServerTransport`），10 个工具。
+- `packages/live-control-mcp/package.json`：`type:module` + `bin` + `deps: @modelcontextprotocol/sdk ^1.29.0, zod ^3.25.76`。
+- `apps/app/src/app/extensions.ts`：末尾新增 `live-control` builtin 卡片。
+
+**10 个工具（按四组）**
+- 切片分析：`analyze_recording` / `extract_highlights` / `generate_clips`
+- 场控监控：`get_room_state` / `monitor_room` / `detect_anomaly`
+- 决策建议：`suggest_action` / `auto_reply`（复用话术方法论的互动破冰/逼单模块）
+- 素材复盘：`export_replay_clips` / `summarize_session`
+
+**注册机制（已读码确认，三层）**
+- 卡片 `resources` 用 `{ type:"mcp", mcpServerName:"live-control", command:["npx","-y","live-control-mcp"], required:true }` + `enablement:[{type:"mcp-connected", ref:"live-control"}]` + `lifecycle:{ reload:["mcp"], detection:["mcp:live-control"] }` + `defaultEnabled:false`。
+- `extensionManifestToDirectoryInfo`（constants.ts:70）把卡自动转 `McpDirectoryInfo` 并入 `MCP_QUICK_CONNECT` → 出现在扩展目录/设置页。
+- `resolveLocalMcpCommand`（store.ts:457）：对**无** `localCommandRef` 的扩展直接返回 `entry.command` 拉起 stdio 子进程。`localCommandRef` 是写死联合类型（仅 `openwork.computerUseMcp`/`openwork.uiMcp`），本卡不用它，走默认分支。
+
+**验证闭环**
+- stdio 冒烟（真实 JSON-RPC 握手）：`initialize` OK（serverInfo live-control 0.1.0）→ `tools/list` 返回全部 10 工具 → `tools/call` 抽验 5 个（analyze_recording/extract_highlights/get_room_state/auto_reply/summarize_session）均返回合法 JSON。
+- apps/app 全量 `tsc --noEmit` exit 0；`node --check` 两个 .mjs 通过。
+
+**范围边界与待办（重要，勿越界）**
+- `defaultEnabled:false`：避免未发布到 npm 的 `npx -y live-control-mcp` 在每次启动被自动拉起而失败；用户手动启用才连。真实分发需 npm 发布或 dev 路径替换（与 openwork-ui-mcp 同机制），属 P5 打包范畴。
+- Mock 模式 `generate_clips`/`export_replay_clips` **只产出 ffmpeg 命令与计划路径，不实际落片**；接入真实录制源后改为实际执行。
+- 真实平台适配器（抖音/视频号/淘宝/快手）替换 `index.mjs` 里 `new MockAdapter()` 即可，零结构改动——属后续独立 scope，本轮不做。
+- 与 P6 话术 skill 解耦：话术出文本（skill），切片/场控出平台动作/数据（MCP），印证"话术轻、场控重一个量级"。
+- P6 还剩**数字人**（仅分镜脚本生成，非驱动渲染），待定。

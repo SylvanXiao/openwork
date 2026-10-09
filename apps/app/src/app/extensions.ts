@@ -522,4 +522,36 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
     defaultEnabled: true,
     platform: ["darwin", "linux", "windows"],
   },
+  {
+    schemaVersion: 1,
+    id: "live-control",
+    name: "直播切片/场控 (Live Control)",
+    description: "直播切片与实时场控 MCP：录播高光识别、直播流实时监控与异常预警、基于数据的行动建议与弹幕回复、整场复盘。平台无关，当前内置离线 Mock 适配器，无需任何平台密钥即可跑通。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    icon: { src: "/openwork-mark.svg" },
+    composer: { prompt: "使用直播切片/场控来 " },
+    setup: {
+      instructions: "直播切片/场控为内置 MCP。启用后在对话中描述录播ID或直播ID，即可调用切片分析、场控监控、决策建议与复盘工具。当前为 Mock 适配器（合成数据），接入抖音/视频号/淘宝/快手真实平台时替换 adapter 即可。",
+      primaryCta: "启用直播切片/场控",
+    },
+    resources: [
+      {
+        type: "mcp",
+        id: "live-control-mcp",
+        label: "直播切片/场控 MCP",
+        mcpServerName: "live-control",
+        command: ["npx", "-y", "live-control-mcp"],
+        required: true,
+      },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用直播切片/场控来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "mcp-connected", ref: "live-control", label: "MCP server connected" },
+    ],
+    lifecycle: { reload: ["mcp"], detection: ["mcp:live-control"] },
+    defaultEnabled: false,
+    platform: ["darwin", "linux", "windows"],
+  },
 ];

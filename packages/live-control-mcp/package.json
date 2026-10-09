@@ -1,0 +1,22 @@
+{
+  "name": "live-control-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for live-stream slicing & real-time control (platform-agnostic, ships offline Mock adapter)",
+  "author": "OpenWork",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "live-control-mcp": "index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "adapter.mjs"
+  ],
+  "scripts": {
+    "check": "node --check index.mjs && node --check adapter.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.76"
+  }
+}
