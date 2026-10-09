@@ -300,3 +300,21 @@ P0 环境跑通 ──► P1 全中文 UI ──► P2 国产模型默认 ──
 - 真实平台适配器（抖音/视频号/淘宝/快手）替换 `index.mjs` 里 `new MockAdapter()` 即可，零结构改动——属后续独立 scope，本轮不做。
 - 与 P6 话术 skill 解耦：话术出文本（skill），切片/场控出平台动作/数据（MCP），印证"话术轻、场控重一个量级"。
 - P6 还剩**数字人**（仅分镜脚本生成，非驱动渲染），待定。
+
+---
+
+## 12. P6 收尾：数字人分镜脚本 + 真实平台适配器机制（2026-10-09，已落地，待 commit）
+
+**③ 数字人分镜脚本 skill（收尾 P6 第四场景）**
+- 新建 `.opencode/skills/digital-human-storyboard/SKILL.md`：数字人直播分镜脚本生成器，**只产分镜表（镜头运动/画面/口播/字幕/时长/音效），不负责驱动渲染**。
+- 结构与 `live-script-generator` 对齐：六重身份视角、分镜五段落（开场留人/互动破冰/产品FAB/逼单/复购）、生成前必问、分镜表输出格式、模板速查、按品类六类骨架、数字人专属注意（口型停顿/镜头幅度/绿幕抠像/字幕安全区/互动预埋）、节奏变体、合规红线。
+- `extensions.ts` 新增 `digital-human-storyboard` builtin 卡片（镜像话术卡的 `skill` 资源 + `toggle-enabled` enablement + `reload:["skills"]` + `defaultEnabled:true`）。
+- 与话术 skill 的关系：话术出纯口播文本 → 数字人分镜把口播拆成可驱动/剪辑的一镜一镜；SKILL.md 内已写明建议「先用语话术技能出稿，再分镜」。
+- → **P6 四场景全部落地**：话术(skill) + 切片/场控(MCP) + 数字人分镜(skill)。
+
+**② 真实平台适配器机制（可一键切换，但未实测）**
+- `index.mjs` 新增 `createAdapter()` 工厂：按环境变量 `LIVE_CONTROL_ADAPTER` 选择（`mock` 默认 / `douyin`）。替换 `new MockAdapter()` 的硬代码为 env 选择，**切换机制本身已实测**（设 `LIVE_CONTROL_ADAPTER=douyin` 后 server 启动、tools/list 仍 10 工具、tools/call 触发 `get_room_state` 正确报「缺少 DOUYIN_CLIENT_KEY」）。
+- 新增 `packages/live-control-mcp/adapters/douyin.mjs`：`DouyinAdapter extends PlatformAdapter`，实现全部 10 方法，读 `DOUYIN_CLIENT_KEY/SECRET/OPEN_ID/ACCESS_TOKEN` 环境变量，走 `access-token` 头 + `client_token` 鉴权。
+- **重要边界（勿越界）**：抖音适配器的 endpoint 路径与返回结构是「基于公开文档的占位」，未经真机验证——真实抖音直播/回放接口需企业资质 + 特定 scope（live.room / data.external / im 等），且返回需按文档归一化。**没有凭证无法真机验收**，故只交付「可一键切换 + 字段映射骨架」，不伪造成功。拿到凭证后需逐一核对接口路径/字段/权限再正式启用。
+- 接其他平台：在 `adapters/` 下新建实现 PlatformAdapter 10 方法的文件，在 `createAdapter` 注册即可，其余零改动。
+- **P6 全部完成标记**：切片/场控 MCP（mock 跑通 + 真实适配器机制就绪）、话术 skill、数字人分镜 skill 均已落地；真实平台对接为后续独立 scope（依赖凭证）。

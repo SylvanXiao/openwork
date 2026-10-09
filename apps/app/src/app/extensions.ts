@@ -524,6 +524,30 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
   },
   {
     schemaVersion: 1,
+    id: "digital-human-storyboard",
+    name: "数字人分镜脚本 (Digital Human Storyboard)",
+    description: "数字人直播分镜脚本生成器：把口播稿拆解成可直接交给数字人驱动/剪辑的分镜表（镜头运动/画面/口播/字幕/时长/音效），覆盖六类岗位视角与开场留人/互动/产品FAB/逼单/复购五段结构。不负责驱动渲染。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用数字人分镜脚本来 " },
+    setup: {
+      instructions: "数字人分镜脚本为内置技能，无需额外配置。在对话中描述数字人人设、品类与货品，即可生成分镜表。建议先用直播话术生成器出稿，再分镜。",
+      primaryCta: "开始生成分镜",
+    },
+    resources: [
+      { type: "skill", id: "digital-human-storyboard", label: "数字人分镜脚本", path: ".opencode/skills/digital-human-storyboard/SKILL.md" },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用数字人分镜脚本来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "toggle-enabled", ref: "digital-human-storyboard", label: "已启用" },
+    ],
+    lifecycle: { reload: ["skills"] },
+    defaultEnabled: true,
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
     id: "live-control",
     name: "直播切片/场控 (Live Control)",
     description: "直播切片与实时场控 MCP：录播高光识别、直播流实时监控与异常预警、基于数据的行动建议与弹幕回复、整场复盘。平台无关，当前内置离线 Mock 适配器，无需任何平台密钥即可跑通。",

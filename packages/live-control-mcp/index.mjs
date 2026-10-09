@@ -7,7 +7,8 @@
  *
  * 平台无关：只依赖 adapter.mjs 里的 PlatformAdapter 统一接口，当前默认挂载
  * MockAdapter（离线可跑，确定性合成数据）。接真实平台（抖音/视频号/淘宝/快手）
- * 时，只需把下面 `new MockAdapter()` 换成对应 RealAdapter，其余零改动。
+ * 时，在 adapters/ 下实现 PlatformAdapter 的 10 个方法，并用环境变量
+ * LIVE_CONTROL_ADAPTER 切换（见文件底部 createAdapter），其余零改动。
  *
  * 与 P6 话术 skill 的关系：话术 skill（live-script-generator）产出「口播文本」，
  * 本 MCP 产出「平台数据/动作」（切片、场控、复盘）—— 一个轻、一个重，职责分离。
@@ -20,10 +21,20 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { MockAdapter } from "./adapter.mjs";
+import { DouyinAdapter } from "./adapters/douyin.mjs";
 
 // ── Adapter selection ──
-// 接入真实平台时替换为对应 RealAdapter（实现 adapter.mjs 里的同名方法）。
-const ADAPTER = new MockAdapter();
+// 通过环境变量 LIVE_CONTROL_ADAPTER 选择平台适配器：
+//   mock    → 离线 Mock（默认，无需凭证，确定性合成数据）
+//   douyin  → 抖音开放平台（需 DOUYIN_CLIENT_KEY/SECRET 等环境变量，脚手架未实测）
+// 接入其他平台：在 adapters/ 下新建实现 PlatformAdapter 10 方法的文件，并在此注册。
+function createAdapter() {
+  const kind = (process.env.LIVE_CONTROL_ADAPTER || "mock").toLowerCase();
+  if (kind === "douyin") return new DouyinAdapter();
+  // 未来：if (kind === "wechat") return new WechatAdapter();
+  return new MockAdapter();
+}
+const ADAPTER = createAdapter();
 
 const ok = (text) => ({ content: [{ type: "text", text }] });
 const fail = (text) => ({ content: [{ type: "text", text }], isError: true });
