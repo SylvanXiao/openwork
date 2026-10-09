@@ -798,6 +798,13 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
           const connection = orgMcp.connections.find((entry) => entry.id === server.orgMcpConnectionId);
           const signIn = composerConnectionSignIn({ server, status, connection });
           const connecting = Boolean(signIn && orgMcp.connectingId === signIn.connectionId);
+          // Local (workspace) MCPs have no org connection id, so the org sign-in
+          // helper declines them. When one needs auth or a reconnect, offer an
+          // entry point into the MCP settings surface where the browser OAuth
+          // flow starts (#HANDOFF local needs_auth).
+          const localSignIn = !signIn
+            && isLocalCapability(server.origin)
+            && (status?.status === "needs_auth" || status?.status === "reconnect_required");
           const source = [server.marketplaceName, server.pluginName].filter(Boolean).join(" · ");
           return (
             <div
@@ -818,6 +825,14 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
                     >
                       {connecting ? <LoaderCircle size={10} className="animate-spin" /> : null}
                       {signIn.reconnect ? t("mcp.org_connection_reconnect_action") : t("mcp.org_connection_connect_action")}
+                    </button>
+                  ) : localSignIn ? (
+                    <button
+                      type="button"
+                      className="inline-flex shrink-0 items-center gap-1 rounded-full bg-gray-12 px-2 py-0.5 text-[10px] font-medium text-gray-1 transition-colors hover:bg-gray-11"
+                      onClick={() => props.onOpenSettingsSection?.("connections")}
+                    >
+                      {t("composer.local_mcp_sign_in")}
                     </button>
                   ) : statusLabel ? (
                     <span className="shrink-0 rounded-full bg-gray-3 px-2 py-0.5 text-[10px] font-medium text-gray-11">

@@ -258,4 +258,76 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
     ],
     lifecycle: { reload: ["config"], detection: ["provider:ollama"] },
   },
+  {
+    schemaVersion: 1,
+    id: "siliconflow-cn",
+    name: "硅基流动 (SiliconFlow)",
+    description: "国产大模型聚合网关，兼容 OpenAI 接口。配置 API Key 后即可选用 DeepSeek、Qwen 等模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用硅基流动（SiliconFlow）的模型来 " },
+    setup: {
+      instructions: "在硅基流动控制台获取 API Key，并将其配置为 SiliconFlow 提供方的密钥，即可在模型列表中选用 DeepSeek、Qwen 等模型。",
+      primaryCta: "配置硅基流动",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "siliconflow-cn", providerId: "siliconflow-cn", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用硅基流动（SiliconFlow）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "siliconflow-cn", label: "SiliconFlow 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:siliconflow-cn"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "alibaba-cn",
+    name: "阿里云百炼 (DashScope)",
+    description: "阿里云百炼大模型平台，兼容 OpenAI 接口。支持通义千问 Qwen 全系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用阿里云百炼（DashScope）的模型来 " },
+    setup: {
+      instructions: "在阿里云百炼控制台开通模型服务并获取 API Key，配置为阿里云百炼提供方的密钥后即可选用 Qwen 系列模型。",
+      primaryCta: "配置阿里云百炼",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "alibaba-cn", providerId: "alibaba-cn", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用阿里云百炼（DashScope）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "alibaba-cn", label: "阿里云百炼 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:alibaba-cn"] },
+    platform: ["darwin", "linux", "windows"],
+  },
+  {
+    schemaVersion: 1,
+    id: "zhipuai",
+    name: "智谱开放平台 (Zhipu AI)",
+    description: "智谱 AI 开放平台，兼容 OpenAI 接口。支持 GLM 全系列模型。",
+    source: { format: "openwork-builtin", origin: "builtin", trusted: true },
+    composer: { prompt: "使用智谱开放平台（Zhipu AI）的模型来 " },
+    setup: {
+      instructions: "在智谱开放平台获取 API Key，配置为智谱 AI 提供方的密钥后即可选用 GLM 系列模型。",
+      primaryCta: "配置智谱开放平台",
+      secondaryCta: "获取 API Key",
+    },
+    resources: [
+      { type: "provider", id: "zhipuai", providerId: "zhipuai", packageName: "@ai-sdk/openai-compatible", required: true },
+    ],
+    contributions: [
+      { type: "composer-prompt", prompt: "使用智谱开放平台（Zhipu AI）的模型来 ", location: "composer" },
+    ],
+    enablement: [
+      { type: "provider-connected", ref: "zhipuai", label: "智谱 AI 提供方" },
+    ],
+    lifecycle: { reload: ["config"], detection: ["provider:zhipuai"] },
+    platform: ["darwin", "linux", "windows"],
+  },
 ];

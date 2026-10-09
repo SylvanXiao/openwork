@@ -76,7 +76,7 @@ export const isLanguage = (value: unknown): value is Language => {
   return typeof value === "string" && LANGUAGES.includes(value as Language);
 };
 
-let localeValue: Language = "en";
+let localeValue: Language = "zh";
 
 /**
  * Get current locale
@@ -214,8 +214,8 @@ export const initLocale = (): Language => {
   }
 
   if (typeof document !== "undefined") {
-    document.documentElement.setAttribute("lang", "en");
+    document.documentElement.setAttribute("lang", "zh");
   }
 
-  return "en";
+  return "zh";
 };

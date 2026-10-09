@@ -13,11 +13,14 @@
  *
  * These are model ID substrings (case-insensitive match).
  */
+// 中国版默认编排：把国产旗舰模型置顶（按 token 费用「便宜够用优先」）。
+// 这些子串在模型 ID 上做大小写不敏感匹配（见 isRecommendedModel）。
 export const RECOMMENDED_MODEL_PATTERNS: string[] = [
-  "claude-opus-4",
-  "gpt-5.5",
-  "kimi-k2.6",
-  "glm-5.2",
+  "deepseek-v4-flash", // DeepSeek V4 Flash — 最便宜的日常首选
+  "qwen-turbo", // 通义千问 Turbo — 便宜够用
+  "qwen-plus", // 通义千问 Plus — 便宜且强
+  "glm-5.2", // 智谱 GLM-5.2 — 国产旗舰
+  "kimi-k2.6", // 月之暗面 Kimi K2.6 — 长上下文推理
 ];
 
 /**

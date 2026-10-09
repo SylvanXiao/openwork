@@ -28,7 +28,20 @@ describe("OpenWork extension catalog platform filter", () => {
   });
 
   test("keeps OpenWork Browser desktop-only and Computer Use mac-only", () => {
-    expect(filteredIds("darwin")).toEqual(["openwork-browser", "computer-use", "ollama"]);
-    expect(filteredIds("linux")).toEqual(["openwork-browser", "ollama"]);
+    expect(filteredIds("darwin")).toEqual([
+      "openwork-browser",
+      "computer-use",
+      "ollama",
+      "siliconflow-cn",
+      "alibaba-cn",
+      "zhipuai",
+    ]);
+    expect(filteredIds("linux")).toEqual([
+      "openwork-browser",
+      "ollama",
+      "siliconflow-cn",
+      "alibaba-cn",
+      "zhipuai",
+    ]);
   });
 });
