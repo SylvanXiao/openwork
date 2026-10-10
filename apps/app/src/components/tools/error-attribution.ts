@@ -107,7 +107,7 @@ export function reconnectActionFromChatToolResult(
   result: unknown,
   input?: unknown,
 ): ChatToolReconnectAction | null {
-  // Only canonical OpenWork Cloud tools may produce a native connection action.
+  // Only canonical TGWork Cloud tools may produce a native connection action.
   // Discovery may offer authorization only for an explicit setup request;
   // finding an unavailable connection is not itself a reason to prompt.
   if (!OPENWORK_CLOUD_CAPABILITY_TOOLS.has(toolName)) return null
@@ -177,8 +177,8 @@ export function attributeChatToolError(errorText: string): ToolErrorAttribution 
     || category === "lifecycle_deadline"
   ) {
     return confirmed(
-      "OpenWork timeout",
-      "OpenWork created this deadline. The external operation may still have completed, so verify its state before retrying.",
+      "TGWork timeout",
+      "TGWork created this deadline. The external operation may still have completed, so verify its state before retrying.",
     )
   }
 
@@ -187,7 +187,7 @@ export function attributeChatToolError(errorText: string): ToolErrorAttribution 
     || code === "MCP_URL_BLOCKED"
     || code === "MCP_FETCH_FORBIDDEN_PORT"
   ) {
-    return confirmed("Blocked by OpenWork", "OpenWork blocked the request before it was sent.")
+    return confirmed("Blocked by TGWork", "TGWork blocked the request before it was sent.")
   }
 
   if (httpStatus !== undefined && (httpStatus < 200 || httpStatus >= 300)) {

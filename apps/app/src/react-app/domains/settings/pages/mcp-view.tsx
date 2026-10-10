@@ -160,7 +160,7 @@ export type McpViewProps = {
   installedCommands?: LibraryCommandItem[];
   /** Composer agents to render in Library. */
   installedAgents?: LibraryAgentItem[];
-  /** MCP capabilities assigned through OpenWork Connect. */
+  /** MCP capabilities assigned through TGWork Connect. */
   availableConnectMcpServers?: McpServerEntry[];
   availableConnectMcpStatuses?: McpStatusMap;
   /** Organization inventory is still being fetched and nothing is cached yet. */
@@ -179,7 +179,7 @@ export type McpViewProps = {
   mcpLastUpdatedAt: number | null;
   mcpStatuses: McpStatusMap;
   mcpConnectingName: string | null;
-  /** False when secure storage for OpenWork-managed sign-ins is unavailable on this device. */
+  /** False when secure storage for TGWork-managed sign-ins is unavailable on this device. */
   managedOAuthAvailable?: boolean;
   /** Organization policy permission for local extension configuration. */
   allowManageExtensions: boolean;
@@ -197,7 +197,7 @@ export type McpViewProps = {
   isExtensionConnected?: (entry: McpDirectoryInfo) => boolean;
   /** Enablement context for evaluating extension active state. */
   enablementContext?: import("../../../../app/enablement").EnablementContext;
-  /** Organization policy restriction for OpenWork-provided built-in extensions. */
+  /** Organization policy restriction for TGWork-provided built-in extensions. */
   builtInExtensionsDisabled?: boolean;
   /** Preview a Claude Code plugin bundle from a GitHub URL ("Will install" disclosure). */
   previewClaudePlugin?: (url: string) => Promise<OpenworkClaudePluginPreview>;
@@ -854,7 +854,7 @@ export function McpView(props: McpViewProps) {
 
   // Auto-configured built-ins like openwork-cloud remain active but hidden from
   // Your apps until Show hidden reveals the row for disable/remove. Projected
-  // direct org connections are shown through their OpenWork Connect card.
+  // direct org connections are shown through their TGWork Connect card.
   const visibleMcpServers = inventoryState === "all" && (filter === "all" || filter === "mcp")
     ? showHidden
       ? props.mcpServers
@@ -894,7 +894,7 @@ export function McpView(props: McpViewProps) {
     return isQuickConnectConfigured(entry);
   };
 
-  // Built-in OpenWork extensions answer to `allowBuiltInExtensions`; every
+  // Built-in TGWork extensions answer to `allowBuiltInExtensions`; every
   // other directory entry is a local install governed by
   // `allowManageExtensions`. Entries the member already installed stay usable
   // but can no longer be managed.
@@ -1069,7 +1069,7 @@ export function McpView(props: McpViewProps) {
             description={detailSkill.description ?? "Installed skill"}
             taxonomy="skill"
             connected={true}
-            connectedLabel={detailSkill.origin === "openwork-connect" ? "Available through OpenWork Connect" : undefined}
+            connectedLabel={detailSkill.origin === "openwork-connect" ? "Available through TGWork Connect" : undefined}
             hidden={hidden}
             path={detailSkill.origin === "openwork-connect" ? undefined : detailSkill.path}
             sourceLabel={
@@ -1156,11 +1156,11 @@ export function McpView(props: McpViewProps) {
               ? `Provided by ${detailConnectMcp.pluginName}${detailConnectMcp.marketplaceName ? ` · ${detailConnectMcp.marketplaceName}` : ""}.`
               : detailConnectMcp.marketplaceName
                 ? `Provided by ${detailConnectMcp.marketplaceName}.`
-                : "Available through OpenWork Connect."
+                : "Available through TGWork Connect."
           }
           taxonomy="connection"
           connected={(props.availableConnectMcpStatuses?.[detailConnectMcp.id ?? detailConnectMcp.name]?.status) === "connected"}
-          connectedLabel="Available through OpenWork Connect"
+          connectedLabel="Available through TGWork Connect"
           disconnectedLabel="Setup required"
           url={detailConnectMcp.config.type === "remote" ? detailConnectMcp.config.url : undefined}
           oauth={detailConnectMcp.config.type === "remote"}
@@ -1333,7 +1333,7 @@ export function McpView(props: McpViewProps) {
     <section className="w-full max-w-3xl animate-in fade-in duration-300">
       {props.builtInExtensionsDisabled && props.allowManageExtensions ? (
         <div className="mb-5 rounded-xl border border-amber-6 bg-amber-2 px-4 py-3 text-xs text-amber-11">
-          Built-in OpenWork extensions are disabled by your organization. Use Show hidden to review blocked built-ins.
+          Built-in TGWork extensions are disabled by your organization. Use Show hidden to review blocked built-ins.
         </div>
       ) : null}
 
@@ -1345,7 +1345,7 @@ export function McpView(props: McpViewProps) {
           <p className="text-sm font-medium text-foreground">Your team’s tool access</p>
           <p className="mt-1">{manageExtensionsDisabledReason()}</p>
           <p className="mt-2">Need an MCP server or skill? Ask your admin to share it with your team or allow local tools in Team → Access. You can still sign in to available connections below.</p>
-          {props.builtInExtensionsDisabled ? <p className="mt-2">Built-in OpenWork extensions are disabled by your organization. Use Show hidden to review blocked built-ins.</p> : null}
+          {props.builtInExtensionsDisabled ? <p className="mt-2">Built-in TGWork extensions are disabled by your organization. Use Show hidden to review blocked built-ins.</p> : null}
         </div>
       )}
 

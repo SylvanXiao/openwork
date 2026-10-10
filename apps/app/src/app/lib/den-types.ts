@@ -121,7 +121,7 @@ export type DenOrgPlugin = {
   memberCount: number;
   updatedAt: string | null;
   componentCounts: Record<string, number>;
-  /** Preferred Den surface: plugins are normalized into OpenWork extensions. */
+  /** Preferred Den surface: plugins are normalized into TGWork extensions. */
   extension?: DenOrgExtensionProjection | null;
   cloudReadiness?: DenPluginCloudReadiness;
 };

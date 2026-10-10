@@ -15,7 +15,7 @@ const ACTION_OWNER = {
   organization_admin: "Your organization admin",
   provider_admin: "The provider admin",
   network_admin: "Your network admin",
-  openwork: "OpenWork support",
+  openwork: "TGWork support",
 }
 
 /** Uses the desktop's signed-in account; credentials never enter an MCP App. */

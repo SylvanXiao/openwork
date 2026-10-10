@@ -52,7 +52,7 @@ export async function buildOpenworkEnvSystemContext(
     const keyList = keys.map((key) => `- ${key}`).join("\n");
 
     const context = [
-      "OpenWork environment variables configured:",
+      "TGWork environment variables configured:",
       keyList,
       "Only names are shown; values are secret. Use these names when relevant.",
     ].join("\n");

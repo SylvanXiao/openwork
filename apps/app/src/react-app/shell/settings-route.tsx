@@ -995,7 +995,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   );
   const [openWorkModelsPromoHidden, setOpenWorkModelsPromoHidden] = useState(isOpenWorkModelsPromoHidden);
   const openWorkModelsPromoEligible = useOpenWorkModelsPromoEligibility();
-  // Entitled = Den/import says OpenWork Models is included. Available = local
+  // Entitled = Den/import says TGWork Models is included. Available = local
   // engine actually exposes selectable openwork models.
   const openWorkModelsEntitled = cloudSession.isSignedIn && hasOpenWorkCloudProvider;
   const openWorkModelsAvailable = hasOpenWorkModelsAvailable({
@@ -1256,7 +1256,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   const installOpenAiImageExtension = useCallback(async (apiKey: string) => {
     const resolvedApiKey = apiKey.trim();
     if (!openworkClient) {
-      setImageExtensionError("OpenWork server is not connected.");
+      setImageExtensionError("TGWork server is not connected.");
       return;
     }
     if (!resolvedApiKey) {
@@ -1270,7 +1270,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     try {
       await openworkClient.upsertUserEnv([{ key: "OPENAI_API_KEY", value: resolvedApiKey }]);
       setUserEnvKeys((current) => Array.from(new Set([...current, "OPENAI_API_KEY"])));
-      setImageExtensionStatus("Saved OPENAI_API_KEY. Agents can use OpenWork extension actions for image generation.");
+      setImageExtensionStatus("Saved OPENAI_API_KEY. Agents can use TGWork extension actions for image generation.");
     } catch (error) {
       setImageExtensionError(describeRouteError(error));
     } finally {
@@ -1284,7 +1284,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     const apiKey = input.apiKey.trim();
     const prompt = input.prompt.trim();
     if (!client || !workspaceId) {
-      setImageGenerationError("OpenWork server is not connected for this workspace.");
+      setImageGenerationError("TGWork server is not connected for this workspace.");
       return;
     }
     if (!apiKey) {
@@ -1331,7 +1331,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     const workspaceId = runtimeWorkspaceId?.trim() ?? "";
     const modelId = input.modelId.trim();
     if (!client || !workspaceId) {
-      setLocalProviderError("OpenWork server is not connected for this workspace.");
+      setLocalProviderError("TGWork server is not connected for this workspace.");
       return;
     }
     if (!modelId) {
@@ -2258,7 +2258,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     setRenameWorkspaceBusy(true);
     try {
       if (!openworkClient) {
-        toast.error("OpenWork server is unavailable. Reconnect the server before renaming workspaces.");
+        toast.error("TGWork server is unavailable. Reconnect the server before renaming workspaces.");
         return;
       }
       await openworkClient.updateWorkspaceDisplayName(renameWorkspaceId, trimmed);
@@ -2295,7 +2295,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       }
       return;
     }
-    throw new Error("OpenWork server is unavailable. Reconnect the server before exporting workspace config.");
+    throw new Error("TGWork server is unavailable. Reconnect the server before exporting workspace config.");
   }, [workspaceServerClientResolver, workspaces]);
 
   const handleForgetWorkspace = useCallback(async (workspaceId: string) => {
@@ -2621,15 +2621,15 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
               cloudMcpHealth={cloudMcpHealth}
               refreshCloudMcpHealth={refreshCloudMcpHealth}
               getEngineV2PreviewStatus={async () => {
-                if (!openworkClient) throw new Error("OpenWork server is not connected.");
+                if (!openworkClient) throw new Error("TGWork server is not connected.");
                 return openworkClient.getEngineV2PreviewStatus();
               }}
               setEngineV2PreviewEnabled={async (enabled) => {
-                if (!openworkClient) throw new Error("OpenWork server is not connected.");
+                if (!openworkClient) throw new Error("TGWork server is not connected.");
                 return openworkClient.setEngineV2PreviewEnabled(enabled);
               }}
               setEngineV2PreviewChatRouting={async (enabled) => {
-                if (!openworkClient) throw new Error("OpenWork server is not connected.");
+                if (!openworkClient) throw new Error("TGWork server is not connected.");
                 return openworkClient.setEngineV2PreviewChatRouting(enabled);
               }}
               organizationServer={denSession}

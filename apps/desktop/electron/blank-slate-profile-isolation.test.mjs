@@ -16,8 +16,8 @@ test("any desktop build can launch with an isolated blank-slate profile", async 
   };
   const originalNormalEnv = { ...normalEnv };
   const normalProfile = prepareBlankSlateProfile({ argv: [], env: normalEnv });
-  const normal = resolveBlankSlateLaunch({ appName: "OpenWork Enterprise", profile: normalProfile });
-  assert.deepEqual(normal, { enabled: false, appName: "OpenWork Enterprise", userDataPath: null });
+  const normal = resolveBlankSlateLaunch({ appName: "TGWork Enterprise", profile: normalProfile });
+  assert.deepEqual(normal, { enabled: false, appName: "TGWork Enterprise", userDataPath: null });
   assert.deepEqual(normalEnv, originalNormalEnv);
 
   const firstEnv = { OPENWORK_DESKTOP_DISTRIBUTION: "enterprise" };
@@ -25,12 +25,12 @@ test("any desktop build can launch with an isolated blank-slate profile", async 
   const secondEnv = {};
   const firstProfile = prepareBlankSlateProfile({ argv: ["--blank-slate"], env: firstEnv });
   const secondProfile = prepareBlankSlateProfile({ argv: ["--blank-slate"], env: secondEnv });
-  const first = resolveBlankSlateLaunch({ appName: "OpenWork Enterprise", profile: firstProfile });
-  const second = resolveBlankSlateLaunch({ appName: "OpenWork Enterprise", profile: secondProfile });
+  const first = resolveBlankSlateLaunch({ appName: "TGWork Enterprise", profile: firstProfile });
+  const second = resolveBlankSlateLaunch({ appName: "TGWork Enterprise", profile: secondProfile });
 
   try {
     assert.equal(first.enabled, true);
-    assert.equal(first.appName, "OpenWork Enterprise - Test profile");
+    assert.equal(first.appName, "TGWork Enterprise - Test profile");
     assert.notEqual(first.rootPath, second.rootPath);
     assert.ok(!first.userDataPath.includes("com.differentai.openwork"));
 
@@ -49,9 +49,9 @@ test("any desktop build can launch with an isolated blank-slate profile", async 
     );
     assert.equal(firstEnv.OPENWORK_DESKTOP_DISTRIBUTION, "enterprise");
     assert.equal("OPENWORK_DEV_MODE" in firstEnv, false);
-    assert.ok(first.appName.startsWith("OpenWork Enterprise"));
+    assert.ok(first.appName.startsWith("TGWork Enterprise"));
     assert.equal(normal.userDataPath, null);
-    assert.equal(normal.appName, "OpenWork Enterprise");
+    assert.equal(normal.appName, "TGWork Enterprise");
     assert.equal(
       normalEnv.OPENWORK_DESKTOP_BOOTSTRAP_PATH,
       originalNormalEnv.OPENWORK_DESKTOP_BOOTSTRAP_PATH,

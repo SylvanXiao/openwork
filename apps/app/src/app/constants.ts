@@ -40,9 +40,9 @@ export type McpDirectoryInfo = {
   /** Extra environment variables handed to a local stdio server process. */
   environment?: Record<string, string>;
   oauth: boolean;
-  /** Route OAuth through the local OpenWork gateway instead of delegating it to OpenCode. */
+  /** Route OAuth through the local TGWork gateway instead of delegating it to OpenCode. */
   managedOAuth?: boolean;
-  /** Identifies MCP entries owned by OpenWork Connect instead of workspace configuration. */
+  /** Identifies MCP entries owned by TGWork Connect instead of workspace configuration. */
   managedBy?: "openwork-connect";
   oauthConfig?: {
     clientId?: string;
@@ -57,9 +57,9 @@ export type McpDirectoryInfo = {
   iconSrc?: string;
   /** Prompt inserted from the composer extension picker. */
   composerPrompt?: string;
-  /** Whether OpenWork should show this extension as enabled before user setup. */
+  /** Whether TGWork should show this extension as enabled before user setup. */
   defaultEnabled?: boolean;
-  /** Whether OpenWork should hide this extension from the default catalog view. */
+  /** Whether TGWork should hide this extension from the default catalog view. */
   defaultHidden?: boolean;
   /** Whether this extension is still in preview. */
   preview?: boolean;
@@ -176,7 +176,7 @@ export const MCP_QUICK_CONNECT: McpDirectoryInfo[] = [
     kind: "mcp",
     iconSrc: "/openwork-mark.svg",
     // Auto-managed by the signed-in cloud reconciler (syncCloudControlMcp):
-    // configured + enabled while signed in to OpenWork Cloud. Hidden from the
+    // configured + enabled while signed in to TGWork Cloud. Hidden from the
     // default catalog; "Show hidden" reveals it.
     defaultHidden: true,
   },

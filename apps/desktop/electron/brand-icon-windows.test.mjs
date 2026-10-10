@@ -86,8 +86,8 @@ test("updates both the live window icon and Windows taskbar identity", async () 
     image,
     appId: "com.differentai.openwork",
     appIconPath: "C:\\Users\\Admin\\brand-icon.ico",
-    relaunchCommand: "C:\\Program Files\\OpenWork\\OpenWork.exe",
-    relaunchDisplayName: "OpenWork",
+    relaunchCommand: "C:\\Program Files\\TGWork\\TGWork.exe",
+    relaunchDisplayName: "TGWork",
   }, async () => calls.push(["waitForRefresh"]));
 
   assert.deepEqual(calls, [
@@ -96,8 +96,8 @@ test("updates both the live window icon and Windows taskbar identity", async () 
     ["setAppDetails", {
       appIconPath: "C:\\Users\\Admin\\brand-icon.ico",
       appIconIndex: 0,
-      relaunchCommand: "C:\\Program Files\\OpenWork\\OpenWork.exe",
-      relaunchDisplayName: "OpenWork",
+      relaunchCommand: "C:\\Program Files\\TGWork\\TGWork.exe",
+      relaunchDisplayName: "TGWork",
     }],
     ["setAppDetails", { appId: "com.differentai.openwork" }],
     ["setIcon", image],
@@ -130,8 +130,8 @@ test("does not refresh the taskbar button before the boot window is shown", asyn
     image: { id: "company-icon" },
     appId: "com.differentai.openwork.brand.1234",
     appIconPath: "C:\\brand.ico",
-    relaunchCommand: "C:\\OpenWork.exe",
-    relaunchDisplayName: "OpenWork",
+    relaunchCommand: "C:\\TGWork.exe",
+    relaunchDisplayName: "TGWork",
   }, async () => calls.push("wait"));
 
   assert.deepEqual(calls, ["details", "details", "icon"]);
@@ -148,8 +148,8 @@ test("restores a visible taskbar button when refresh staging fails", async () =>
     image: { id: "company-icon" },
     appId: "com.differentai.openwork.brand.1234",
     appIconPath: "C:\\brand.ico",
-    relaunchCommand: "C:\\OpenWork.exe",
-    relaunchDisplayName: "OpenWork",
+    relaunchCommand: "C:\\TGWork.exe",
+    relaunchDisplayName: "TGWork",
   }, async () => {
     calls.push("wait");
     throw new Error("refresh failed");
@@ -160,16 +160,16 @@ test("restores a visible taskbar button when refresh staging fails", async () =>
 
 test("builds a per-user Start Menu shortcut with the branded Windows identity", () => {
   assert.equal(windowsBrandShortcutFileName('Agent: Blue/West'), "Agent- Blue-West.lnk");
-  assert.equal(windowsInstalledShortcutFileName("OpenWork"), "OpenWork.lnk");
+  assert.equal(windowsInstalledShortcutFileName("TGWork"), "TGWork.lnk");
   assert.deepEqual(windowsBrandShortcutDetails({
-    target: "C:\\Program Files\\OpenWork\\OpenWork.exe",
+    target: "C:\\Program Files\\TGWork\\TGWork.exe",
     appId: "com.differentai.openwork.brand.1234",
     appIconPath: "C:\\Users\\Admin\\brand-icon.ico",
-    appName: "OpenWork",
+    appName: "TGWork",
   }), {
-    target: "C:\\Program Files\\OpenWork\\OpenWork.exe",
-    cwd: "C:\\Program Files\\OpenWork",
-    description: "OpenWork organization desktop",
+    target: "C:\\Program Files\\TGWork\\TGWork.exe",
+    cwd: "C:\\Program Files\\TGWork",
+    description: "TGWork organization desktop",
     icon: "C:\\Users\\Admin\\brand-icon.ico",
     iconIndex: 0,
     appUserModelId: "com.differentai.openwork.brand.1234",
@@ -179,10 +179,10 @@ test("builds a per-user Start Menu shortcut with the branded Windows identity", 
 test("anchors a packaged shortcut target to the active Windows user profile", () => {
   assert.equal(windowsInstalledExecutablePath({
     packaged: true,
-    execPath: "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Programs\\@openworkdesktop\\OpenWork.exe",
+    execPath: "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Programs\\@openworkdesktop\\TGWork.exe",
     resourcesPath: "C:\\Windows\\System32\\config\\systemprofile\\AppData\\Local\\Programs\\@openworkdesktop\\resources",
     shortcutPath: "C:\\Users\\Administrator\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Northwind.lnk",
-  }), "C:\\Users\\Administrator\\AppData\\Local\\Programs\\@openworkdesktop\\OpenWork.exe");
+  }), "C:\\Users\\Administrator\\AppData\\Local\\Programs\\@openworkdesktop\\TGWork.exe");
 });
 
 test("creates a branded shortcut after callers remove stale Windows metadata", () => {
@@ -194,7 +194,7 @@ test("creates a branded shortcut after callers remove stale Windows metadata", (
       return true;
     },
   };
-  const shortcutPath = "C:\\Users\\Admin\\OpenWork Organization.lnk";
+  const shortcutPath = "C:\\Users\\Admin\\TGWork Organization.lnk";
 
   const created = writeWindowsBrandShortcut(shellApi, shortcutPath, details, false);
   assert.equal(created, true);

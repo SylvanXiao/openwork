@@ -264,7 +264,7 @@ function PreparedWorkspacePage({ prepared }: { prepared: PreparedBootstrapSummar
             className="mx-auto flex w-fit items-center gap-2 rounded-full border border-green-6/30 bg-green-2/30 px-3 py-1 text-xs font-semibold text-green-11"
           >
             <CheckCircle2 className="size-3.5" />
-            Setup complete — OpenWork is ready
+            Setup complete — TGWork is ready
           </div>
           <PageTitle>{prepared.orgName}</PageTitle>
         </PageHeader>
@@ -765,7 +765,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
           <PageHeader>
             <PageTitle>Workspace identity is ready</PageTitle>
             <PageDescription>
-              Restart OpenWork once to finish applying {orgName || "your workspace"}&apos;s name and app icon everywhere.
+              Restart TGWork once to finish applying {orgName || "your workspace"}&apos;s name and app icon everywhere.
             </PageDescription>
             {brandingRestart.updateReady ? (
               <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-green-6/30 bg-green-2/30 px-3 py-1 text-xs font-semibold text-green-11">
@@ -795,7 +795,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
               Continue without restarting
             </Button>
             <Button type="button" size="lg" onClick={() => void restartWithBranding()}>
-              Restart OpenWork
+              Restart TGWork
               <ArrowRight data-icon="inline-end" />
             </Button>
           </PageFooter>
@@ -838,7 +838,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
               className="mx-auto flex w-fit items-center gap-2 rounded-full border border-green-6/30 bg-green-2/30 px-3 py-1 text-xs font-semibold text-green-11"
             >
               <CheckCircle2 className="size-3.5" />
-              Setup complete — OpenWork prepared this workspace
+              Setup complete — TGWork prepared this workspace
             </div>
           ) : null}
           <PageTitle>
@@ -871,7 +871,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
               <EmptyHeader>
                 <EmptyTitle>No resources have been configured for this organization yet.</EmptyTitle>
                 <EmptyDescription>
-                  Add AI providers or marketplaces from the OpenWork Cloud dashboard.
+                  Add AI providers or marketplaces from the TGWork Cloud dashboard.
                 </EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
@@ -879,7 +879,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
                   variant="outline"
                   onClick={() => platform.openLink(resolveDenBaseUrls(settings.baseUrl).baseUrl)}
                 >
-                  Open OpenWork Cloud
+                  Open TGWork Cloud
                   <ArrowUpRightIcon data-icon="inline-end" />
                 </Button>
               </EmptyContent>

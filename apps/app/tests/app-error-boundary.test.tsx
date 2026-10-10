@@ -107,7 +107,7 @@ test("redaction masks bare token-like pairs outside URLs", () => {
 });
 
 test("redaction keeps file:// stack frames and dev-server line:col positions intact", () => {
-  const packaged = "    at render (file:///Applications/OpenWork.app/Contents/Resources/app/dist/assets/index-abc.js:1:2345)";
+  const packaged = "    at render (file:///Applications/天工开物.app/Contents/Resources/app/dist/assets/index-abc.js:1:2345)";
   expect(redactCrashText(packaged)).toBe(packaged);
   expect(redactCrashText("    at AppRoot (http://localhost:5173/src/react-app/shell/app-root.tsx?t=1725000000:371:23)")).toBe(
     "    at AppRoot (http://localhost:5173/src/react-app/shell/app-root.tsx:371:23)",

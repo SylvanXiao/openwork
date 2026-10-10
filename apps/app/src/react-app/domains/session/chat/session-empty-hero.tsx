@@ -124,7 +124,7 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
     return () => window.removeEventListener(pendingChatSeedEvent, seed);
   }, []);
 
-  // Quiet inline lead to OpenWork Models: replaces the old startup dialog
+  // Quiet inline lead to TGWork Models: replaces the old startup dialog
   // interrupt. Shown only while the session runs on the free starter model
   // (the built-in `opencode` provider) and the hosted offering applies.
   const onFreeStarterModel = props.composer?.selectedModel.providerID === DEFAULT_MODEL.providerID;
@@ -205,7 +205,7 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
             type="button"
             className="flex size-5 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:text-foreground"
             onClick={hideOpenWorkModelsPromo}
-            aria-label="Hide OpenWork Models hint"
+            aria-label="Hide TGWork Models hint"
           >
             <X className="size-3" />
           </button>

@@ -138,7 +138,7 @@ function connectDotVariant(status: OpenWorkConnectStatus): StatusDotVariant {
 
 /**
  * Non-developer mode shows one status row: the runtime status, unless
- * OpenWork Connect needs attention (or is the only signal available).
+ * TGWork Connect needs attention (or is the only signal available).
  * Developer mode keeps the two separate rows.
  */
 export function resolveCollapsedStatus(
@@ -149,7 +149,7 @@ export function resolveCollapsedStatus(
   if (connect && connect.state === "needs_attention") {
     return {
       variant: "disconnected",
-      label: `OpenWork Connect: ${connect.label}`,
+      label: `TGWork Connect: ${connect.label}`,
       detail: connect.description,
     };
   }
@@ -157,7 +157,7 @@ export function resolveCollapsedStatus(
   if (connect) {
     return {
       variant: connectDotVariant(connect),
-      label: `OpenWork Connect: ${connect.label}`,
+      label: `TGWork Connect: ${connect.label}`,
       detail: connect.description,
     };
   }
@@ -244,7 +244,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
 
   const docsControlAction = useMemo<OpenworkControlAction>(() => ({
     id: "status.docs.open",
-    label: "Open OpenWork docs",
+    label: "Open TGWork docs",
     description: "Open the documentation from the account menu.",
     sideEffect: "external",
     targetRef: triggerRef,
@@ -255,7 +255,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
   const feedbackControlAction = useMemo<OpenworkControlAction>(() => ({
     id: "status.feedback.open",
     label: "Send feedback",
-    description: "Open the OpenWork feedback surface from the account menu.",
+    description: "Open the TGWork feedback surface from the account menu.",
     sideEffect: "external",
     disabled: !props.onSendFeedback,
     targetRef: triggerRef,
@@ -286,10 +286,10 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
   });
   const accountLabel = signedIn
     ? user.name?.trim() || user.email
-    : restoringSession ? "OpenWork Cloud" : "Sign in";
+    : restoringSession ? "TGWork Cloud" : "Sign in";
   const accountDetail = signedIn
-    ? (user.name ? user.email : "OpenWork Cloud")
-    : restoringSession ? "Restoring your session" : "Sync with OpenWork Cloud";
+    ? (user.name ? user.email : "TGWork Cloud")
+    : restoringSession ? "Restoring your session" : "Sync with TGWork Cloud";
 
   const runtimeStatus = props.showConnectionStatus
     ? resolveRuntimeStatus({
@@ -368,7 +368,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
             title={connectNeedsAttention
               ? openWorkConnectAttentionTitle(connectStatus.description)
               : connectStatus
-                ? `${runtimeStatus ? `${runtimeStatus.label} · ` : ""}OpenWork Connect: ${connectStatus.label}`
+                ? `${runtimeStatus ? `${runtimeStatus.label} · ` : ""}TGWork Connect: ${connectStatus.label}`
                 : runtimeStatus?.label}
           >
               {signedIn ? (
@@ -428,7 +428,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
                     </span>
                     <div className="min-w-0">
                       <div className="text-[11.5px] font-medium text-foreground">
-                        {`OpenWork Connect: ${connectStatus.label}`}
+                        {`TGWork Connect: ${connectStatus.label}`}
                       </div>
                       <div className="text-[10.5px] leading-tight text-muted-foreground">
                         {connectStatus.description}
@@ -482,7 +482,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
           >
             <Sparkles className="size-3.5 text-blue-11" />
             <span className="flex min-w-0 flex-col">
-              <span>OpenWork Models</span>
+              <span>TGWork Models</span>
               <span className="text-[10.5px] text-muted-foreground">hosted frontier models</span>
             </span>
           </DropdownMenuItem>
@@ -526,7 +526,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
             >
               <span className="inline-flex min-w-0 items-center gap-2">
                 <UserRound className="size-3.5" />
-                <span className="truncate">Sign in to OpenWork Cloud</span>
+                <span className="truncate">Sign in to TGWork Cloud</span>
               </span>
               <ArrowUpRight className="size-3.5" />
             </Button>

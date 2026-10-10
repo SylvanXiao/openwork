@@ -327,13 +327,13 @@ export function McpAppSandboxView({ origin, app, toolName, inputArguments, resul
         checkpoints: [...checkpoints],
         ...(sandboxDocument ? { sandboxDocument } : {}),
       }
-      console.error(`[OpenWork MCP App] ${code}`, diagnostic)
+      console.error(`[TGWork MCP App] ${code}`, diagnostic)
       setError(diagnostic)
     }
     checkpoint("resource-resolved")
     if (!readOnly && !app.launchId) {
       fail("MCP_APP_LAUNCH_CONTEXT_MISSING", "resource-resolution", null,
-        "This App has no live launch context. Update OpenWork and reopen the App before using its actions.")
+        "This App has no live launch context. Update TGWork and reopen the App before using its actions.")
       return
     }
     const sandbox = openworkServerClient.mcpAppSandbox(app, window.location.origin)
@@ -342,14 +342,14 @@ export function McpAppSandboxView({ origin, app, toolName, inputArguments, resul
         "MCP_APP_SANDBOX_ORIGIN_INVALID",
         "sandbox-proxy",
         null,
-        "The sandbox resolved to the same origin as the OpenWork host.",
+        "The sandbox resolved to the same origin as the TGWork host.",
         sandbox.expectedOrigin,
       )
       return
     }
     const bridge = new AppBridge(
       null,
-      { name: "OpenWork", version: "1.0.0" },
+      { name: "天工开物", version: "1.0.0" },
       readOnly ? {} : { serverTools: {}, openLinks: {} },
       {
         hostContext: {
@@ -368,7 +368,7 @@ export function McpAppSandboxView({ origin, app, toolName, inputArguments, resul
         await openDesktopUrl(url)
         return {}
       } catch (cause) {
-        console.error("[OpenWork MCP App] MCP_APP_OPEN_LINK_BLOCKED", {
+        console.error("[TGWork MCP App] MCP_APP_OPEN_LINK_BLOCKED", {
           toolName,
           message: safeMcpAppDiagnosticMessage(cause, "The link could not be opened."),
         })
@@ -696,7 +696,7 @@ function EmbeddedMcpAppFrame({ part }: { part: DynamicToolUIPart }) {
               elapsedMs: Math.round(performance.now() - startedAt),
               checkpoints: [...checkpoints],
             }
-            console.error(`[OpenWork MCP App] ${diagnostic.code}`, diagnostic)
+            console.error(`[TGWork MCP App] ${diagnostic.code}`, diagnostic)
             setError(diagnostic)
           }
         })

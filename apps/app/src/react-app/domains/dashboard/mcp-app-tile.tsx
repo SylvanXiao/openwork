@@ -237,7 +237,7 @@ export function McpAppTile({
       }
       if (app.launchId) ownedLaunches.current.set(app.launchId, endpoint);
       assertActive();
-      if (!app.launchId) throw new Error("This App has no live launch context. Update OpenWork and run the tile again.");
+      if (!app.launchId) throw new Error("This App has no live launch context. Update TGWork and run the tile again.");
       const request = {
         launchId: app.launchId,
         sessionId: null,
@@ -264,7 +264,7 @@ export function McpAppTile({
         if (!userInitiated) return { phase: "idle", revokeAutoLaunch: true };
         const approved = window.confirm(
           `Allow this MCP App to call ${app.toolName} on ${app.serverName}? `
-          + "OpenWork remembers your choice for this tile until you remove it.",
+          + "TGWork remembers your choice for this tile until you remove it.",
         );
         assertActive();
         if (!approved) return { phase: "error", message: "The app launch was declined." };

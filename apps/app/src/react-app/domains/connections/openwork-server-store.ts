@@ -879,7 +879,7 @@ export function createOpenworkServerStore(options: CreateOpenworkServerStoreOpti
   };
 
   const getSnapshot = () => {
-    if (!snapshot) throw new Error("OpenWork server snapshot was not initialized.");
+    if (!snapshot) throw new Error("TGWork server snapshot was not initialized.");
     return snapshot;
   };
 

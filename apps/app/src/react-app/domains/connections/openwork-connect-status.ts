@@ -74,7 +74,7 @@ export function resolveOpenWorkConnectStatus(
     return {
       state: "ready",
       label: "Ready",
-      description: "Signed in to OpenWork Cloud. Connected service tools will be checked when a workspace is active.",
+      description: "Signed in to TGWork Cloud. Connected service tools will be checked when a workspace is active.",
     };
   }
 
@@ -91,7 +91,7 @@ export function resolveOpenWorkConnectStatus(
       state: "needs_attention",
       label: "Needs attention",
       description: maintenance.issue?.message
-        ?? "OpenWork Connect could not verify connected service tools. Run diagnostics for details.",
+        ?? "TGWork Connect could not verify connected service tools. Run diagnostics for details.",
     };
   }
 

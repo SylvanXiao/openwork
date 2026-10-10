@@ -1,10 +1,10 @@
 extends: ./electron-builder.base.yml
-appId: com.differentai.openwork
-productName: OpenWork
+appId: com.tgwork.app
+productName: 天工开物
 protocols:
-  - name: OpenWork
+  - name: 天工开物
     schemes:
-      - openwork
+      - tgwork
 linux:
-  executableName: openwork
-artifactName: openwork-${os}-${arch}-${version}.${ext}
+  executableName: tgwork
+artifactName: tgwork-${os}-${arch}-${version}.${ext}

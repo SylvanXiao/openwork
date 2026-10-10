@@ -217,7 +217,7 @@ function serverDataDir(env, homedir, paths) {
   return paths.join(homedir, ".openwork", "openwork-server");
 }
 
-/** Workspace-local state OpenWork owns; the rest of the workspace folder is the user's. */
+/** Workspace-local state TGWork owns; the rest of the workspace folder is the user's. */
 function workspaceOpenworkStatePaths(workspacePaths, paths) {
   const output = [];
   for (const workspacePath of workspacePaths) {

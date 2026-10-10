@@ -88,24 +88,11 @@ export function WelcomePage({
               </div>
 
               <div className="mt-11 flex flex-col gap-3">
-                {onTeamSignIn ? (
-                  <Button
-                    type="button"
-                    size="lg"
-                    className="h-12 w-full text-[15px] font-semibold"
-                    onClick={onTeamSignIn}
-                    disabled={busy}
-                    data-testid="welcome-team-signin"
-                  >
-                    {t("welcome.sign_in_cloud")}
-                  </Button>
-                ) : null}
-
                 <Button
                   type="button"
                   size="lg"
-                  variant={onTeamSignIn ? "outline" : "default"}
-                  className="h-12 w-full text-[15px] font-medium"
+                  variant="default"
+                  className="h-12 w-full text-[15px] font-semibold"
                   onClick={onGetStarted}
                   disabled={busy}
                   data-testid="welcome-use-without-cloud"
@@ -114,6 +101,20 @@ export function WelcomePage({
                     ? t("welcome.creating_workspace")
                     : (getStartedLabel || t("welcome.use_without_cloud"))}
                 </Button>
+
+                {onTeamSignIn ? (
+                  <Button
+                    type="button"
+                    size="lg"
+                    variant="outline"
+                    className="h-12 w-full text-[15px] font-medium"
+                    onClick={onTeamSignIn}
+                    disabled={busy}
+                    data-testid="welcome-team-signin"
+                  >
+                    {t("welcome.sign_in_cloud")}
+                  </Button>
+                ) : null}
 
                 <div className="pt-2">
                   <button

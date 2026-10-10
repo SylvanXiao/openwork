@@ -361,7 +361,7 @@ test("toolbar and menu Close share browser focus, while chat and other windows r
   await flush();
   mainContents.focus();
   invoke("openwork:browser:shortcut-focus", tab.tabId);
-  createApplicationMenu({ appName: "OpenWork", docsUrl: "https://example.com/docs", getWindow: () => mainWindow,
+  createApplicationMenu({ appName: "TGWork", docsUrl: "https://example.com/docs", getWindow: () => mainWindow,
     closeBrowserTab: host => panel.closeFocusedBrowserTab(host) }).install();
   const close = menuTemplates.at(-1).find(item => item.label === "File").submenu.find(item => item.label === "Close");
   assert.equal(close.role, undefined, "no native role can bypass browser routing");
@@ -1341,7 +1341,7 @@ test("a native choice launches only the selected installed or default browser wi
     assert.deepEqual(request, {
       point: LINK.point,
       items: [
-        { type: "item", id: "open-builtin", label: "Open in OpenWork" },
+        { type: "item", id: "open-builtin", label: "Open in TGWork" },
         { type: "item", id: "open-external", label: "Open in Default Browser" },
         { type: "item", id: "browser:chrome", label: "Open in Google Chrome" },
         { type: "item", id: "browser:firefox", label: "Open in Firefox" },

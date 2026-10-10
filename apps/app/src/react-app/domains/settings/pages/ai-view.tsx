@@ -51,7 +51,7 @@ export type AiSettingsViewProps = {
   organizationName?: string;
   /** Set of local provider IDs that were imported from cloud. */
   cloudProviderIds?: Set<string>;
-  /** Cloud provider IDs routed through the OpenWork inference gateway. */
+  /** Cloud provider IDs routed through the TGWork inference gateway. */
   gatewayProviderIds?: ReadonlySet<string>;
   /** Gateway providers waiting on this member's own sign-in before they can be used. */
   gatewayConnectProviders?: GatewayConnectProvider[];
@@ -59,7 +59,7 @@ export type AiSettingsViewProps = {
   connectingGatewayProviderId?: string | null;
   onConnectGatewayProvider?: (provider: GatewayConnectProvider) => void | Promise<void>;
   showOpenWorkModelsSubscribe?: boolean;
-  /** Subtle fallback row when OpenWork Models is not connected and the banner was dismissed. */
+  /** Subtle fallback row when TGWork Models is not connected and the banner was dismissed. */
   showOpenWorkModelsConnect?: boolean;
   /** Den entitlement is present but local engine has no selectable openwork models yet. */
   showOpenWorkModelsSyncing?: boolean;
@@ -169,7 +169,7 @@ export function AiSettingsView(props: AiSettingsViewProps) {
               type="button"
               className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full text-blue-11 transition-colors hover:bg-blue-3/70"
               onClick={() => void props.onDismissOpenWorkModels?.()}
-              aria-label="Dismiss OpenWork Models banner"
+              aria-label="Dismiss TGWork Models banner"
             >
               <X className="size-3.5" />
             </button>
@@ -178,21 +178,21 @@ export function AiSettingsView(props: AiSettingsViewProps) {
                 <ProviderIcon providerId="openwork" size={22} className="mt-0.5 shrink-0 text-blue-11" />
                 <div className="min-w-0 space-y-2">
                   <div>
-                    <div className="text-sm font-medium text-dls-text">OpenWork Models</div>
+                    <div className="text-sm font-medium text-dls-text">TGWork Models</div>
                     <div className="mt-0.5 text-xs text-muted-foreground">
-                      Hosted frontier models for OpenWork tasks without managing provider API keys.
+                      Hosted frontier models for TGWork tasks without managing provider API keys.
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 text-[11px] text-blue-11">
                     <span className="inline-flex items-center gap-1 rounded-full border border-blue-6 bg-blue-3 px-2 py-0.5">
-                      <CheckCircle2 className="size-3" /> Managed by OpenWork Cloud
+                      <CheckCircle2 className="size-3" /> Managed by TGWork Cloud
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-full border border-blue-6 bg-blue-3 px-2 py-0.5">
                       <KeyRound className="size-3" /> No API key setup
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Pricing is handled through OpenWork Cloud. You can continue using OpenCode Zen or your own providers.
+                    Pricing is handled through TGWork Cloud. You can continue using OpenCode Zen or your own providers.
                   </p>
                 </div>
               </div>
@@ -279,7 +279,7 @@ export function AiSettingsView(props: AiSettingsViewProps) {
               <ProviderIcon providerId="openwork" size={20} className="text-muted-foreground" />
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-dls-text">OpenWork Models</span>
+                  <span className="truncate text-sm font-medium text-dls-text">TGWork Models</span>
                   <span className="shrink-0 rounded-full border border-dls-border bg-dls-sidebar/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                     Not connected
                   </span>
@@ -306,13 +306,13 @@ export function AiSettingsView(props: AiSettingsViewProps) {
               <ProviderIcon providerId="openwork" size={20} className="text-amber-11" />
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-dls-text">OpenWork Models</span>
+                  <span className="truncate text-sm font-medium text-dls-text">TGWork Models</span>
                   <span className="shrink-0 rounded-full border border-amber-6 bg-amber-3 px-2 py-0.5 text-[10px] font-medium text-amber-11">
                     Included — syncing
                   </span>
                 </div>
                 <div className="truncate text-xs text-muted-foreground">
-                  OpenWork Models will become available automatically when the pending workspace reload completes.
+                  TGWork Models will become available automatically when the pending workspace reload completes.
                 </div>
               </div>
             </div>

@@ -704,7 +704,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
         const delivery = syncDenSessionDelivery();
         const contextKey = getCloudProviderSyncContextKey();
         const openworkClient = options.openworkServer.getSnapshot().openworkServerClient;
-        if (!openworkClient) throw new Error("OpenWork server unavailable.");
+        if (!openworkClient) throw new Error("TGWork server unavailable.");
         const status = await openworkClient.getCloudProviderSyncStatus();
         if (!isCurrentDenSessionDelivery(delivery) || contextKey !== getCloudProviderSyncContextKey()) return state.importedCloudProviders;
         const next = Object.fromEntries(status.providers.map((provider) => [provider.cloudProviderId, provider]));
@@ -761,7 +761,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const persisted = await writeWorkspaceOpenworkConfigRecord(nextConfig);
     if (!persisted) {
       throw new Error(
-        "OpenWork server unavailable. Connect to manage imported cloud providers.",
+        "TGWork server unavailable. Connect to manage imported cloud providers.",
       );
     }
     setStateField("importedCloudProviders", nextProviders);
@@ -779,7 +779,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     }
 
     if (hasOpenworkTarget) {
-      throw new Error("OpenWork server config API is unavailable for this workspace.");
+      throw new Error("TGWork server config API is unavailable for this workspace.");
     }
 
     if (isLocalWorkspace && isDesktopRuntime() && root) {
@@ -809,7 +809,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     }
 
     if (hasOpenworkTarget) {
-      throw new Error("OpenWork server config API is unavailable for this workspace.");
+      throw new Error("TGWork server config API is unavailable for this workspace.");
     }
 
     if (isLocalWorkspace && isDesktopRuntime() && root) {
@@ -833,7 +833,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const { openworkClient, openworkWorkspaceId, canUseOpenworkServer } =
       await resolveOpenworkConfigTarget("write");
     if (!canUseOpenworkServer || !openworkClient || !openworkWorkspaceId) {
-      throw new Error("OpenWork server unavailable. Connect to manage cloud providers.");
+      throw new Error("TGWork server unavailable. Connect to manage cloud providers.");
     }
     await openworkClient.patchConfig(openworkWorkspaceId, {
       opencode: { provider: update },
@@ -847,7 +847,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const { openworkClient, openworkWorkspaceId, canUseOpenworkServer } =
       await resolveOpenworkConfigTarget("write");
     if (!canUseOpenworkServer || !openworkClient || !openworkWorkspaceId) {
-      throw new Error("OpenWork server unavailable. Connect to manage cloud providers.");
+      throw new Error("TGWork server unavailable. Connect to manage cloud providers.");
     }
     const config = await readWorkspaceOpenworkConfigRecord();
     const cloudImports = readWorkspaceCloudImports(config);
@@ -1568,7 +1568,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       const shouldUseServerReload = !(
         isDesktopRuntime() && options.selectedWorkspaceDisplay().workspaceType === "local"
       );
-      // Prefer the OpenWork server engine reload: it disposes the engine AND
+      // Prefer the TGWork server engine reload: it disposes the engine AND
       // re-registers runtime-DB MCPs, so non-primary workspaces and pending
       // changes are picked up instead of silently dropping (toggles "turn
       // off").
@@ -1781,7 +1781,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
     const token = settings.authToken?.trim() ?? "";
     const orgId = settings.activeOrgId?.trim() ?? "";
     if (!token || !orgId) {
-      throw new Error("Sign in to OpenWork Cloud and choose an organization first.");
+      throw new Error("Sign in to TGWork Cloud and choose an organization first.");
     }
 
     try {
@@ -1809,7 +1809,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
           throw new CloudProviderNeedsServerError(
             `${provider.name} needs environment variables (${envEntries
               .map((entry) => entry.key)
-              .join(", ")}) but the OpenWork server is not available.`,
+              .join(", ")}) but the TGWork server is not available.`,
           );
         }
         await openworkClient.upsertUserEnv(envEntries);
@@ -2051,7 +2051,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
       return;
     }
 
-    // Imports, baseline reads, and persistence all go through the OpenWork
+    // Imports, baseline reads, and persistence all go through the TGWork
     // server target (patchRuntimeProviders throws without it). Running before
     // the target resolves made the baseline read fall back to an empty source
     // and re-import every org provider — engine dispose churn on settings open.
@@ -2197,7 +2197,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
   async function startGatewayProviderOAuth(providerId: string, credentialSetId?: string) {
     const orgId = readDenSettings().activeOrgId;
     const client = options.openworkServer.getSnapshot().openworkServerClient;
-    if (!orgId || !client) throw new Error("Sign in to OpenWork before connecting this provider.");
+    if (!orgId || !client) throw new Error("Sign in to TGWork before connecting this provider.");
     await pushDenSession();
     return client.startGatewayProviderOAuth(providerId, orgId, credentialSetId);
   }
@@ -2239,7 +2239,7 @@ export function createProviderAuthStore(options: CreateProviderAuthStoreOptions)
           async () => {
             if (!isCurrent()) return;
             const openworkClient = options.openworkServer.getSnapshot().openworkServerClient;
-            if (!openworkClient) throw new Error("OpenWork server unavailable.");
+            if (!openworkClient) throw new Error("TGWork server unavailable.");
             // An old server session can still return noop after a failed token
             // refresh. Delivery must succeed before every run, not just no_session.
             if (!await pushDenSession() || !isCurrent()) return;

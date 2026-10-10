@@ -1,18 +1,18 @@
 extends: ./electron-builder.base.yml
-appId: com.differentai.openwork
-productName: OpenWork Enterprise
+appId: com.tgwork.app
+productName: 天工开物企业版
 extraMetadata:
   openworkDistribution: enterprise
 protocols:
-  - name: OpenWork Enterprise
+  - name: 天工开物企业版
     schemes:
-      - openwork
+      - tgwork
 publish:
   - provider: github
-    owner: different-ai
-    repo: openwork
+    owner: tgwork
+    repo: tgwork
     releaseType: release
     channel: enterprise
 linux:
-  executableName: openwork-enterprise
-artifactName: openwork-enterprise-${os}-${arch}-${version}.${ext}
+  executableName: tgwork-enterprise
+artifactName: tgwork-enterprise-${os}-${arch}-${version}.${ext}

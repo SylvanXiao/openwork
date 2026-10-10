@@ -375,9 +375,9 @@ releaseDate: '2026-08-11T00:00:00.000Z'
       await cacheVerifiedRecoveryArtifact({ app, artifact, fetchArtifact: async () => new Response(bytes) });
       const metadataPath = path.join(userData, "app-recovery-cache", "metadata.json");
       const metadata = JSON.parse(await readFile(metadataPath, "utf8"));
-      await writeFile(metadataPath, JSON.stringify({ ...metadata, url: "https://tampered.invalid/OpenWork.dmg" }), "utf8");
+      await writeFile(metadataPath, JSON.stringify({ ...metadata, url: "https://tampered.invalid/TGWork.dmg" }), "utf8");
       assert.equal(await readCachedRecoveryArtifact(app, expected), null);
-      await writeFile(metadataPath, JSON.stringify({ ...metadata, fileName: "OpenWork.dmg" }), "utf8");
+      await writeFile(metadataPath, JSON.stringify({ ...metadata, fileName: "TGWork.dmg" }), "utf8");
       assert.equal(await readCachedRecoveryArtifact(app, expected), null);
     } finally {
       await rm(userData, { recursive: true, force: true });
@@ -540,7 +540,7 @@ describe("pre-activation guard", () => {
     const { tempDir, handlers, calls, feeds } = await registerFakeUpdaterIpc({
       version: "9.9.9",
       assertActivation: () => {
-        if (activationRequired) throw new Error("OpenWork must be activated from your Den portal before this command is available.");
+        if (activationRequired) throw new Error("TGWork must be activated from your Den portal before this command is available.");
       },
     });
     try {

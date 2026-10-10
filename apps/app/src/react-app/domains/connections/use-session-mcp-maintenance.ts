@@ -89,7 +89,7 @@ function genericCloudMcpMaintenanceIssue(input?: {
     stage: "engine_delivery",
     retryable: input?.retryable ?? true,
     recommendedAction: "Retry, then open Settings → Connect if the problem continues.",
-    message: input?.message ?? "OpenWork could not verify connected service tools for this workspace.",
+    message: input?.message ?? "TGWork could not verify connected service tools for this workspace.",
   };
 }
 
@@ -331,7 +331,7 @@ export async function syncCloudControlMcpInBackground(input: {
       return failedCloudMcpBackgroundSync({
         health: result.health,
         code: "cloud_mcp_token_mint_failed",
-        message: "OpenWork could not refresh Cloud authentication for connected service tools.",
+        message: "TGWork could not refresh Cloud authentication for connected service tools.",
       });
     }
   }

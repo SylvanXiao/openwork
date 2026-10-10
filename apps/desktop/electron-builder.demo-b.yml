@@ -1,6 +1,6 @@
 extends: electron-builder.yml
-appId: com.differentai.openwork.demo.consumer
-productName: OpenWork Demo B
+appId: com.tgwork.app.demo.consumer
+productName: 天工开物 Demo B
 protocols: []
 directories:
   output: dist-electron-demo-b

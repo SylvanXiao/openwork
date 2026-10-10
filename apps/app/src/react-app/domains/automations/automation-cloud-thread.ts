@@ -3,14 +3,14 @@ import { workspaceSessionRoute } from "@/react-app/shell/workspace-routes"
 
 export type AutomationExecutionIdentity = {
   icon: "desktop" | "cloud"
-  label: "Desktop" | "OpenWork Cloud"
+  label: "Desktop" | "TGWork Cloud"
 }
 
 export function automationExecutionIdentity(
   thread: Pick<AutomationExecutionThread, "executionLocation">,
 ): AutomationExecutionIdentity {
   return thread.executionLocation === "cloud"
-    ? { icon: "cloud", label: "OpenWork Cloud" }
+    ? { icon: "cloud", label: "TGWork Cloud" }
     : { icon: "desktop", label: "Desktop" }
 }
 

@@ -2,7 +2,7 @@
  * Lightweight MCP state hook for the ConnectorsPage surface.
  *
  * Mirrors the subset of connections-store behavior the page needs
- * (list / add / remove / enable / test) by calling the OpenWork
+ * (list / add / remove / enable / test) by calling the TGWork
  * server directly, without requiring the full ~15-dependency
  * createConnectionsStore wiring.
  */

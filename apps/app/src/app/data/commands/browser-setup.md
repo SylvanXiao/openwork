@@ -1,6 +1,6 @@
 ---
 name: browser-setup
-description: Use the built-in OpenWork browser
+description: Use the built-in TGWork browser
 ---
 
 Use browser_tabs to find this conversation's tabs, then browser_open to open https://example.com if needed.

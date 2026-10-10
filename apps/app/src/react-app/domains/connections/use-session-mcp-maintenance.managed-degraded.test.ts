@@ -109,7 +109,7 @@ function cloudHealth(usable: boolean): OpenworkCloudMcpHealth {
       code: "cloud_desired_missing",
       stage: "desired",
       retryable: false,
-      recommendedAction: "Connect OpenWork Cloud",
+      recommendedAction: "Connect TGWork Cloud",
       message: "missing",
     },
     checkedAt: new Date(NOW).toISOString(),
@@ -137,7 +137,7 @@ describe("managed MCP secure-storage degradation in session maintenance", () => 
         throw new OpenworkServerError(
           503,
           "managed_mcp_secure_storage_unavailable",
-          "Secure storage for OpenWork-managed MCP credentials is unavailable.",
+          "Secure storage for TGWork-managed MCP credentials is unavailable.",
         );
       },
       getOpenworkCloudMcpHealth: async () => cloudHealth(false),

@@ -156,13 +156,13 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
   {
     schemaVersion: 1,
     id: "openwork-browser",
-    name: "OpenWork Browser",
-    description: "Automate the built-in browser panel that stays visible inside OpenWork.",
+    name: "TGWork Browser",
+    description: "Automate the built-in browser panel that stays visible inside TGWork.",
     source: { format: "openwork-builtin", origin: "builtin", trusted: true },
     icon: { src: "/openwork-mark.svg" },
-    composer: { prompt: "Use the OpenWork Browser extension to " },
+    composer: { prompt: "Use the TGWork Browser extension to " },
     setup: {
-      instructions: "OpenWork Browser is ready by default in desktop workspaces.",
+      instructions: "TGWork Browser is ready by default in desktop workspaces.",
     },
     resources: [
       {
@@ -175,7 +175,7 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
     contributions: [
       { type: "settings-panel", ref: "openwork.browser.settings", location: "settings-detail" },
       { type: "session-side-panel", ref: "openwork.browser.panel", location: "session-right-pane" },
-      { type: "composer-prompt", prompt: "Use the OpenWork Browser extension to ", location: "composer" },
+      { type: "composer-prompt", prompt: "Use the TGWork Browser extension to ", location: "composer" },
     ],
     enablement: [
       { type: "toggle-enabled", ref: "openwork-browser", label: "Enabled" },
@@ -194,7 +194,7 @@ export const BUILT_IN_OPENWORK_EXTENSION_MANIFESTS: OpenWorkExtensionManifest[] 
     icon: { src: "/openwork-mark.svg" },
     composer: { prompt: "Use Computer Use to " },
     setup: {
-      instructions: "Enable Computer Use on macOS 14 or later and grant Accessibility and Screen Recording in the helper. For each session, choose an app window and allow reading, app controls, or mouse and keyboard. Choose Allow and start in OpenWork. Your input interrupts control; Stop in the preview ends access.",
+      instructions: "Enable Computer Use on macOS 14 or later and grant Accessibility and Screen Recording in the helper. For each session, choose an app window and allow reading, app controls, or mouse and keyboard. Choose Allow and start in TGWork. Your input interrupts control; Stop in the preview ends access.",
       primaryCta: "Enable Computer Use",
       secondaryCta: "Check macOS permissions",
       testActionRef: "openwork.computerUse.healthCheck",

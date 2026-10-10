@@ -65,11 +65,11 @@ export type ModelPickerModalProps = {
   onClose: (options?: { restorePromptFocus?: boolean }) => void;
   /** Den entitlement present. Picker no longer upsells here; callers still pass it. */
   openWorkModelsEntitled?: boolean;
-  /** The server is waiting to reload this workspace with OpenWork Models. */
+  /** The server is waiting to reload this workspace with TGWork Models. */
   openWorkModelsSyncing?: boolean;
   onRefreshOrganizationModels?: () => void | Promise<void>;
   restrictToCloud?: boolean;
-  /** Runtime provider ids routed through the OpenWork inference gateway (sync status source "openwork_gateway"). */
+  /** Runtime provider ids routed through the TGWork inference gateway (sync status source "openwork_gateway"). */
   gatewayProviderIds?: ReadonlySet<string>;
   /** Gateway providers waiting on this member's sign-in; shown as a compact "Connect" hint. */
   gatewayConnectProviders?: GatewayConnectProvider[];
@@ -240,7 +240,7 @@ export function ModelPickerModal(props: ModelPickerModalProps) {
     }
   }, [props.query, providerGroups]);
 
-  // Expand current, organization-provided, and OpenWork groups once they appear
+  // Expand current, organization-provided, and TGWork groups once they appear
   // (options often load async).
   const autoExpandedRef = useRef<Set<string>>(new Set());
   useEffect(() => {

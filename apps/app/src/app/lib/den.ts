@@ -84,7 +84,7 @@ const ORG_PROXY_HEADER = "x-openwork-legacy-org-id";
 const ORG_SCOPE_HEADER = "x-openwork-org-id";
 const DEFAULT_DEN_TIMEOUT_MS = 12_000;
 
-export const DEFAULT_DEN_AUTH_NAME = "OpenWork User";
+export const DEFAULT_DEN_AUTH_NAME = "TGWork User";
 const BUILD_DEN_BASE_URL =
   (typeof import.meta !== "undefined" && typeof import.meta.env?.VITE_DEN_BASE_URL === "string"
     ? import.meta.env.VITE_DEN_BASE_URL
@@ -703,10 +703,10 @@ export function denOriginComparisonKey(input: string | null | undefined): string
 }
 
 /**
- * True when the effective Den control plane is not the hosted OpenWork Cloud
+ * True when the effective Den control plane is not the hosted TGWork Cloud
  * (app.openworklabs.com). Self-hosted deployments point the app at their own
  * control plane via VITE_DEN_BASE_URL or the desktop bootstrap config, so
- * hosted-only surfaces (e.g. OpenWork Models upsells) should stay hidden.
+ * hosted-only surfaces (e.g. TGWork Models upsells) should stay hidden.
  */
 export function isSelfHostedControlPlane(): boolean {
   return (
@@ -789,7 +789,7 @@ function isHostedDenHost(hostname: string): boolean {
  *
  * Only two shapes are known ahead of time:
  * - An explicit API host (`api.*`) is already the API origin.
- * - Hosted OpenWork Cloud (`*.openworklabs.com`) serves its API at the
+ * - Hosted TGWork Cloud (`*.openworklabs.com`) serves its API at the
  *   `api.`-prefixed host.
  *
  * Every other deployment (self-hosted single host, localhost, tunnel or
@@ -3234,7 +3234,7 @@ export function createDenClient(options: { baseUrl: string; apiBaseUrl?: string 
       });
       const access = parseDenOpenWorkWebAccess(payload);
       if (!access) {
-        throw new DenApiError(500, "invalid_openwork_web_access_payload", "OpenWork Web access response was invalid.");
+        throw new DenApiError(500, "invalid_openwork_web_access_payload", "TGWork Web access response was invalid.");
       }
       return access;
     },
@@ -3317,7 +3317,7 @@ export function createDenClient(options: { baseUrl: string; apiBaseUrl?: string 
       });
     },
 
-    /** Web creation surface: placement is fixed to OpenWork Cloud by the route. */
+    /** Web creation surface: placement is fixed to TGWork Cloud by the route. */
     async createCloudAutomation(orgId: string, input: CreateCloudAutomation): Promise<AutomationDetail> {
       return requestJson<AutomationDetail>(baseUrls, "/v1/cloud-automations", {
         method: "POST",

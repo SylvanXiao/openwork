@@ -730,7 +730,7 @@ export function createWorkspaceStore({
     const bearerToken = String(token ?? "").trim();
     const hostAuthToken = String(hostToken ?? "").trim();
     if (bearerToken) headers.set("Authorization", `Bearer ${bearerToken}`);
-    if (hostAuthToken) headers.set("X-OpenWork-Host-Token", hostAuthToken);
+    if (hostAuthToken) headers.set("X-TGWork-Host-Token", hostAuthToken);
 
     try {
       const electron = await import("electron").catch(() => null);
@@ -742,7 +742,7 @@ export function createWorkspaceStore({
         cache: "no-store",
       });
       if (!response.ok) {
-        throw new Error(`OpenWork workspace discovery failed (${response.status} ${response.statusText || "HTTP error"})`);
+        throw new Error(`TGWork workspace discovery failed (${response.status} ${response.statusText || "HTTP error"})`);
       }
       return await response.json();
     } finally {
@@ -837,7 +837,7 @@ export function createWorkspaceStore({
       const recoveredWorkspaces = await recoverWorkspacesFromKnownState();
       if (recoveredWorkspaces.length > 0) {
         const selectedWorkspace = recoveredWorkspaces[0];
-        console.info("[migration] recovered desktop workspaces from persisted OpenWork state", {
+        console.info("[migration] recovered desktop workspaces from persisted TGWork state", {
           count: recoveredWorkspaces.length,
           selectedWorkspaceId: selectedWorkspace.id,
         });
@@ -873,7 +873,7 @@ export function createWorkspaceStore({
       }
       return nextWorkspace;
     });
-    // Older desktop state can contain multiple OpenWork remote entries that
+    // Older desktop state can contain multiple TGWork remote entries that
     // normalize to the same rem_<workspaceId> after stripping worker mounts.
     // Collapse them here so React never receives duplicate workspace keys.
     const workspaceIndexById = new Map();
@@ -927,7 +927,7 @@ export function createWorkspaceStore({
     const home = process.env.OPENWORK_DEV_MODE === "1" && process.env.OPENWORK_DEV_SHARED_STATE !== "1"
       ? path.join(app.getPath("userData"), "openwork-dev-data", "home")
       : os.homedir();
-    const folderPath = await normalizeLocalWorkspacePath(path.join(home, "OpenWork Chat"));
+    const folderPath = await normalizeLocalWorkspacePath(path.join(home, "TGWork Chat"));
     try {
       await createWorkspace({ folderPath });
       return null;
@@ -1048,8 +1048,8 @@ export function createWorkspaceStore({
       if (!discovered?.id) {
         throw new Error(
           directory
-            ? `OpenWork server has no workspace matching ${directory}.`
-            : "OpenWork server returned no workspaces.",
+            ? `TGWork server has no workspace matching ${directory}.`
+            : "TGWork server returned no workspaces.",
         );
       }
       resolvedOpenworkWorkspaceId = String(discovered.id).trim();
@@ -1123,8 +1123,8 @@ export function createWorkspaceStore({
           if (!discovered?.id) {
             throw new Error(
               directory
-                ? `OpenWork server has no workspace matching ${directory}.`
-                : "OpenWork server returned no workspaces.",
+                ? `TGWork server has no workspace matching ${directory}.`
+                : "TGWork server returned no workspaces.",
             );
           }
           remoteWorkspaceId = String(discovered.id).trim();

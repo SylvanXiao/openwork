@@ -37,7 +37,7 @@ async function certificateFixture() {
   certificateFixturePromise ??= (async () => {
     const directory = await mkdtemp(path.join(tmpdir(), "openwork-runtime-cert-chain-"));
     const run = (...args) => execFileSync("openssl", args, { cwd: directory, stdio: "ignore" });
-    run("req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", "root.key", "-out", "root.pem", "-subj", "/CN=OpenWork Test Root", "-days", "2", "-sha256");
+    run("req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", "root.key", "-out", "root.pem", "-subj", "/CN=TGWork Test Root", "-days", "2", "-sha256");
     await writeFile(path.join(directory, "server.ext"), "extendedKeyUsage = serverAuth\nsubjectAltName = DNS:enterprise.test\n");
     run("req", "-newkey", "rsa:2048", "-nodes", "-keyout", "leaf.key", "-out", "leaf.csr", "-subj", "/CN=enterprise.test", "-sha256");
     run("x509", "-req", "-in", "leaf.csr", "-CA", "root.pem", "-CAkey", "root.key", "-set_serial", "2", "-out", "leaf.pem", "-days", "1", "-sha256", "-extfile", "server.ext");

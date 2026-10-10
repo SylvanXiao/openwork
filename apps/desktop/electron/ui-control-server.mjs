@@ -77,7 +77,7 @@ export function createUiControlServer({
     if (command === "snapshot") {
       return evaluateOpenworkControl(`(async () => {
         const control = window.__openworkControl;
-        if (!control) return { ok: false, error: "OpenWork control surface is not available yet." };
+        if (!control) return { ok: false, error: "TGWork control surface is not available yet." };
         control.setEnabled?.(true);
         return { ok: true, ...control.snapshot() };
       })()`);
@@ -85,7 +85,7 @@ export function createUiControlServer({
     if (command === "actions") {
       return evaluateOpenworkControl(`(async () => {
         const control = window.__openworkControl;
-        if (!control) return { ok: false, error: "OpenWork control surface is not available yet." };
+        if (!control) return { ok: false, error: "TGWork control surface is not available yet." };
         control.setEnabled?.(true);
         return { ok: true, actions: control.listActions() };
       })()`);
@@ -93,7 +93,7 @@ export function createUiControlServer({
     if (command === "context") {
       return evaluateOpenworkControl(`(async () => {
         const control = window.__openworkControl;
-        if (!control) return { ok: false, error: "OpenWork control surface is not available yet." };
+        if (!control) return { ok: false, error: "TGWork control surface is not available yet." };
         return { ok: true, context: control.context() };
       })()`);
     }
@@ -101,9 +101,9 @@ export function createUiControlServer({
       return evaluateOpenworkControl(`(async () => {
         const control = window.__openworkControl;
         const input = JSON.parse(${argsJsonLiteral});
-        if (!control) return { ok: false, error: "OpenWork control surface is not available yet." };
+        if (!control) return { ok: false, error: "TGWork control surface is not available yet." };
         if (!input || typeof input.id !== "string" || !input.id.trim()) {
-          return { ok: false, error: "Missing OpenWork affordance id." };
+          return { ok: false, error: "Missing TGWork affordance id." };
         }
         return control[${JSON.stringify(command)}](input);
       })()`);
@@ -112,15 +112,15 @@ export function createUiControlServer({
       return evaluateOpenworkControl(`(async () => {
         const control = window.__openworkControl;
         const input = JSON.parse(${argsJsonLiteral});
-        if (!control) return { ok: false, error: "OpenWork control surface is not available yet." };
+        if (!control) return { ok: false, error: "TGWork control surface is not available yet." };
         if (!input || typeof input.actionId !== "string" || !input.actionId.trim()) {
-          return { ok: false, error: "Missing OpenWork actionId." };
+          return { ok: false, error: "Missing TGWork actionId." };
         }
         control.setEnabled?.(true);
         return control.execute(input.actionId, input.args ?? {});
       })()`);
     }
-    return { ok: false, error: `Unknown OpenWork control command: ${command}` };
+    return { ok: false, error: `Unknown TGWork control command: ${command}` };
   }
 
   async function start() {
@@ -197,7 +197,7 @@ export function createUiControlServer({
       } catch (error) {
         if (/^\/(?:browser|webmcp)(?:\/|$)/.test(request.url ?? "")) console.error("[ui-control] request failed");
         else console.error("[ui-control] request failed", error);
-        sendJsonResponse(response, 500, { ok: false, error: "OpenWork UI control request failed." });
+        sendJsonResponse(response, 500, { ok: false, error: "TGWork UI control request failed." });
       }
     });
     await new Promise((resolve, reject) => {
@@ -206,7 +206,7 @@ export function createUiControlServer({
     });
     const address = uiControlServer.address();
     const port = typeof address === "object" && address ? address.port : null;
-    if (!port) throw new Error("Could not start OpenWork UI control bridge.");
+    if (!port) throw new Error("Could not start TGWork UI control bridge.");
     uiControlDiscoveryPath = path.join(app.getPath("userData"), "openwork-ui-control.json");
     await writeFile(
       uiControlDiscoveryPath,

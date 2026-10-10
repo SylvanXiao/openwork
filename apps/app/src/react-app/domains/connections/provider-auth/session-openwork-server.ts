@@ -9,8 +9,8 @@
 // the Den session, and server-side cloud provider sync never started (#3671).
 //
 // This adapter reports the truth for the endpoint it wraps:
-// - loopback local endpoints (the desktop's own OpenWork server) advertise
-//   `providerSync: true` — every OpenWork server does
+// - loopback local endpoints (the desktop's own TGWork server) advertise
+//   `providerSync: true` — every TGWork server does
 //   (apps/server/src/types.ts `Capabilities.providerSync: true`) — and carry
 //   the live host token so the store can PUT /den-session and
 //   POST /cloud-provider-sync/run;

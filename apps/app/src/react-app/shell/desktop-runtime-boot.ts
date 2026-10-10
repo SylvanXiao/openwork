@@ -57,12 +57,12 @@ function isOpenworkServerReady(info?: BootOpenworkServerInfo) {
 /**
  * On desktop (Tauri) startup:
  *   1) bootstrap the workspace list
- *   2) if a local workspace is selected, restart the embedded OpenWork server
+ *   2) if a local workspace is selected, restart the embedded TGWork server
  *   3) start the OpenCode engine pointed at the workspace
- *   4) activate the workspace on the running OpenWork server
+ *   4) activate the workspace on the running TGWork server
  *   5) notify React routes that fresh desktop runtime info is available. Electron
  *      routes read live runtime info directly instead of persisting ephemeral
- *      localhost ports/tokens into OpenWork settings.
+ *      localhost ports/tokens into TGWork settings.
  *
  * Safe to call multiple times — gated by a `didBoot` ref so it runs once per mount.
  */
@@ -133,13 +133,13 @@ export function useDesktopRuntimeBoot() {
             markReady();
             return;
           }
-          setPhase("starting-engine", "Starting OpenWork server");
+          setPhase("starting-engine", "Starting TGWork server");
           const serverInfo = await openworkServerRestart({ remoteAccessEnabled: preferredRemoteAccess }).catch((error) => {
             console.warn("[desktop-boot] openworkServerRestart failed:", error);
             return null;
           });
           if (!isOpenworkServerInfoLike(serverInfo) || !isOpenworkServerReady(serverInfo)) {
-            setError("OpenWork server did not finish starting. Please restart OpenWork.");
+            setError("TGWork server did not finish starting. Please restart TGWork.");
             return;
           }
           publishOpenworkServerInfo(serverInfo);
@@ -183,12 +183,12 @@ export function useDesktopRuntimeBoot() {
           };
 
           if (boot.ok === false) {
-            setError(boot.error || "Failed to start OpenWork runtime");
+            setError(boot.error || "Failed to start TGWork runtime");
             return;
           }
 
           if (!boot.skipped && !isOpenworkServerReady(boot.openworkServer)) {
-            setError("OpenWork server did not finish starting. Please restart OpenWork.");
+            setError("TGWork server did not finish starting. Please restart TGWork.");
             return;
           }
 

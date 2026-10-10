@@ -1,6 +1,6 @@
 export const PUBLIC_DESKTOP_DISTRIBUTION = Object.freeze({
   flavor: "public",
-  appName: "OpenWork",
+  appName: "TGWork",
   appIdentifier: "com.differentai.openwork",
   protocolScheme: "openwork",
   requireSignin: false,
@@ -9,7 +9,7 @@ export const PUBLIC_DESKTOP_DISTRIBUTION = Object.freeze({
 
 export const CLOUD_DESKTOP_DISTRIBUTION = Object.freeze({
   flavor: "cloud",
-  appName: "OpenWork Cloud",
+  appName: "TGWork Cloud",
   appIdentifier: "com.differentai.openwork",
   protocolScheme: "openwork",
   requireSignin: true,
@@ -18,7 +18,7 @@ export const CLOUD_DESKTOP_DISTRIBUTION = Object.freeze({
 
 export const ENTERPRISE_DESKTOP_DISTRIBUTION = Object.freeze({
   flavor: "enterprise",
-  appName: "OpenWork Enterprise",
+  appName: "TGWork Enterprise",
   appIdentifier: "com.differentai.openwork",
   protocolScheme: "openwork",
   requireSignin: true,

@@ -26,7 +26,7 @@ test("UI control failures are logged locally without exposing exception details"
   console.error = (...args) => logged.push(args);
   const server = createUiControlServer({
     app: { getPath: () => userData },
-    appName: "OpenWork",
+    appName: "TGWork",
     appIdentifier: "com.differentai.openwork",
     getWindow: async () => { throw failure; },
     browserTask: async () => { throw new Error("private website content"); },
@@ -43,7 +43,7 @@ test("UI control failures are logged locally without exposing exception details"
     const payload = await response.json();
 
     assert.equal(response.status, 500);
-    assert.deepEqual(payload, { ok: false, error: "OpenWork UI control request failed." });
+    assert.deepEqual(payload, { ok: false, error: "TGWork UI control request failed." });
     assert.equal(logged[0]?.[0], "[ui-control] request failed");
     assert.equal(logged[0]?.[1], failure);
     assert.doesNotMatch(JSON.stringify(payload), /private renderer failure/);

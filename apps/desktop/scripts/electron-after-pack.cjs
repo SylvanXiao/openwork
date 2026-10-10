@@ -3,7 +3,7 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const asar = require("@electron/asar");
 
-const computerUseHelperAppName = "OpenWork Computer Use.app";
+const computerUseHelperAppName = "TGWork Computer Use.app";
 
 const sidecarBases = [
   "opencode",

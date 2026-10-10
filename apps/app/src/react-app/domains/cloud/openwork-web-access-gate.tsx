@@ -75,21 +75,21 @@ export function OpenWorkWebAccessGateScreen(props: {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              OpenWork Web
+              TGWork Web
             </p>
             <h1 className="mt-2 text-[26px] font-semibold leading-tight tracking-[-0.03em]">
               {checking
                 ? "Checking workspace access…"
                 : denied
-                  ? "OpenWork Web access is required"
-                  : "OpenWork Web remains locked"}
+                  ? "TGWork Web access is required"
+                  : "TGWork Web remains locked"}
             </h1>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
               {checking
                 ? `Waiting for Den to confirm access for ${organizationName}.`
                 : denied
-                  ? `${organizationName} does not have an active OpenWork Web subscription or complimentary admin grant.`
-                  : `Den could not confirm OpenWork Web access for ${organizationName}. The workspace stays locked until it can.`}
+                  ? `${organizationName} does not have an active TGWork Web subscription or complimentary admin grant.`
+                  : `Den could not confirm TGWork Web access for ${organizationName}. The workspace stays locked until it can.`}
             </p>
           </div>
         </div>

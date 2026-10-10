@@ -21,7 +21,7 @@ async function createHarness(options = {}) {
   const dataHome = path.join(root, "data");
   const configHome = path.join(root, "config");
   const resourcesPath = path.join(root, "resources");
-  const appImagePath = options.appImagePath ?? path.join(root, "OpenWork AppImage");
+  const appImagePath = options.appImagePath ?? path.join(root, "TGWork AppImage");
   await mkdir(path.join(resourcesPath, "icons", "linux"), { recursive: true });
   await Promise.all(iconSizes.map((size) => (
     writeFile(path.join(resourcesPath, "icons", "linux", `${size}x${size}.png`), String(size))
@@ -55,7 +55,7 @@ async function createHarness(options = {}) {
   const integration = createLinuxDesktopIntegration({
     app,
     dialog,
-    appName: "OpenWork",
+    appName: "TGWork",
     distribution: "public",
     env: {
       APPIMAGE: appImagePath,
@@ -93,7 +93,7 @@ function relaunchAt(harness, appImagePath, options = {}) {
         return { response: 0, checkboxChecked: false };
       },
     },
-    appName: "OpenWork",
+    appName: "TGWork",
     distribution: "public",
     env: {
       APPIMAGE: appImagePath,
@@ -128,7 +128,7 @@ describe("Linux AppImage desktop integration", () => {
     assert.equal(quoteDesktopExec("`"), '"\\`"');
     const entry = buildOpenworkDesktopEntry({
       appImagePath,
-      appName: "OpenWork",
+      appName: "TGWork",
       appVersion: "0.18.7",
       distribution: "public",
     });
@@ -153,7 +153,7 @@ describe("Linux AppImage desktop integration", () => {
 
     const desktopEntry = await readFile(harness.integration.paths.desktopEntryPath, "utf8");
     assert.match(desktopEntry, new RegExp(`^Exec=${quoteDesktopExec(harness.appImagePath)} %U$`, "m"));
-    assert.match(desktopEntry, /^X-OpenWork-Managed=true$/m);
+    assert.match(desktopEntry, /^X-TGWork-Managed=true$/m);
     for (const size of iconSizes) {
       assert.equal(await readFile(harness.integration.paths.iconPaths[size], "utf8"), String(size));
     }
@@ -162,14 +162,14 @@ describe("Linux AppImage desktop integration", () => {
   it("detects a moved AppImage and repairs the launcher for the new path", async () => {
     const first = await createHarness();
     assert.equal((await first.integration.install()).ok, true);
-    const movedPath = path.join(first.root, "Applications", "OpenWork.AppImage");
+    const movedPath = path.join(first.root, "Applications", "TGWork.AppImage");
     await mkdir(path.dirname(movedPath), { recursive: true });
     await rename(first.appImagePath, movedPath);
 
     const moved = createLinuxDesktopIntegration({
       app: { isPackaged: true, getVersion: () => "0.18.7" },
       dialog: { showMessageBox: async () => ({ response: 0, checkboxChecked: false }) },
-      appName: "OpenWork",
+      appName: "TGWork",
       distribution: "public",
       env: {
         APPIMAGE: movedPath,
@@ -212,7 +212,7 @@ describe("Linux AppImage desktop integration", () => {
     assert.equal(relaunched.dialogs.length, 0);
     const entry = await readFile(relaunched.integration.paths.desktopEntryPath, "utf8");
     assert.match(entry, new RegExp(`^TryExec=${updatedPath}$`, "m"));
-    assert.match(entry, /^X-OpenWork-Version=0\.18\.8$/m);
+    assert.match(entry, /^X-TGWork-Version=0\.18\.8$/m);
   });
 
   it("silently refreshes an owned launcher when only the version changed", async () => {
@@ -268,7 +268,7 @@ describe("Linux AppImage desktop integration", () => {
     await mkdir(applications, { recursive: true });
     await writeFile(path.join(applications, managerDesktopId), `[Desktop Entry]
 Type=Application
-Name=OpenWork
+Name=TGWork
 Exec=${quoteDesktopExec(harness.appImagePath)} %U
 TryExec=${harness.appImagePath}
 MimeType=x-scheme-handler/openwork;
@@ -287,7 +287,7 @@ MimeType=x-scheme-handler/openwork;
     await mkdir(path.dirname(harness.integration.paths.desktopEntryPath), { recursive: true });
     const original = `[Desktop Entry]
 Type=Application
-Name=Manager-owned OpenWork
+Name=Manager-owned TGWork
 Exec=${quoteDesktopExec(harness.appImagePath)} %U
 TryExec=${harness.appImagePath}
 MimeType=x-scheme-handler/openwork;
@@ -316,7 +316,7 @@ MimeType=x-scheme-handler/openwork;
     await mkdir(path.dirname(managerPath), { recursive: true });
     const managerEntry = `[Desktop Entry]
 Type=Application
-Name=OpenWork
+Name=TGWork
 Exec=${quoteDesktopExec(harness.appImagePath)} %U
 TryExec=${harness.appImagePath}
 MimeType=x-scheme-handler/openwork;

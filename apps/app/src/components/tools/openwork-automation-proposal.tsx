@@ -93,7 +93,7 @@ export function OpenWorkAutomationProposalTool({ part }: { part: DynamicToolUIPa
   const blocker = !automationsEnabled
     ? "Automations are disabled for this deployment."
     : !signedIn
-      ? "Sign in to OpenWork Cloud to create this Automation."
+      ? "Sign in to TGWork Cloud to create this Automation."
       : null
 
   const create = async () => {
@@ -151,7 +151,7 @@ export function OpenWorkAutomationProposalTool({ part }: { part: DynamicToolUIPa
           <p className="mt-0.5 text-xs text-dls-secondary">
             {created
               ? placement === "cloud"
-                ? "It runs on the schedule below in OpenWork Cloud."
+                ? "It runs on the schedule below in TGWork Cloud."
                 : "It runs on the schedule below while this desktop is connected."
               : "Nothing was created yet. Review it, then create it if it looks right."}
           </p>
@@ -170,7 +170,7 @@ export function OpenWorkAutomationProposalTool({ part }: { part: DynamicToolUIPa
 
       <div className="flex items-center justify-between gap-3 border-t border-dls-border px-4 py-3">
         <p className="min-w-0 flex-1 text-xs text-dls-secondary">
-          {blocker ?? (placement === "cloud" ? "Automations run headlessly in OpenWork Cloud." : "Automations run on this desktop while it is connected.")}
+          {blocker ?? (placement === "cloud" ? "Automations run headlessly in TGWork Cloud." : "Automations run on this desktop while it is connected.")}
         </p>
         {created ? (
           <Button

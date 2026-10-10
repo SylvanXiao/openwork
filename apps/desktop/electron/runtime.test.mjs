@@ -54,7 +54,7 @@ describe("workspace root preparation", () => {
     try {
       const manager = createRuntimeManager({
         app: {
-          getPath: (name) => name === "exe" ? path.join(root, "OpenWork.exe") : root,
+          getPath: (name) => name === "exe" ? path.join(root, "TGWork.exe") : root,
           isPackaged: false,
         },
         desktopRoot: path.dirname(fileURLToPath(import.meta.url)),
@@ -257,8 +257,8 @@ describe("commandMatchesPackagedSidecar", () => {
   it("matches packaged opencode sidecars with platform suffixes", () => {
     assert.equal(
       commandMatchesPackagedSidecar(
-        "/Applications/OpenWork.app/Contents/Resources/sidecars/opencode-aarch64-apple-darwin serve --hostname 127.0.0.1 --port 49174 --cors *",
-        ["/Applications/OpenWork.app/Contents/Resources/sidecars"],
+        "/Applications/TGWork.app/Contents/Resources/sidecars/opencode-aarch64-apple-darwin serve --hostname 127.0.0.1 --port 49174 --cors *",
+        ["/Applications/TGWork.app/Contents/Resources/sidecars"],
       ),
       true,
     );
@@ -268,7 +268,7 @@ describe("commandMatchesPackagedSidecar", () => {
     assert.equal(
       commandMatchesPackagedSidecar(
         "/usr/local/bin/opencode serve --hostname 127.0.0.1 --port 49174",
-        ["/Applications/OpenWork.app/Contents/Resources/sidecars"],
+        ["/Applications/TGWork.app/Contents/Resources/sidecars"],
       ),
       false,
     );
@@ -335,7 +335,7 @@ describe("resolveOpenworkServerConfigPath", () => {
   });
 });
 
-describe("OpenWork server credential persistence", () => {
+describe("TGWork server credential persistence", () => {
   it("deterministically migrates legacy workspace credentials into one server bundle", () => {
     const migrated = migrateOpenworkServerTokenStore({
       version: 1,

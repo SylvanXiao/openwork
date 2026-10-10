@@ -99,8 +99,8 @@ export function cloudWorkspaceTakeoverCopy(input: {
 }): { title: string; body: string } {
   if (input.variant === "access-required") {
     return {
-      title: "OpenWork Web needs an active plan",
-      body: "Your organization does not have an active OpenWork Web subscription or complimentary access. Get OpenWork Web in Den to start your cloud workspace.",
+      title: "TGWork Web needs an active plan",
+      body: "Your organization does not have an active TGWork Web subscription or complimentary access. Get TGWork Web in Den to start your cloud workspace.",
     };
   }
   if (input.variant === "failed") {
@@ -112,7 +112,7 @@ export function cloudWorkspaceTakeoverCopy(input: {
   if (input.variant === "unavailable") {
     return {
       title: "Couldn’t check your workspace",
-      body: "OpenWork Cloud didn’t answer. Your sandbox may still be running, so try checking again.",
+      body: "TGWork Cloud didn’t answer. Your sandbox may still be running, so try checking again.",
     };
   }
   if (input.slow) {
@@ -130,7 +130,7 @@ export function cloudWorkspaceTakeoverCopy(input: {
   if (input.variant === "updating") {
     return {
       title: "Updating your workspace…",
-      body: "We’re applying the latest OpenWork image. Your files and sessions come along.",
+      body: "We’re applying the latest TGWork image. Your files and sessions come along.",
     };
   }
   return {
@@ -269,9 +269,9 @@ export function mapCloudWorkspaceState(input: {
   if (input.accessRequired) {
     return {
       variant: "access-required",
-      label: "OpenWork Web plan required",
+      label: "TGWork Web plan required",
       tone: "amber",
-      statusLine: "OpenWork Web plan required",
+      statusLine: "TGWork Web plan required",
       ...lines,
       updateAvailable,
       showUpdate: false,

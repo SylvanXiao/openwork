@@ -30,9 +30,9 @@ test("normal launches remain unchanged", () => {
 
   assert.equal(profile, null);
   assert.deepEqual(env, originalEnv);
-  assert.deepEqual(resolveBlankSlateLaunch({ appName: "OpenWork", profile }), {
+  assert.deepEqual(resolveBlankSlateLaunch({ appName: "TGWork", profile }), {
     enabled: false,
-    appName: "OpenWork",
+    appName: "TGWork",
     userDataPath: null,
   });
 });
@@ -58,11 +58,11 @@ test("cleanup worker removes the entire temporary root after its parent exits", 
 test("blank-slate launches receive unique temporary roots and a visible name", async () => {
   const firstProfile = prepareBlankSlateProfile({ argv: ["--blank-slate"], env: {} });
   const secondProfile = prepareBlankSlateProfile({ argv: ["--blank-slate"], env: {} });
-  const first = resolveBlankSlateLaunch({ appName: "OpenWork", profile: firstProfile });
-  const second = resolveBlankSlateLaunch({ appName: "OpenWork", profile: secondProfile });
+  const first = resolveBlankSlateLaunch({ appName: "TGWork", profile: firstProfile });
+  const second = resolveBlankSlateLaunch({ appName: "TGWork", profile: secondProfile });
 
   try {
-    assert.equal(first.appName, "OpenWork - Test profile");
+    assert.equal(first.appName, "TGWork - Test profile");
     assert.equal(first.enabled, true);
     assert.ok(first.rootPath.startsWith(tmpdir()));
     assert.notEqual(first.rootPath, second.rootPath);

@@ -10,7 +10,7 @@ const packagePath = resolve(repoRoot, "packages", "computer-use", "native");
 const iconPath = resolve(desktopRoot, "resources", "icons", "icon.icns");
 const productName = "ComputerUse";
 const helperExecutableName = "ComputerUse";
-const helperAppName = "OpenWork Computer Use.app";
+const helperAppName = "TGWork Computer Use.app";
 const bundleIdentifier = "com.differentai.openwork.computer-use";
 
 const readArg = (name) => {
@@ -89,7 +89,7 @@ function infoPlist() {
   <key>CFBundleDevelopmentRegion</key>
   <string>en</string>
   <key>CFBundleDisplayName</key>
-  <string>OpenWork Computer Use</string>
+  <string>TGWork Computer Use</string>
   <key>CFBundleExecutable</key>
   <string>${helperExecutableName}</string>
   <key>CFBundleIdentifier</key>
@@ -99,7 +99,7 @@ function infoPlist() {
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
-  <string>OpenWork Computer Use</string>
+  <string>TGWork Computer Use</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>

@@ -168,7 +168,7 @@ import { buildConnectorToolIdentities } from "@/react-app/domains/connections/co
 
 const EMPTY_TRANSCRIPT: UIMessage[] = [];
 const IDLE_STATUS: SessionStatus = { type: "idle" };
-const DEFAULT_COMPOSER_CONTROL_TEXT = "Help me outline the next OpenWork task.";
+const DEFAULT_COMPOSER_CONTROL_TEXT = "Help me outline the next TGWork task.";
 const SESSION_SURFACE_SELECTOR = "[data-session-surface-id]";
 
 function sanitizedInspectorDiagnosticText(value: string) {
@@ -182,7 +182,7 @@ function sanitizedInspectorDiagnosticText(value: string) {
 
 const MARKDOWN_PRIMITIVE_EVAL_TEXT = `# Markdown proof heading
 
-This shared renderer keeps **bold proof text**, inline \`renderMarkdownHtml\`, and [OpenWork link](https://openworklabs.com) readable in one message.
+This shared renderer keeps **bold proof text**, inline \`renderMarkdownHtml\`, and [TGWork link](https://openworklabs.com) readable in one message.
 
 \`\`\`ts
 const pipeline = "shared markdown primitive";
@@ -368,7 +368,7 @@ function createChatTranscriptEvalMessages(sessionId: string) {
         },
         {
           type: "text",
-          text: "Your plan is drafted — details in [OpenWork](https://openworklabs.com). Search token: chat-transcript-proof.",
+          text: "Your plan is drafted — details in [TGWork](https://openworklabs.com). Search token: chat-transcript-proof.",
         },
       ],
       // `completed` makes the finished turn fold behind a real
@@ -600,9 +600,9 @@ export type SessionSurfaceProps = {
   selectedModel: ModelRef;
   /** providerID → modelID → provider model, for per-session variant options. */
   providerCatalog?: ProviderCatalog;
-  /** Den/import includes OpenWork Models for this org member (not just local sync). */
+  /** Den/import includes TGWork Models for this org member (not just local sync). */
   openWorkModelsEntitled?: boolean;
-  /** The server is waiting to reload this workspace with OpenWork Models. */
+  /** The server is waiting to reload this workspace with TGWork Models. */
   openWorkModelsSyncing?: boolean;
   onRefreshOrganizationModels?: () => void | Promise<void>;
   onModelPickerOpenChange: (open: boolean) => void;
@@ -652,7 +652,7 @@ export type SessionSurfaceProps = {
 };
 
 function messageToReadableText(message: UIMessage) {
-  const header = message.role === "user" ? "You" : message.role === "assistant" ? "OpenWork" : message.role;
+  const header = message.role === "user" ? "You" : message.role === "assistant" ? "天工开物" : message.role;
   const body = message.parts
     .flatMap((part) => {
       if (part.type === "text") return [part.text];
@@ -2977,7 +2977,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     const organizationId = settings.activeOrgId?.trim() ?? "";
     if (!token || !organizationId) {
       props.onOpenConnect();
-      throw new Error("Sign in to OpenWork Cloud, then try reconnecting again.");
+      throw new Error("Sign in to TGWork Cloud, then try reconnecting again.");
     }
 
     const scope: ChatMcpReconnectScope = {
@@ -2996,7 +2996,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
     try {
       const denClient = createDenClient({ baseUrl: settings.baseUrl, token });
       const connections = await denClient.listMcpConnections(organizationId, "usable");
-      if (!isChatMcpReconnectScopeCurrent(scope, currentScope())) throw new Error("Your OpenWork account changed. Try connecting again.");
+      if (!isChatMcpReconnectScopeCurrent(scope, currentScope())) throw new Error("Your TGWork account changed. Try connecting again.");
       const connection = connections.find((entry) => entry.id === action.connectionId);
       if (!connection || connection.authType !== "oauth" || connection.credentialMode !== "per_member") {
         throw new Error(`${action.connectionName} is no longer available as your reconnectable account.`);
@@ -3009,7 +3009,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
       });
       onProgress({ phase: "opening" });
       const result = await denClient.startMcpConnectionConnect(organizationId, action.connectionId);
-      if (!isChatMcpReconnectScopeCurrent(scope, currentScope())) throw new Error("Your OpenWork account changed. Try connecting again.");
+      if (!isChatMcpReconnectScopeCurrent(scope, currentScope())) throw new Error("Your TGWork account changed. Try connecting again.");
       if (result.status === "connected") {
         recordInspectorEvent("mcp.chat_reconnect.completed", {
           workspaceId: props.workspaceId,

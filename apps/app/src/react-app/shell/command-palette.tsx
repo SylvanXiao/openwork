@@ -453,7 +453,7 @@ export function CommandPalette(props: CommandPaletteProps) {
       : []),
     {
       id: "cloud.sign_in",
-      title: "Sign in to OpenWork Cloud",
+      title: "Sign in to TGWork Cloud",
       keywords: ["login", "account", "organization", "org", "den", "cloud"],
       group: ACTIONS_GROUP,
       action: () => {

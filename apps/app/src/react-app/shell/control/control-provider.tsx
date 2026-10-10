@@ -347,7 +347,7 @@ export function OpenworkControlProvider({ children }: { children: ReactNode }) {
       resources: [{
         ref: `screen:${route}`,
         kind: "screen",
-        title: "OpenWork",
+        title: "天工开物",
         provider: { id: "openwork-ui", kind: "builtin" },
         state: { kind: "other", route },
       }],
@@ -554,7 +554,7 @@ export function OpenworkControlProvider({ children }: { children: ReactNode }) {
       return {
         ok: false,
         id: request.id,
-        error: `OpenWork context changed from revision ${request.expectedRevision} to ${revision}.`,
+        error: `TGWork context changed from revision ${request.expectedRevision} to ${revision}.`,
         code: "conflict",
         revision,
       };
@@ -839,8 +839,8 @@ export function OpenworkRouteControlActions() {
     },
     {
       id: "help.capabilities",
-      label: "What can OpenWork do?",
-      description: "List the main capabilities of OpenWork.",
+      label: "What can TGWork do?",
+      description: "List the main capabilities of TGWork.",
       kind: "query",
       effects: { data: "read", ui: "none", external: false },
       sideEffect: "none",
@@ -854,7 +854,7 @@ export function OpenworkRouteControlActions() {
           { id: "computer-use", label: "Computer use", description: "Control your computer with screenshots and mouse/keyboard actions." },
           { id: "skills", label: "Skills", description: "Install specialized skill packs for specific workflows." },
           { id: "automations", label: "Automations", description: "Schedule recurring tasks and background agents." },
-          { id: "sharing", label: "Share sessions", description: "Share workspace sessions with collaborators via OpenWork Cloud." },
+          { id: "sharing", label: "Share sessions", description: "Share workspace sessions with collaborators via TGWork Cloud." },
         ],
         hint: "Use settings.panel.open for settings such as AI providers, and route.extensions.skills to browse Library.",
       }),

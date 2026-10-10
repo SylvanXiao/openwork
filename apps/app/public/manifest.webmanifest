@@ -1,6 +1,6 @@
 {
-  "name": "OpenWork",
-  "short_name": "OpenWork",
+  "name": "天工开物",
+  "short_name": "天工开物",
   "description": "Local-first agent workspace",
   "start_url": "/",
   "display": "standalone",

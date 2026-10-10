@@ -15,7 +15,7 @@ export function createMcpAppActions(origin: McpAppOrigin, app: OpenworkMcpAppRes
   const assertActive = () => {
     if (!active) throw new Error("This App view has closed or changed. Reopen it before using its actions.");
     if (origin.readOnly) throw new Error("This view is read-only and cannot perform App actions.");
-    if (!app.launchId) throw new Error("This App has no live launch context. Update OpenWork and reopen the App.");
+    if (!app.launchId) throw new Error("This App has no live launch context. Update TGWork and reopen the App.");
   };
   return {
     dispose: () => { active = false; },

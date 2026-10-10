@@ -500,13 +500,13 @@ export function resetRuntimeStatesAfterFailedServerStart(openworkServerStateRef,
 
 function assertOpenworkServerReady(snapshot) {
   if (!snapshot?.running) {
-    throw new Error("OpenWork server did not stay running after startup.");
+    throw new Error("TGWork server did not stay running after startup.");
   }
   if (!snapshot.baseUrl) {
-    throw new Error("OpenWork server did not report a base URL after startup.");
+    throw new Error("TGWork server did not report a base URL after startup.");
   }
   if (!snapshot.ownerToken && !snapshot.clientToken) {
-    throw new Error("OpenWork server did not report an access token after startup.");
+    throw new Error("TGWork server did not report an access token after startup.");
   }
   return snapshot;
 }
@@ -1165,14 +1165,14 @@ async function repairIncompleteChains(options) {
   const chainRepair = options.chainRepair ?? {};
   const logInfo = options.logInfo;
   if (chainRepair.disabled === true || String(env.OPENWORK_DISABLE_CHAIN_REPAIR ?? "").trim() === "1") {
-    if (typeof logInfo === "function") logInfo("OpenWork runtime: chain repair disabled by OPENWORK_DISABLE_CHAIN_REPAIR.");
+    if (typeof logInfo === "function") logInfo("TGWork runtime: chain repair disabled by OPENWORK_DISABLE_CHAIN_REPAIR.");
     return { pems: [], timedOut: false };
   }
 
   const origins = await resolveChainRepairOrigins(options);
   if (origins.length === 0) {
     if (!chainRepair.origins && !String(env.OPENWORK_CHAIN_REPAIR_ORIGINS ?? "").trim() && typeof logInfo === "function") {
-      logInfo("OpenWork runtime: chain repair skipped: no activation record.");
+      logInfo("TGWork runtime: chain repair skipped: no activation record.");
     }
     return { pems: [], timedOut: false };
   }
@@ -1193,7 +1193,7 @@ async function repairIncompleteChains(options) {
 
   if (typeof fetchImpl !== "function") {
     if (typeof logInfo === "function") {
-      for (const origin of origins) logInfo(`OpenWork runtime: chain repair skipped for ${origin}: fetch unavailable`);
+      for (const origin of origins) logInfo(`TGWork runtime: chain repair skipped for ${origin}: fetch unavailable`);
     }
     return { pems: [], timedOut: false };
   }
@@ -1203,27 +1203,27 @@ async function repairIncompleteChains(options) {
     for (const origin of origins) {
       const strictError = await strictProbeChainRepair(origin, tlsConnectImpl);
       if (strictError === null) {
-        if (typeof logInfo === "function") logInfo(`OpenWork runtime: chain ok for ${origin}`);
+        if (typeof logInfo === "function") logInfo(`TGWork runtime: chain ok for ${origin}`);
         continue;
       }
       if (strictError !== "UNABLE_TO_VERIFY_LEAF_SIGNATURE") {
-        if (typeof logInfo === "function") logInfo(`OpenWork runtime: chain repair skipped for ${origin}: ${strictError}`);
+        if (typeof logInfo === "function") logInfo(`TGWork runtime: chain repair skipped for ${origin}: ${strictError}`);
         continue;
       }
 
       const leafState = await introspectLeafCertificate(origin, tlsConnectImpl);
       if (!leafState) {
-        if (typeof logInfo === "function") logInfo(`OpenWork runtime: chain repair skipped for ${origin}: certificate introspection failed`);
+        if (typeof logInfo === "function") logInfo(`TGWork runtime: chain repair skipped for ${origin}: certificate introspection failed`);
         continue;
       }
       if (!leafState.leafOnly) {
-        if (typeof logInfo === "function") logInfo(`OpenWork runtime: chain repair skipped for ${origin}: served chain includes an intermediate`);
+        if (typeof logInfo === "function") logInfo(`TGWork runtime: chain repair skipped for ${origin}: served chain includes an intermediate`);
         continue;
       }
 
       const issuerUrls = caIssuerUrls(leafState.leaf);
       if (issuerUrls.length === 0) {
-        if (typeof logInfo === "function") logInfo(`OpenWork runtime: chain repair skipped for ${origin}: no CA Issuers AIA URL`);
+        if (typeof logInfo === "function") logInfo(`TGWork runtime: chain repair skipped for ${origin}: no CA Issuers AIA URL`);
         continue;
       }
 
@@ -1238,18 +1238,18 @@ async function repairIncompleteChains(options) {
         if (!intermediate) continue;
         const reason = refusalReason(leafState.leaf, intermediate, rootsProvider);
         if (reason) {
-          if (typeof logInfo === "function") logInfo(`OpenWork runtime: chain repair refused for ${origin}: ${reason}`);
+          if (typeof logInfo === "function") logInfo(`TGWork runtime: chain repair refused for ${origin}: ${reason}`);
           continue;
         }
         pems.push(intermediate.toString());
         repaired = true;
         if (typeof logInfo === "function") {
-          logInfo(`OpenWork runtime: chain repaired for ${origin}: added "${certificateCommonName(intermediate)}"`);
+          logInfo(`TGWork runtime: chain repaired for ${origin}: added "${certificateCommonName(intermediate)}"`);
         }
         break;
       }
       if (!repaired && typeof logInfo === "function") {
-        logInfo(`OpenWork runtime: chain repair skipped for ${origin}: no usable AIA issuer certificate`);
+        logInfo(`TGWork runtime: chain repair skipped for ${origin}: no usable AIA issuer certificate`);
       }
     }
     return { pems, timedOut: false };
@@ -1284,7 +1284,7 @@ async function resolveSystemCa({
   const env = parentEnv ?? {};
   if (Object.prototype.hasOwnProperty.call(env, "NODE_EXTRA_CA_CERTS")) {
     if (typeof logInfo === "function") {
-      logInfo("OpenWork runtime: NODE_EXTRA_CA_CERTS is already set; skipping system CA bundle export.");
+      logInfo("TGWork runtime: NODE_EXTRA_CA_CERTS is already set; skipping system CA bundle export.");
     }
     try {
       const configuredPem = await readFile(String(env.NODE_EXTRA_CA_CERTS), "utf8");
@@ -1307,7 +1307,7 @@ async function resolveSystemCa({
       platform: platformLoader,
     });
     if (typeof logInfo === "function") {
-      logInfo(`OpenWork runtime: system CA bundle sources ${summarizeSystemCaSources(bundle.sources)}`);
+      logInfo(`TGWork runtime: system CA bundle sources ${summarizeSystemCaSources(bundle.sources)}`);
     }
     let repairedPems = [];
     try {
@@ -1323,7 +1323,7 @@ async function resolveSystemCa({
       });
       repairedPems = repaired.pems;
       if (repaired.timedOut && typeof logInfo === "function") {
-        logInfo("OpenWork runtime: chain repair skipped: timed out");
+        logInfo("TGWork runtime: chain repair skipped: timed out");
       }
     } catch {
       repairedPems = [];
@@ -1868,9 +1868,9 @@ export function createRuntimeManager({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-OpenWork-Host-Token": hostToken,
+          "X-TGWork-Host-Token": hostToken,
         },
-        body: JSON.stringify({ scope: "owner", label: "OpenWork desktop owner token" }),
+        body: JSON.stringify({ scope: "owner", label: "TGWork desktop owner token" }),
       },
       5000,
     );
@@ -1948,7 +1948,7 @@ export function createRuntimeManager({
       : [...packagedPaths, devPath];
     const embeddedPath = candidates.find((candidate) => existsSync(candidate));
     if (!embeddedPath) {
-      throw new Error(`Cannot find OpenWork embedded server bundle. Checked: ${candidates.join(", ")}`);
+      throw new Error(`Cannot find TGWork embedded server bundle. Checked: ${candidates.join(", ")}`);
     }
     // Must be set before the bundle loads: the server memoizes its file sink
     // from process.env the first time it creates a logger.
@@ -2037,7 +2037,7 @@ export function createRuntimeManager({
           engineState.childExited = false;
         }
       } catch (error) {
-        appendOutput(openworkServerState, "lastStderr", `OpenWork server workspace probe: ${error instanceof Error ? error.message : String(error)}\n`);
+        appendOutput(openworkServerState, "lastStderr", `TGWork server workspace probe: ${error instanceof Error ? error.message : String(error)}\n`);
       }
     }
     if (!portSelection.preferredPort || boundPort === portSelection.preferredPort) {
@@ -2089,7 +2089,7 @@ export function createRuntimeManager({
         opencodeBinPath: options.opencodeBinPath,
       });
     } catch (error) {
-      appendOutput(engineState, "lastStderr", `OpenWork server: ${error instanceof Error ? error.message : String(error)}\n`);
+      appendOutput(engineState, "lastStderr", `TGWork server: ${error instanceof Error ? error.message : String(error)}\n`);
       throw error;
     }
 
@@ -2260,7 +2260,7 @@ export function createRuntimeManager({
         status: -1,
         stdout: "",
         stderr:
-          "Guided install is not supported on Windows yet. Install the OpenWork-pinned OpenCode version manually, then restart OpenWork.",
+          "Guided install is not supported on Windows yet. Install the TGWork-pinned OpenCode version manually, then restart TGWork.",
       };
     }
 

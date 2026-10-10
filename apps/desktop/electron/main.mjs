@@ -1114,7 +1114,7 @@ browserPanel = createBrowserPanel({
     try {
       const server = await runtimeManager.openworkServerInfo();
       if (!server.baseUrl || !(server.clientToken ?? server.ownerToken)) throw new Error("Policy service unavailable");
-      // loopback-fetch: the policy service is the locally managed OpenWork server.
+      // loopback-fetch: the policy service is the locally managed TGWork server.
       const response = await fetch(`${server.baseUrl}/managed-policy/evaluate`, {
         method: "POST",
         headers: { Authorization: `Bearer ${server.clientToken ?? server.ownerToken}`, "Content-Type": "application/json" },
@@ -1412,7 +1412,7 @@ const SHUTDOWN_SCREEN_HTML = `<!doctype html>
   <body>
     <main>
       <div class="spinner" aria-hidden="true"></div>
-      <div class="title">Stopping OpenWork services</div>
+      <div class="title">Stopping TGWork services</div>
       <div class="body">Closing local workers and background services...</div>
     </main>
   </body>
@@ -1466,13 +1466,13 @@ const quitInProgress = () => quitSequencer.phase() !== "idle";
 
 function assertOpenworkServerReady(info) {
   if (!info?.running) {
-    throw new Error("OpenWork server did not stay running after startup.");
+    throw new Error("TGWork server did not stay running after startup.");
   }
   if (!info.baseUrl) {
-    throw new Error("OpenWork server did not report a base URL after startup.");
+    throw new Error("TGWork server did not report a base URL after startup.");
   }
   if (!info.ownerToken && !info.clientToken) {
-    throw new Error("OpenWork server did not report an access token after startup.");
+    throw new Error("TGWork server did not report an access token after startup.");
   }
   return info;
 }
@@ -1976,7 +1976,7 @@ const desktopCommandHandlers = {
   },
   "getComputerUseState": async () => getComputerUseState(),
   "computerUseAction": async (event, value) => {
-    if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== mainWindow.webContents.mainFrame) throw new Error("Computer Use controls require the main OpenWork window.");
+    if (!mainWindow || event.sender !== mainWindow.webContents || event.senderFrame !== mainWindow.webContents.mainFrame) throw new Error("Computer Use controls require the main TGWork window.");
     return computerUseAction(value);
   },
   "getComputerUseMcpCommand": async (event, ...args) => {
@@ -2541,7 +2541,7 @@ function assertDesktopActivation() {
     DESKTOP_DISTRIBUTION,
     workspaceStore.readDesktopBootstrapConfigSync(),
   )) {
-    throw new Error("OpenWork must be activated from your Den portal before this command is available.");
+    throw new Error("TGWork must be activated from your Den portal before this command is available.");
   }
 }
 
@@ -2652,7 +2652,7 @@ async function createMainWindow() {
     onRepeatedCrash: (details) => {
       dialog.showErrorBox(
         `${APP_NAME} could not recover`,
-        `The app renderer stopped repeatedly (${details.reason ?? "unknown reason"}). Quit and reopen OpenWork. Your workspace files were not deleted.`,
+        `The app renderer stopped repeatedly (${details.reason ?? "unknown reason"}). Quit and reopen TGWork. Your workspace files were not deleted.`,
       );
     },
   });
@@ -2832,12 +2832,12 @@ const browserLoginSync = createBrowserLoginSync({
         title: action === "resume" ? "Resume browser login sync?" : action === "configure" ? "Enable browser login sync?" : action === "discover" ? "Look for browser profiles?" : "Read logins from this browser?",
         message: sourceLabel,
         detail: action === "resume"
-          ? "OpenWork will resume reading the sites you selected from this profile. It never changes the source browser."
+          ? "TGWork will resume reading the sites you selected from this profile. It never changes the source browser."
           : action === "configure"
-            ? `OpenWork will keep reading login cookies for these sites until you pause or disconnect: ${sites.join(", ")}. It never changes the source browser.`
+            ? `TGWork will keep reading login cookies for these sites until you pause or disconnect: ${sites.join(", ")}. It never changes the source browser.`
             : action === "discover"
-              ? "OpenWork will look only for supported browser profile locations. It will not read cookie databases until you choose a profile and confirm again."
-              : "OpenWork will read login metadata from this profile so you can choose sites. Nothing syncs until you confirm those sites, and the source browser is never changed.",
+              ? "TGWork will look only for supported browser profile locations. It will not read cookie databases until you choose a profile and confirm again."
+              : "TGWork will read login metadata from this profile so you can choose sites. Nothing syncs until you confirm those sites, and the source browser is never changed.",
         noLink: true,
       };
       const result = mainWindow
@@ -2869,7 +2869,7 @@ const { ensureAutoUpdater } = registerUpdaterIpc({
 
 if (!app.requestSingleInstanceLock()) {
   if (isDevMode && !app.isPackaged) {
-    console.error(`[openwork] Another OpenWork dev instance already holds this profile directory:
+    console.error(`[openwork] Another TGWork dev instance already holds this profile directory:
   ${app.getPath("userData")}
 The second process is exiting so its CDP port is released.
 Run this worktree with an isolated profile: OPENWORK_DEV_PROFILE=auto pnpm dev
@@ -2974,8 +2974,8 @@ or use: pnpm dev:worktree`);
     if (firstLaunchWorkspaceFailure) {
       runDetachedTask("show default workspace warning", () => dialog.showMessageBox(win, {
         type: "warning",
-        message: "OpenWork could not prepare its default folder",
-        detail: `OpenWork is open without a workspace. Use Add workspace in the sidebar to choose another folder.\n\n${firstLaunchWorkspaceFailure.error}`,
+        message: "TGWork could not prepare its default folder",
+        detail: `TGWork is open without a workspace. Use Add workspace in the sidebar to choose another folder.\n\n${firstLaunchWorkspaceFailure.error}`,
         buttons: ["Continue"],
       }));
     }
@@ -3005,7 +3005,7 @@ or use: pnpm dev:worktree`);
     if (quitInProgress()) return;
     dialog.showErrorBox(
       `${APP_NAME} could not start`,
-      "OpenWork hit an unexpected startup error. Quit and reopen the app. If it continues, switch to a Stable build and share the diagnostics with support.",
+      "TGWork hit an unexpected startup error. Quit and reopen the app. If it continues, switch to a Stable build and share the diagnostics with support.",
     );
     app.quit();
   });
