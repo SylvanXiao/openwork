@@ -43,7 +43,7 @@ OpenWork 圍繞一個核心理念設計：讓您可以輕鬆地將智能體工�
 
 
 ## 快速開始
-在此處下載 dmg：https://github.com/different-ai/openwork/releases（或按照下面的說明從源代碼安裝）
+在此處下載 dmg：https://github.com/SylvanXiao/tgwork/releases（或按照下面的說明從源代碼安裝）
 
 ## 為什麼選擇 OpenWork
 

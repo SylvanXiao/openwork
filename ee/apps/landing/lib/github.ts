@@ -15,7 +15,7 @@ type Repo = {
   stargazers_count?: number;
 };
 
-const FALLBACK_RELEASE = "https://github.com/different-ai/openwork/releases";
+const FALLBACK_RELEASE = "https://github.com/SylvanXiao/tgwork/releases";
 
 const formatCompact = (value: number) => {
   try {
@@ -75,12 +75,12 @@ export const getGithubData = async () => {
   // the paginated list being flooded by alpha tags pushing stable releases out
   // of the per_page window.
   const [repo, latestRelease, releases] = await Promise.all([
-    fetchJson<Repo>("https://api.github.com/repos/different-ai/openwork"),
+    fetchJson<Repo>("https://api.github.com/repos/SylvanXiao/tgwork"),
     fetchJson<Release>(
-      "https://api.github.com/repos/different-ai/openwork/releases/latest"
+      "https://api.github.com/repos/SylvanXiao/tgwork/releases/latest"
     ),
     fetchJson<Release[]>(
-      "https://api.github.com/repos/different-ai/openwork/releases?per_page=50"
+      "https://api.github.com/repos/SylvanXiao/tgwork/releases?per_page=50"
     )
   ]);
 

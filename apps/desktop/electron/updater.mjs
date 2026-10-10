@@ -44,8 +44,8 @@ function resolveAppVersion(app) {
   return _cachedAppVersion;
 }
 const ELECTRON_UPDATER_FEEDS = Object.freeze({
-  stable: "https://github.com/tgwork/tgwork/releases/latest/download",
-  alpha: "https://github.com/tgwork/tgwork/releases/download/alpha-macos-latest",
+  stable: "https://github.com/SylvanXiao/tgwork/releases/latest/download",
+  alpha: "https://github.com/SylvanXiao/tgwork/releases/download/alpha-macos-latest",
 });
 
 function normalizeElectronUpdaterChannel(value, manifestChannel = "latest") {
@@ -176,7 +176,7 @@ export function targetedStableUpdaterFeed(currentVersion, targetVersion, allowOl
       ? "Recovery target version must differ from the installed version."
       : "Target update version must be newer than the installed version.");
   }
-  return `https://github.com/tgwork/tgwork/releases/download/v${normalizedTarget}`;
+  return `https://github.com/SylvanXiao/tgwork/releases/download/v${normalizedTarget}`;
 }
 
 function updaterChannelState(app, channel, targetVersion = null, manifestChannel = "latest") {
@@ -446,7 +446,7 @@ export function registerUpdaterIpc({
   async function resolveRecoveryArtifact(version) {
     if (!electronNet?.fetch) return null;
     try {
-      const manifestUrl = `https://github.com/tgwork/tgwork/releases/download/v${version}/${recoveryManifestName(platform, arch, distribution)}`;
+      const manifestUrl = `https://github.com/SylvanXiao/tgwork/releases/download/v${version}/${recoveryManifestName(platform, arch, distribution)}`;
       const response = await electronNet.fetch(manifestUrl, { headers: { Accept: "text/yaml, text/plain, */*" } });
       if (!response.ok) return null;
       return selectRecoveryArtifact(parseRecoveryManifest(await response.text()), {

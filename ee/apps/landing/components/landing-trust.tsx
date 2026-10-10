@@ -274,7 +274,7 @@ export function LandingTrustOverview(props: SharedProps) {
             <div className="mt-4 text-[13px] text-slate-500">
               See our{" "}
               <a
-                href="https://github.com/different-ai/openwork/blob/dev/SECURITY.md"
+                href="https://github.com/SylvanXiao/tgwork/blob/dev/SECURITY.md"
                 target="_blank"
                 rel="noreferrer"
                 className="underline decoration-slate-300 underline-offset-2 hover:text-[#011627]"

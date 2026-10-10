@@ -9,7 +9,7 @@ export type ConfiguredInstallerArtifact = {
   size: number
 }
 
-export const DEFAULT_INSTALLER_RELEASE_REPO = "different-ai/openwork"
+export const DEFAULT_INSTALLER_RELEASE_REPO = "SylvanXiao/tgwork"
 
 type InstallerReleaseAssetOptions = { releaseRepo?: string; releaseTag?: string }
 type ExplicitInstallerReleaseAssetOptions = InstallerReleaseAssetOptions & { releaseTag: string }

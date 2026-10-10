@@ -21,10 +21,10 @@ type GithubFetchFixtures = {
   releases: GithubFixtureRelease[];
 };
 
-const repoUrl = "https://api.github.com/repos/different-ai/openwork";
-const latestReleaseUrl = "https://api.github.com/repos/different-ai/openwork/releases/latest";
-const releasesUrl = "https://api.github.com/repos/different-ai/openwork/releases?per_page=50";
-const fallbackReleaseUrl = "https://github.com/different-ai/openwork/releases";
+const repoUrl = "https://api.github.com/repos/SylvanXiao/tgwork";
+const latestReleaseUrl = "https://api.github.com/repos/SylvanXiao/tgwork/releases/latest";
+const releasesUrl = "https://api.github.com/repos/SylvanXiao/tgwork/releases?per_page=50";
+const fallbackReleaseUrl = "https://github.com/SylvanXiao/tgwork/releases";
 const releaseTag = "v0.17.38";
 const releasePageUrl = `${fallbackReleaseUrl}/tag/${releaseTag}`;
 const downloadBaseUrl = `${fallbackReleaseUrl}/download/${releaseTag}`;

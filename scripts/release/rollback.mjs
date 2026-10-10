@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const REPO = "different-ai/openwork";
+export const REPO = "SylvanXiao/tgwork";
 const MAX_BUFFER = 128 * 1024 * 1024;
 
 const log = (message) => console.log(`  ${message}`);

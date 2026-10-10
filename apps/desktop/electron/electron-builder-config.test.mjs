@@ -49,7 +49,7 @@ describe("Electron distribution configs", () => {
     assert.equal(config.extraMetadata.openworkDistribution, "enterprise");
     assert.equal(config.protocols[0].schemes[0], "tgwork");
     assert.equal(config.publish[0].provider, "github");
-    assert.equal(config.publish[0].owner, "tgwork");
+    assert.equal(config.publish[0].owner, "SylvanXiao");
     assert.equal(config.publish[0].repo, "tgwork");
     assert.equal(config.publish[0].channel, "enterprise");
     assert.equal(

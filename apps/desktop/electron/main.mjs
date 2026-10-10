@@ -160,8 +160,8 @@ if (BLANK_SLATE_LAUNCH.enabled || process.env.OPENWORK_ELECTRON_USE_MOCK_KEYCHAI
   // system keychain normally.
   app.commandLine.appendSwitch("use-mock-keychain");
 }
-const RELEASE_DOWNLOAD_BASE_URL = "https://github.com/tgwork/tgwork/releases/latest/download";
-const RELEASE_PAGE_URL = "https://github.com/tgwork/tgwork/releases/latest";
+const RELEASE_DOWNLOAD_BASE_URL = "https://github.com/SylvanXiao/tgwork/releases/latest/download";
+const RELEASE_PAGE_URL = "https://github.com/SylvanXiao/tgwork/releases/latest";
 const DOCS_PAGE_URL = "https://openworklabs.com/docs";
 const applicationMenu = createApplicationMenu({
   appName: APP_NAME,

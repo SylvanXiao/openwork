@@ -9,7 +9,7 @@ protocols:
       - tgwork
 publish:
   - provider: github
-    owner: tgwork
+    owner: SylvanXiao
     repo: tgwork
     releaseType: release
     channel: cloud

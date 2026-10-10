@@ -35,7 +35,7 @@ afterPack: scripts/electron-after-pack.cjs
 afterSign: scripts/electron-after-sign.cjs
 publish:
   - provider: github
-    owner: tgwork
+    owner: SylvanXiao
     repo: tgwork
     releaseType: release
 mac:

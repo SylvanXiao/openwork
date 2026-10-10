@@ -25,7 +25,7 @@ OpenWorkは、エージェントワークフローを再現可能なプロダク
 
 ## クイックスタート
 
-デスクトップアプリを[openworklabs.com/download](https://openworklabs.com/download)からダウンロードするか、最新の[GitHubリリース](https://github.com/different-ai/openwork/releases)を取得するか、以下の手順でソースからインストールしてください。
+デスクトップアプリを[openworklabs.com/download](https://openworklabs.com/download)からダウンロードするか、最新の[GitHubリリース](https://github.com/SylvanXiao/tgwork/releases)を取得するか、以下の手順でソースからインストールしてください。
 
 - macOSおよびLinux向けのダウンロードが直接利用可能です。
 - Windowsへのアクセスは現在、[openworklabs.com/pricing#windows-support](https://openworklabs.com/pricing#windows-support)の有料サポートプランで提供されています。

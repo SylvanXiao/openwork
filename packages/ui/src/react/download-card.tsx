@@ -21,7 +21,7 @@ export type DownloadPlatformGroup = {
   options: DownloadPlatformOption[]
 }
 
-const FALLBACK_RELEASE = "https://github.com/different-ai/openwork/releases"
+const FALLBACK_RELEASE = "https://github.com/SylvanXiao/tgwork/releases"
 
 const FALLBACK_INSTALLERS: DownloadCardInstallers = {
   macos: { appleSilicon: FALLBACK_RELEASE, intel: FALLBACK_RELEASE },

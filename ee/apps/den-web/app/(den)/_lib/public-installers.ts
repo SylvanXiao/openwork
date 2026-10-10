@@ -1,6 +1,6 @@
 import type { DownloadCardInstallers } from "@openwork/ui/react";
 
-const FALLBACK_RELEASE = "https://github.com/different-ai/openwork/releases";
+const FALLBACK_RELEASE = "https://github.com/SylvanXiao/tgwork/releases";
 
 type ReleaseAsset = {
   name?: string;
@@ -49,7 +49,7 @@ export async function getPublicInstallers(): Promise<{
   releaseTag: string;
 }> {
   try {
-    const response = await fetch("https://api.github.com/repos/different-ai/openwork/releases/latest", {
+    const response = await fetch("https://api.github.com/repos/SylvanXiao/tgwork/releases/latest", {
       next: { revalidate: 3600 },
       headers: { Accept: "application/vnd.github+json" },
     });

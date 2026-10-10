@@ -81,7 +81,7 @@ a normal reviewed PR and close the loop there.
 - **Rerun an existing tag** (infra failure, replay AUR/Daytona):
 
   ```bash
-  gh workflow run "Release App" --repo different-ai/openwork -f tag=vX.Y.Z
+  gh workflow run "Release App" --repo SylvanXiao/tgwork -f tag=vX.Y.Z
   ```
 
   Recovery runs skip tag creation and monotonicity. Sources are pinned to the
@@ -152,8 +152,8 @@ npm publish. It does **not** require:
 ## Verification checklist
 
 ```bash
-gh run list --repo different-ai/openwork --workflow "Release App" --limit 3
-gh release view vX.Y.Z --repo different-ai/openwork   # published, not draft
+gh run list --repo SylvanXiao/tgwork --workflow "Release App" --limit 3
+gh release view vX.Y.Z --repo SylvanXiao/tgwork   # published, not draft
 ```
 
 - Release is **not a draft** and marked Latest

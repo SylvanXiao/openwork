@@ -234,7 +234,7 @@ export function LandingEnterprise(props: Props) {
               })}
             </div>
             <div className="mt-5 flex flex-col gap-4 rounded-[12px] bg-[#0B1E30] px-[22px] py-[18px] sm:flex-row sm:items-center sm:justify-between">
-              <code className="mono overflow-x-auto text-[13.5px] text-[#E2E8F0]">$ git clone different-ai/openwork &amp;&amp; docker compose up</code>
+              <code className="mono overflow-x-auto text-[13.5px] text-[#E2E8F0]">$ git clone SylvanXiao/tgwork &amp;&amp; docker compose up</code>
               <a href="/docs" className="shrink-0 text-[13px] font-medium text-[#7DD3FC]">Self-hosting guide →</a>
             </div>
             <p className="mt-3 text-[13.5px] text-[var(--lp-muted)]">The full stack is open source — run it in your VPC with your keys, your models, and your policies.</p>

@@ -335,7 +335,7 @@ const openApiOptions: Parameters<typeof generateSpecs>[1] = {
       },
       license: {
         name: "OpenWork Enterprise Edition License",
-        url: "https://github.com/different-ai/openwork/blob/dev/ee/LICENSE",
+        url: "https://github.com/SylvanXiao/tgwork/blob/dev/ee/LICENSE",
       },
       description: [
         "OpenAPI spec for the Den control plane API.",

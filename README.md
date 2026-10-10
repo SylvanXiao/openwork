@@ -103,7 +103,7 @@ The fastest path from a fresh clone to a running dev build.
 ### First run
 
 ```bash
-git clone https://github.com/different-ai/openwork.git
+git clone https://github.com/SylvanXiao/tgwork.git
 cd openwork
 corepack enable
 pnpm install

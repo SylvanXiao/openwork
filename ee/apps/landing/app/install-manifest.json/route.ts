@@ -8,7 +8,7 @@
 // Platforms/arches are only included when a matching release asset exists, so
 // the manifest is always current without manual maintenance.
 
-const GITHUB_REPO = "different-ai/openwork";
+const GITHUB_REPO = "SylvanXiao/tgwork";
 const RELEASES_API = `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=20`;
 
 type GithubAsset = { name: string; browser_download_url: string };

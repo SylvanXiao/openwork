@@ -189,7 +189,7 @@ export function PricingGrid(props: PricingGridProps) {
         SSO, analytics, desktop policies, and white-labeling), free for development and testing, and
         free to evaluate for 30 days at any size with all features — see the{" "}
         <a
-          href="https://github.com/different-ai/openwork/blob/dev/ee/LICENSE"
+          href="https://github.com/SylvanXiao/tgwork/blob/dev/ee/LICENSE"
           rel="noreferrer"
           target="_blank"
           className="underline"

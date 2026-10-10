@@ -93,7 +93,7 @@ export function SiteNav(props: Props) {
 
           <div className="col-start-3 flex items-center gap-4">
             <a
-              href="https://github.com/different-ai/openwork"
+              href="https://github.com/SylvanXiao/tgwork"
               className="hidden h-9 items-center gap-2 rounded-full border border-[var(--lp-border)] bg-white px-3.5 text-sm font-normal text-[var(--lp-muted)] transition-colors hover:text-[var(--lp-ink)] sm:flex"
               rel="noreferrer"
               target="_blank"
@@ -165,7 +165,7 @@ export function SiteNav(props: Props) {
                 Book a call
               </a>
               <a
-                href="https://github.com/different-ai/openwork"
+                href="https://github.com/SylvanXiao/tgwork"
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-100 bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-[0_1px_2px_rgba(17,24,39,0.06)] transition-colors hover:text-[#011627]"
                 rel="noreferrer"
                 target="_blank"

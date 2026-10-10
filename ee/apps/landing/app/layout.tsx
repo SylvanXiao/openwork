@@ -19,7 +19,7 @@ const organizationSchema = {
   legalName: "Different AI",
   url: "https://openworklabs.com",
   logo: "https://openworklabs.com/openwork-mark.svg",
-  sameAs: ["https://github.com/different-ai/openwork"]
+  sameAs: ["https://github.com/SylvanXiao/tgwork"]
 };
 
 const inter = Inter({
