@@ -32,7 +32,7 @@ test("any desktop build can launch with an isolated blank-slate profile", async 
     assert.equal(first.enabled, true);
     assert.equal(first.appName, "TGWork Enterprise - Test profile");
     assert.notEqual(first.rootPath, second.rootPath);
-    assert.ok(!first.userDataPath.includes("com.differentai.openwork"));
+    assert.ok(!first.userDataPath.includes("com.tgwork.app"));
 
     for (const key of BLANK_SLATE_PATH_ENV_KEYS) {
       const value = firstEnv[key];

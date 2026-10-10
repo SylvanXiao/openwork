@@ -33,7 +33,7 @@ test("live shared production desktop state requires consent and selects state wi
     const dataDir = join(homeDir, ".openwork", "openwork-server");
     const configDir = join(homeDir, ".config", "openwork");
     const opencodeConfigDir = join(homeDir, ".config", "opencode");
-    const userDataDir = join(homeDir, "Library", "Application Support", "com.differentai.openwork");
+    const userDataDir = join(homeDir, "Library", "Application Support", "com.tgwork.app");
     const opencodeDb = join(homeDir, "Library", "Application Support", "opencode", "opencode.db");
     await mkdir(dataDir, { recursive: true });
     await mkdir(configDir, { recursive: true });
@@ -77,7 +77,7 @@ test("live shared production desktop state requires consent and selects state wi
       profilePaths,
       {
         appName: "OpenWork Eval production-live",
-        appIdentifier: "com.differentai.openwork.eval.production-live",
+        appIdentifier: "com.tgwork.app.eval.production-live",
         port: 31_001,
         cdpPort: 31_002,
       },
@@ -93,7 +93,7 @@ test("live shared production desktop state requires consent and selects state wi
     assert.equal(launchEnv.OPENWORK_DEV_SHARED_STATE, "1");
     assert.equal(launchEnv.OPENWORK_ELECTRON_USERDATA, profilePaths.userDataDir);
     assert.notEqual(launchEnv.OPENWORK_ELECTRON_USERDATA, dataDir);
-    assert.equal(launchEnv.OPENWORK_ELECTRON_APP_IDENTIFIER, "com.differentai.openwork.eval.production-live");
+    assert.equal(launchEnv.OPENWORK_ELECTRON_APP_IDENTIFIER, "com.tgwork.app.eval.production-live");
     assert.equal(launchEnv.OPENWORK_ELECTRON_REMOTE_DEBUG_PORT, "31002");
 
     await removeOwnedSurfaceFiles({

@@ -65,7 +65,7 @@ test("electronSurfaceEnv matches the isolated Electron demo contract", () => {
   const paths = electronProfilePaths(root);
   const env = electronSurfaceEnv(paths, {
     appName: "OpenWork Eval probe",
-    appIdentifier: "com.differentai.openwork.eval.probe",
+    appIdentifier: "com.tgwork.app.eval.probe",
     port: 5123,
     cdpPort: 9123,
   });
@@ -88,7 +88,7 @@ test("electronSurfaceEnv matches the isolated Electron demo contract", () => {
   assert.equal(env.PORT, "5123");
   assert.equal(env.OPENWORK_ELECTRON_REMOTE_DEBUG_PORT, "9123");
   assert.equal(env.OPENWORK_ELECTRON_APP_NAME, "OpenWork Eval probe");
-  assert.equal(env.OPENWORK_ELECTRON_APP_IDENTIFIER, "com.differentai.openwork.eval.probe");
+  assert.equal(env.OPENWORK_ELECTRON_APP_IDENTIFIER, "com.tgwork.app.eval.probe");
   assert.equal(env.OPENWORK_ELECTRON_SKIP_SHARED_PREPARE, "1");
   assert.equal(env.OPENWORK_ELECTRON_USE_MOCK_KEYCHAIN, "1");
   assert.equal(env.XDG_CACHE_HOME, paths.cacheHome);
@@ -104,7 +104,7 @@ test("electronSurfaceEnv maps the v2 eval lane before caller overrides", () => {
     const paths = electronProfilePaths(join(tmpdir(), "openwork-local-host-v2-env"));
     const options = {
       appName: "OpenWork Eval v2",
-      appIdentifier: "com.differentai.openwork.eval.v2",
+      appIdentifier: "com.tgwork.app.eval.v2",
       port: 5124,
       cdpPort: 9124,
     };

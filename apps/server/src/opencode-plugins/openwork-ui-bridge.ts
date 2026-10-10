@@ -17,8 +17,8 @@ function uiControlDiscoveryPaths(): string[] {
   const explicit = process.env.OPENWORK_UI_CONTROL_DISCOVERY?.trim();
   if (explicit) return [explicit];
   return [
-    join(userAppDataDir(), "com.differentai.openwork", "openwork-ui-control.json"),
-    join(userAppDataDir(), "com.differentai.openwork.dev", "openwork-ui-control.json"),
+    join(userAppDataDir(), "com.tgwork.app", "openwork-ui-control.json"),
+    join(userAppDataDir(), "com.tgwork.app.dev", "openwork-ui-control.json"),
   ].filter((p): p is string => Boolean(p));
 }
 

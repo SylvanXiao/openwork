@@ -36,7 +36,7 @@ describe("Electron distribution configs", () => {
     const config = await readConfig("electron-builder.yml");
     assert.equal(config.extends, "./electron-builder.base.yml");
     assert.equal(config.appId, "com.tgwork.app");
-    assert.equal(config.productName, "天工开物");
+    assert.equal(config.productName, "TGWork");
     assert.equal(config.protocols[0].schemes[0], "tgwork");
     assert.equal(config.artifactName, "tgwork-${os}-${arch}-${version}.${ext}");
   });
@@ -45,7 +45,7 @@ describe("Electron distribution configs", () => {
     const config = await readConfig("electron-builder.enterprise.yml");
     assert.equal(config.extends, "./electron-builder.base.yml");
     assert.equal(config.appId, "com.tgwork.app");
-    assert.equal(config.productName, "天工开物企业版");
+    assert.equal(config.productName, "TGWork Enterprise");
     assert.equal(config.extraMetadata.openworkDistribution, "enterprise");
     assert.equal(config.protocols[0].schemes[0], "tgwork");
     assert.equal(config.publish[0].provider, "github");
@@ -62,7 +62,7 @@ describe("Electron distribution configs", () => {
     const config = await readConfig("electron-builder.cloud.yml");
     assert.equal(config.extends, "./electron-builder.base.yml");
     assert.equal(config.appId, "com.tgwork.app");
-    assert.equal(config.productName, "天工开物云");
+    assert.equal(config.productName, "TGWork Cloud");
     assert.equal(config.extraMetadata.openworkDistribution, "cloud");
     assert.equal(config.protocols[0].schemes[0], "tgwork");
     assert.equal(config.publish[0].channel, "cloud");

@@ -21,7 +21,7 @@ const originalWindow = globalThis.window;
 const publicDistribution = {
   flavor: "public" as const,
   appName: "OpenWork",
-  appIdentifier: "com.differentai.openwork",
+  appIdentifier: "com.tgwork.app",
   protocolScheme: "openwork",
   requireSignin: false,
   requireActivation: false,
@@ -30,7 +30,7 @@ const publicDistribution = {
 const enterpriseDistribution = {
   flavor: "enterprise" as const,
   appName: "OpenWork Enterprise",
-  appIdentifier: "com.differentai.openwork",
+  appIdentifier: "com.tgwork.app",
   protocolScheme: "openwork",
   requireSignin: true,
   requireActivation: true,

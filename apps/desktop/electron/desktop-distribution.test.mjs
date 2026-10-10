@@ -22,7 +22,7 @@ describe("resolveDesktopDistribution", () => {
       {
         flavor: "cloud",
         appName: "TGWork Cloud",
-        appIdentifier: "com.differentai.openwork",
+        appIdentifier: "com.tgwork.app",
         protocolScheme: "openwork",
         requireSignin: true,
         requireActivation: false,
@@ -40,7 +40,7 @@ describe("resolveDesktopDistribution", () => {
     assert.deepEqual(distribution, {
       flavor: "enterprise",
       appName: "TGWork Enterprise",
-      appIdentifier: "com.differentai.openwork",
+      appIdentifier: "com.tgwork.app",
       protocolScheme: "openwork",
       requireSignin: true,
       requireActivation: true,

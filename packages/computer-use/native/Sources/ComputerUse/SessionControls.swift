@@ -245,7 +245,7 @@ final class SessionControls: NSObject {
                 }
             }
         })
-        stopObserver = DistributedNotificationCenter.default().addObserver(forName: Notification.Name("com.differentai.openwork.computer-use.stop"), object: nil, queue: .main) { [weak self] _ in
+        stopObserver = DistributedNotificationCenter.default().addObserver(forName: Notification.Name("com.tgwork.app.computer-use.stop"), object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.onStop?() }
         }
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
@@ -322,6 +322,6 @@ final class PermissionSetup: NSObject, NSApplicationDelegate {
         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!)
     }
     @objc private func stopAll() {
-        DistributedNotificationCenter.default().postNotificationName(Notification.Name("com.differentai.openwork.computer-use.stop"), object: nil, userInfo: nil, deliverImmediately: true)
+        DistributedNotificationCenter.default().postNotificationName(Notification.Name("com.tgwork.app.computer-use.stop"), object: nil, userInfo: nil, deliverImmediately: true)
     }
 }

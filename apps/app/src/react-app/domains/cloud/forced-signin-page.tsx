@@ -50,7 +50,7 @@ export function ForcedSigninPage({ developerMode }: ForcedSigninPageProps) {
 
   const initial = readDenSettings();
   const bootstrap = readDenBootstrapConfig();
-  const appName = bootstrap.brandAppName?.trim() || "天工开物";
+  const appName = bootstrap.brandAppName?.trim() || "TGWork";
   const initialBaseUrl =
     bootstrap.enterpriseActivation?.denBaseUrl ||
     initial.baseUrl ||

@@ -71,7 +71,7 @@ const errorBannerClass =
  */
 export function DenSignInSurface(props: DenSignInSurfaceProps) {
   const variant: DenSignInSurfaceVariant = props.variant ?? "panel";
-  const appName = props.appName?.trim() || "天工开物";
+  const appName = props.appName?.trim() || "TGWork";
 
   /* -- Panel content (reused by both variants) -- */
   const panelContent = (

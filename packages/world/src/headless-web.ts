@@ -409,7 +409,7 @@ export async function resolveInstalledProductionHeadlessState(options: {
   }
   const env = options.env ?? process.env;
   const homeDir = options.homeDir ?? homedir();
-  const userDataDir = join(homeDir, "Library", "Application Support", "com.differentai.openwork");
+  const userDataDir = join(homeDir, "Library", "Application Support", "com.tgwork.app");
   const pathOptions = { env, homeDir, platform };
   const dataDir = openworkServerDataDir(pathOptions);
   const serverConfigPath = openworkServerConfigPath(pathOptions);

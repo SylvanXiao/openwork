@@ -192,7 +192,7 @@ const execFileAsync = promisify(execFile);
 async function shipItIsRunning(): Promise<boolean> {
   if (process.platform !== "darwin") return false;
   try {
-    await execFileAsync("pgrep", ["-f", "com.differentai.openwork.ShipIt"]);
+    await execFileAsync("pgrep", ["-f", "com.tgwork.app.ShipIt"]);
     return true;
   } catch {
     return false;

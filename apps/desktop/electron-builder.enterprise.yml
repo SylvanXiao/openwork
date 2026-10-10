@@ -1,10 +1,10 @@
 extends: ./electron-builder.base.yml
 appId: com.tgwork.app
-productName: 天工开物企业版
+productName: TGWork Enterprise
 extraMetadata:
   openworkDistribution: enterprise
 protocols:
-  - name: 天工开物企业版
+  - name: TGWork Enterprise
     schemes:
       - tgwork
 publish:

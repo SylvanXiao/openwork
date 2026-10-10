@@ -1,3 +1,4 @@
+copyright: "Copyright © 2026 [发布者姓名]"
 directories:
   output: dist-electron
 toolsets:
@@ -34,8 +35,8 @@ afterPack: scripts/electron-after-pack.cjs
 afterSign: scripts/electron-after-sign.cjs
 publish:
   - provider: github
-    owner: different-ai
-    repo: openwork
+    owner: tgwork
+    repo: tgwork
     releaseType: release
 mac:
   icon: resources/icons/icon.icns
@@ -46,7 +47,7 @@ mac:
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
-    NSMicrophoneUsageDescription: 天工开物 uses the microphone when you allow a page to access audio input.
+    NSMicrophoneUsageDescription: TGWork uses the microphone when you allow a page to access audio input.
   extraResources:
     - from: resources/sidecars
       to: sidecars
@@ -85,6 +86,7 @@ linux:
     - AppImage
     - tar.gz
 win:
+  publisherName: "[发布者姓名]"
   icon: resources/icons/icon.ico
   extraResources:
     - from: resources/icons/icon.png
@@ -102,3 +104,4 @@ win:
     - nsis
 nsis:
   include: build/installer.nsh
+  license: build/license.txt

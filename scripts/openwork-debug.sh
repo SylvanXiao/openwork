@@ -31,7 +31,7 @@
 #   - dev log sink file (truncated, not deleted)
 #
 # Explicitly NOT touched by `reset`:
-#   - ~/Library/Application Support/com.differentai.openwork.dev/** (tokens,
+#   - ~/Library/Application Support/com.tgwork.app.dev/** (tokens,
 #     workspaces registry, prefs). Use `reset-webview` for WebKit state.
 #   - /Applications/OpenWork.app (prod build never targeted).
 #
@@ -490,7 +490,7 @@ reset_webview_state() {
   # Destructive: clears the desktop dev app's WebKit LocalStorage so stale
   # URL overrides / tokens don't leak across code changes. Does NOT touch
   # the openwork-workspaces.json registry or server-side tokens.
-  local webkit_dir="$HOME/Library/WebKit/com.differentai.openwork.dev"
+  local webkit_dir="$HOME/Library/WebKit/com.tgwork.app.dev"
   if [[ ! -d "$webkit_dir" ]]; then
     log "no dev WebKit dir found at $webkit_dir"
     return 0

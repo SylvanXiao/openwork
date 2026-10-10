@@ -347,7 +347,7 @@ export function OpenworkControlProvider({ children }: { children: ReactNode }) {
       resources: [{
         ref: `screen:${route}`,
         kind: "screen",
-        title: "天工开物",
+        title: "TGWork",
         provider: { id: "openwork-ui", kind: "builtin" },
         state: { kind: "other", route },
       }],

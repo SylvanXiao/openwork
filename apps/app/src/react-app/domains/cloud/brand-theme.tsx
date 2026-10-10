@@ -86,7 +86,7 @@ export function useBrandLogoUrl(): string | undefined {
 
 /** Organization-managed display name. It does not change the signed app identity. */
 export function useBrandAppName(): string {
-  return useOrgRestrictions().brandAppName ?? "天工开物";
+  return useOrgRestrictions().brandAppName ?? "TGWork";
 }
 
 const POLICY_NOTIFICATION_DEDUPE = "desktop-policy-active";

@@ -8,8 +8,8 @@ import {
   resolveUserDataPath,
 } from "./dev-profile.mjs";
 
-const PROD_APP_IDENTIFIER = "com.differentai.openwork";
-const DEV_APP_IDENTIFIER = "com.differentai.openwork.dev";
+const PROD_APP_IDENTIFIER = "com.tgwork.app";
+const DEV_APP_IDENTIFIER = "com.tgwork.app.dev";
 const APP_DATA_PATH = path.join("tmp", "appData");
 
 function resolveProfile({

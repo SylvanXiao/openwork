@@ -36,7 +36,7 @@ My expected cloud web URL: https://app.openworklabs.com (replace with your self-
    - your own runtime config if you have an export tool
 2. Inspect these files if they exist (they can silently override server URLs beneath the Settings UI), but report only `baseUrl`, `apiBaseUrl`, `requireSignin`, and `writtenAt`. Never print `handoff`, `claimLinks`, grants, tokens, or other credential-bearing fields:
    - `~/.config/openwork/desktop-bootstrap.json`
-   - `~/Library/Application Support/com.differentai.openwork/desktop-bootstrap.json`
+   - `~/Library/Application Support/com.tgwork.app/desktop-bootstrap.json`
 3. If the url from step 1 is a localhost address, find what serves that port:
    - `lsof -nP -iTCP:<port> -sTCP:LISTEN`
    - for each PID: `ps -p <PID> -o pid=,command=` and `lsof -a -p <PID> -d cwd -Fn | tail -1`

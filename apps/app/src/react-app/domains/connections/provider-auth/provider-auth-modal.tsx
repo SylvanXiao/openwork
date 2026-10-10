@@ -50,7 +50,7 @@ type ProviderOAuthSession = ProviderOAuthStartResult & {
 };
 
 const PROVIDER_LABELS: Record<string, string> = {
-  openwork: "天工开物",
+  openwork: "TGWork",
   opencode: "OpenCode Zen",
   openai: "OpenAI",
   anthropic: "Anthropic",
@@ -201,7 +201,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
       return [
         {
           id: OPENWORK_MODELS_PROVIDER_ID,
-          name: "天工开物",
+          name: "TGWork",
           methods: [{ type: "cloud", label: "Subscribe" }],
           connected: connectedToOpenWork,
           env: [],

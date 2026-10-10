@@ -282,15 +282,15 @@ captures above remain supplementary setup and debugging evidence.
 The real Windows userData folder is:
 
 ```text
-C:\Users\<User>\AppData\Roaming\com.differentai.openwork
+C:\Users\<User>\AppData\Roaming\com.tgwork.app
 ```
 
 It is **not** `C:\Users\<User>\AppData\Roaming\OpenWork`. Because `exec` runs as
 SYSTEM, inspect the interactive user path explicitly:
 
 ```bash
-daytona exec "$SANDBOX_ID" -- cmd /c 'dir "C:\Users\Administrator\AppData\Roaming\com.differentai.openwork\system-ca-bundle.pem"'
-daytona exec "$SANDBOX_ID" -- cmd /c 'findstr /c:"OpenWork TLS Repro" "C:\Users\Administrator\AppData\Roaming\com.differentai.openwork\system-ca-bundle.pem"'
+daytona exec "$SANDBOX_ID" -- cmd /c 'dir "C:\Users\Administrator\AppData\Roaming\com.tgwork.app\system-ca-bundle.pem"'
+daytona exec "$SANDBOX_ID" -- cmd /c 'findstr /c:"OpenWork TLS Repro" "C:\Users\Administrator\AppData\Roaming\com.tgwork.app\system-ca-bundle.pem"'
 ```
 
 Known gotcha: `system-ca-bundle.pem` is written once at first launch and then
@@ -304,7 +304,7 @@ usually does not bite customers.
   payload:
 
 ```bash
-daytona exec "$SANDBOX_ID" -- cmd /c 'dir "C:\Users\Administrator\AppData\Roaming\com.differentai.openwork"'
+daytona exec "$SANDBOX_ID" -- cmd /c 'dir "C:\Users\Administrator\AppData\Roaming\com.tgwork.app"'
 ```
 
 - Pipes and `|` inside `daytona exec ... -- powershell -Command '...'` can be

@@ -561,7 +561,7 @@ export async function resolveInstalledProductionDesktopState(
   const homeDir = options.homeDir ?? homedir();
   const dataDir = openworkServerDataDir({ env, homeDir, platform });
   await requireInstalledPath(dataDir, "directory", "Installed production OpenWork data directory");
-  const userDataDir = join(homeDir, "Library", "Application Support", "com.differentai.openwork");
+  const userDataDir = join(homeDir, "Library", "Application Support", "com.tgwork.app");
   const workspaceStatePath = join(userDataDir, "openwork-workspaces.json");
   const serverTokenStorePath = join(userDataDir, "openwork-server-tokens.json");
   const serverStatePath = join(userDataDir, "openwork-server-state.json");
@@ -849,7 +849,7 @@ async function ensureDisplay(repoRoot: string, env: NodeJS.ProcessEnv, log: (mes
       const [port, cdpPort] = await allocateFreePorts(2);
       if (port === undefined || cdpPort === undefined) throw new Error("Could not allocate Electron Vite/CDP ports.");
       const appName = `OpenWork Eval ${name}`;
-      const appIdentifier = `com.differentai.openwork.eval.${sanitizeSlug(name)}`;
+      const appIdentifier = `com.tgwork.app.eval.${sanitizeSlug(name)}`;
       const isolationEnv = electronSurfaceEnv(paths, { appName, appIdentifier, port, cdpPort }, opts.env);
       const env: NodeJS.ProcessEnv = { ...process.env, ...isolationEnv };
       const launchArgs = containerLaunchArgs(env.ELECTRON_EXTRA_LAUNCH_ARGS);

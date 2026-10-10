@@ -24,7 +24,7 @@ import { useReloadCoordinator } from "../src/react-app/shell/reload-coordinator"
 const ENTERPRISE_DISTRIBUTION = {
   flavor: "enterprise",
   appName: "OpenWork Enterprise",
-  appIdentifier: "com.differentai.openwork",
+  appIdentifier: "com.tgwork.app",
   protocolScheme: "openwork",
   requireSignin: true,
   requireActivation: true,

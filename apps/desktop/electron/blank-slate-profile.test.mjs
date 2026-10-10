@@ -67,7 +67,7 @@ test("blank-slate launches receive unique temporary roots and a visible name", a
     assert.ok(first.rootPath.startsWith(tmpdir()));
     assert.notEqual(first.rootPath, second.rootPath);
     assert.ok(first.userDataPath.startsWith(first.rootPath));
-    assert.ok(!first.rootPath.includes("com.differentai.openwork"));
+    assert.ok(!first.rootPath.includes("com.tgwork.app"));
   } finally {
     await Promise.all([
       rm(first.rootPath, { recursive: true, force: true }),

@@ -27,7 +27,7 @@ test("UI control failures are logged locally without exposing exception details"
   const server = createUiControlServer({
     app: { getPath: () => userData },
     appName: "TGWork",
-    appIdentifier: "com.differentai.openwork",
+    appIdentifier: "com.tgwork.app",
     getWindow: async () => { throw failure; },
     browserTask: async () => { throw new Error("private website content"); },
     listWebMcpTools: () => ({ ok: false, error: "The built-in browser is not ready." }),

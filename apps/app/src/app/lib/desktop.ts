@@ -689,8 +689,8 @@ export function readDesktopDistributionInfo(): DesktopDistributionInfo {
     : window.__OPENWORK_ELECTRON__?.meta?.distribution;
   return distribution ?? {
     flavor: "public",
-    appName: "天工开物",
-    appIdentifier: "com.differentai.openwork",
+    appName: "TGWork",
+    appIdentifier: "com.tgwork.app",
     protocolScheme: "openwork",
     requireSignin: false,
     requireActivation: false,

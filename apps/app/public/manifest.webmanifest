@@ -1,6 +1,6 @@
 {
-  "name": "天工开物",
-  "short_name": "天工开物",
+  "name": "TGWork",
+  "short_name": "TGWork",
   "description": "Local-first agent workspace",
   "start_url": "/",
   "display": "standalone",

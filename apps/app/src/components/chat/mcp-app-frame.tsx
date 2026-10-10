@@ -349,7 +349,7 @@ export function McpAppSandboxView({ origin, app, toolName, inputArguments, resul
     }
     const bridge = new AppBridge(
       null,
-      { name: "天工开物", version: "1.0.0" },
+      { name: "TGWork", version: "1.0.0" },
       readOnly ? {} : { serverTools: {}, openLinks: {} },
       {
         hostContext: {

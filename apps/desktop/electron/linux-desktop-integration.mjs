@@ -17,8 +17,8 @@ import path from "node:path";
 /** @typedef {import("@openwork/types/desktop-ipc").DesktopIntegrationResult} DesktopIntegrationResult */
 /** @typedef {import("@openwork/types/desktop-ipc").DesktopIntegrationStatus} DesktopIntegrationStatus */
 
-export const OPENWORK_DESKTOP_ID = "com.differentai.openwork.desktop";
-export const OPENWORK_DESKTOP_NAME = "com.differentai.openwork";
+export const OPENWORK_DESKTOP_ID = "com.tgwork.app.desktop";
+export const OPENWORK_DESKTOP_NAME = "com.tgwork.app";
 export const OPENWORK_PROTOCOL_MIME = "x-scheme-handler/openwork";
 
 const INTEGRATION_STATE_VERSION = 1;

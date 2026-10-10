@@ -1,6 +1,6 @@
 extends: electron-builder.yml
 appId: com.tgwork.app.demo.admin
-productName: 天工开物 Demo A
+productName: TGWork Demo A
 protocols: []
 directories:
   output: dist-electron-demo-a

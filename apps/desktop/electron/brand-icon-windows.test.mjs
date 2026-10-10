@@ -84,7 +84,7 @@ test("updates both the live window icon and Windows taskbar identity", async () 
 
   await applyWindowsTaskbarIcon(window, {
     image,
-    appId: "com.differentai.openwork",
+    appId: "com.tgwork.app",
     appIconPath: "C:\\Users\\Admin\\brand-icon.ico",
     relaunchCommand: "C:\\Program Files\\TGWork\\TGWork.exe",
     relaunchDisplayName: "TGWork",
@@ -99,7 +99,7 @@ test("updates both the live window icon and Windows taskbar identity", async () 
       relaunchCommand: "C:\\Program Files\\TGWork\\TGWork.exe",
       relaunchDisplayName: "TGWork",
     }],
-    ["setAppDetails", { appId: "com.differentai.openwork" }],
+    ["setAppDetails", { appId: "com.tgwork.app" }],
     ["setIcon", image],
     ["waitForRefresh"],
     ["setSkipTaskbar", false],
@@ -107,12 +107,12 @@ test("updates both the live window icon and Windows taskbar identity", async () 
 });
 
 test("uses a stable per-brand AppUserModelID to avoid the installed shortcut icon", () => {
-  const base = "com.differentai.openwork";
+  const base = "com.tgwork.app";
   const first = windowsBrandAppUserModelId(base, "https://den.internal/assets/acme.png");
   const repeated = windowsBrandAppUserModelId(base, "https://den.internal/assets/acme.png");
   const second = windowsBrandAppUserModelId(base, "https://den.internal/assets/other.png");
 
-  assert.match(first, /^com\.differentai\.openwork\.brand\.[a-f0-9]{16}$/);
+  assert.match(first, /^com\.tgwork\.app\.brand\.[a-f0-9]{16}$/);
   assert.equal(first, repeated);
   assert.notEqual(first, second);
   assert.equal(windowsBrandAppUserModelId(base, null), base);
@@ -128,7 +128,7 @@ test("does not refresh the taskbar button before the boot window is shown", asyn
     setSkipTaskbar: () => calls.push("skip"),
   }, {
     image: { id: "company-icon" },
-    appId: "com.differentai.openwork.brand.1234",
+    appId: "com.tgwork.app.brand.1234",
     appIconPath: "C:\\brand.ico",
     relaunchCommand: "C:\\TGWork.exe",
     relaunchDisplayName: "TGWork",
@@ -146,7 +146,7 @@ test("restores a visible taskbar button when refresh staging fails", async () =>
     setSkipTaskbar: (value) => calls.push(["skip", value]),
   }, {
     image: { id: "company-icon" },
-    appId: "com.differentai.openwork.brand.1234",
+    appId: "com.tgwork.app.brand.1234",
     appIconPath: "C:\\brand.ico",
     relaunchCommand: "C:\\TGWork.exe",
     relaunchDisplayName: "TGWork",
@@ -163,7 +163,7 @@ test("builds a per-user Start Menu shortcut with the branded Windows identity", 
   assert.equal(windowsInstalledShortcutFileName("TGWork"), "TGWork.lnk");
   assert.deepEqual(windowsBrandShortcutDetails({
     target: "C:\\Program Files\\TGWork\\TGWork.exe",
-    appId: "com.differentai.openwork.brand.1234",
+    appId: "com.tgwork.app.brand.1234",
     appIconPath: "C:\\Users\\Admin\\brand-icon.ico",
     appName: "TGWork",
   }), {
@@ -172,7 +172,7 @@ test("builds a per-user Start Menu shortcut with the branded Windows identity", 
     description: "TGWork organization desktop",
     icon: "C:\\Users\\Admin\\brand-icon.ico",
     iconIndex: 0,
-    appUserModelId: "com.differentai.openwork.brand.1234",
+    appUserModelId: "com.tgwork.app.brand.1234",
   });
 });
 
@@ -187,7 +187,7 @@ test("anchors a packaged shortcut target to the active Windows user profile", ()
 
 test("creates a branded shortcut after callers remove stale Windows metadata", () => {
   const calls = [];
-  const details = { appUserModelId: "com.differentai.openwork.brand.1234" };
+  const details = { appUserModelId: "com.tgwork.app.brand.1234" };
   const shellApi = {
     writeShortcutLink: (...args) => {
       calls.push(args);

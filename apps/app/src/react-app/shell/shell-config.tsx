@@ -37,7 +37,7 @@ export type ShellConfig = {
 /* ------------------------------------------------------------------ */
 
 export const DEFAULT_SHELL_CONFIG: ShellConfig = {
-  appName: "天工开物",
+  appName: "TGWork",
   statusBar: true,
   sidebar: true,
   docsButton: true,
