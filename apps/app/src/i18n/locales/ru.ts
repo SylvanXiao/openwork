@@ -739,6 +739,7 @@ export default {
   "time.seconds_ago": "{count} с назад",
   "welcome.title": "Добро пожаловать в TGWork",
   "welcome.subtitle": "Ваш компьютер, но он работает для вас.",
+  "welcome.tagline": "Ваши данные остаются на вашем компьютере · облако отвечает за учётные записи, использование, плагины и маркетплейс коннекторов",
   "welcome.get_started": "Начать",
   "welcome.sign_in_cloud": "Войти в TGWork Cloud",
   "welcome.use_without_cloud": "Использовать без облака",

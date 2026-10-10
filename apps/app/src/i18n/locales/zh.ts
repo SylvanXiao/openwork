@@ -1134,6 +1134,7 @@ export default {
   "onboarding.authorize_folder": "授权文件夹",
   "welcome.title": "欢迎使用天工开物",
   "welcome.subtitle": "你的电脑，但为你工作。",
+  "welcome.tagline": "数据本地保存 · 云端管账号、用量、插件与连接器市场",
   "welcome.creating_workspace": "正在创建工作区…",
   "welcome.get_started": "开始使用",
   "welcome.sign_in_cloud": "登录天工开物云",

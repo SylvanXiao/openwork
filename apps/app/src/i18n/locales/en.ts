@@ -1132,6 +1132,7 @@ export default {
   "onboarding.authorize_folder": "Authorize folder",
   "welcome.title": "Welcome to TGWork",
   "welcome.subtitle": "Your computer, but it works for you.",
+  "welcome.tagline": "Your data stays on your computer · the cloud handles accounts, usage, plugins & the connector marketplace",
   "welcome.creating_workspace": "Creating workspace\u2026",
   "welcome.get_started": "Get started",
   "welcome.sign_in_cloud": "Sign in to TGWork Cloud",
