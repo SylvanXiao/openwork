@@ -1387,6 +1387,15 @@ importers:
         specifier: ^5.6.3
         version: 5.9.3
 
+  packages/live-control-mcp:
+    dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.29.0
+        version: 1.29.0(patch_hash=b9b29e6a319e94ea968476aa440eb8586b5da9db6b8011ce749c384d186f8a10)(zod@3.25.76)
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
   packages/mcp-apps:
     dependencies:
       '@modelcontextprotocol/ext-apps':

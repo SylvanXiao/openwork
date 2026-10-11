@@ -10,7 +10,7 @@
     "dev:worktree": "OPENWORK_DEV_MODE=1 OPENWORK_DEV_PROFILE=auto OPENWORK_ELECTRON_USE_MOCK_KEYCHAIN=${OPENWORK_ELECTRON_USE_MOCK_KEYCHAIN:-1} OPENWORK_ELECTRON_REMOTE_DEBUG_PORT=0 PORT=0 pnpm --filter @openwork/desktop dev",
     "dev:electron": "OPENWORK_DEV_MODE=1 pnpm --filter @openwork/desktop dev:electron",
     "dev:sandbox": "bash .devcontainer/dev-sandbox.sh",
-    "dev:ui": "OPENWORK_DEV_MODE=1 pnpm --filter @openwork/app dev",
+    "dev:ui": "pnpm --filter @openwork/app dev",
     "dev:ui-demo": "pnpm --filter @openwork/ui-demo dev",
     "dev:web": "pnpm run dev:den:web",
     "dev:web-local": "DEN_ORG_MODE=${DEN_ORG_MODE:-multi_org} DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP=${DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP:-true} pnpm run dev:den",
