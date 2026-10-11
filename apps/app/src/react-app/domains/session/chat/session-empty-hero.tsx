@@ -1,6 +1,7 @@
 /** @jsxImportSource react */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, X, Zap } from "lucide-react";
+import { t } from "@/i18n";
 
 import { DEFAULT_MODEL } from "@/app/constants";
 import type { ComposerAttachment } from "@/app/types";
@@ -30,26 +31,30 @@ type HeroSuggestion = {
   prompt: string;
 };
 
-const DEFAULT_SUGGESTIONS: HeroSuggestion[] = [
+const DEFAULT_SUGGESTION_KEYS: {
+  titleKey: string;
+  descriptionKey: string;
+  promptKey: string;
+}[] = [
   {
-    title: "Summarize my week",
-    description: "Pull highlights from email and calendar.",
-    prompt: "Summarize my week: pull the highlights from my connected email and calendar and give me a short digest of what happened and what needs my attention.",
+    titleKey: "hero.suggestion.summarize_week.title",
+    descriptionKey: "hero.suggestion.summarize_week.desc",
+    promptKey: "hero.suggestion.summarize_week.prompt",
   },
   {
-    title: "Clean up a spreadsheet",
-    description: "Drop in a CSV and describe the result you want.",
-    prompt: "Create a sample CSV file with 20 rows of fake customer data (name, email, company, revenue). Then show me a summary of the data.",
+    titleKey: "hero.suggestion.clean_spreadsheet.title",
+    descriptionKey: "hero.suggestion.clean_spreadsheet.desc",
+    promptKey: "hero.suggestion.clean_spreadsheet.prompt",
   },
   {
-    title: "Draft a document",
-    description: "Reports, emails, or briefs from a few bullet points.",
-    prompt: "Draft a one-page project brief. Ask me for the bullet points you need, then turn them into a clear, well-structured document.",
+    titleKey: "hero.suggestion.draft_document.title",
+    descriptionKey: "hero.suggestion.draft_document.desc",
+    promptKey: "hero.suggestion.draft_document.prompt",
   },
   {
-    title: "Automate a web task",
-    description: "Use the built-in browser for repetitive steps.",
-    prompt: "Open craigslist.org in the browser and search for couches for sale. Show me the top 5 results with prices.",
+    titleKey: "hero.suggestion.automate_web_task.title",
+    descriptionKey: "hero.suggestion.automate_web_task.desc",
+    promptKey: "hero.suggestion.automate_web_task.prompt",
   },
 ];
 
@@ -144,7 +149,11 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
       });
       return { title: card.title, description: card.description, prompt: card.selectionPrompt };
     })
-    : DEFAULT_SUGGESTIONS;
+    : DEFAULT_SUGGESTION_KEYS.map((key) => ({
+      title: t(key.titleKey),
+      description: t(key.descriptionKey),
+      prompt: t(key.promptKey),
+    }));
 
   const submit = async (
     resolvedPrompt: string,
@@ -174,9 +183,9 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
     <div className="mx-auto w-full max-w-[640px] space-y-6 px-4 max-lg:px-4 sm:px-6">
       <div className="space-y-1.5 text-center">
         <h2 className="text-[24px] font-semibold leading-[30px] tracking-[-0.02em] text-foreground">
-          What do you need done?
+          {t("hero.title")}
         </h2>
-        <p className="text-[13px] text-muted-foreground">Describe it in plain language</p>
+        <p className="text-[13px] text-muted-foreground">{t("hero.subtitle")}</p>
       </div>
 
       <NewTaskComposer
@@ -192,20 +201,20 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
           className="flex items-center justify-center gap-2 text-[12px] text-muted-foreground"
           data-testid="openwork-models-hint"
         >
-          <span>Using the free starter model.</span>
+          <span>{t("hero.models_hint_starter")}</span>
           <button
             type="button"
             className="flex items-center gap-1 font-medium text-blue-10 transition-colors hover:text-blue-11"
             onClick={() => platform.openLink(getOpenWorkModelsActionUrl(denAuth.isSignedIn, "sign-up"))}
           >
-            Get frontier models with no API keys
+            {t("hero.models_hint_cta")}
             <ArrowRight className="size-3" />
           </button>
           <button
             type="button"
             className="flex size-5 items-center justify-center rounded text-muted-foreground/70 transition-colors hover:text-foreground"
             onClick={hideOpenWorkModelsPromo}
-            aria-label="Hide TGWork Models hint"
+            aria-label={t("hero.models_hint_hide")}
           >
             <X className="size-3" />
           </button>
@@ -220,9 +229,9 @@ export function SessionEmptyHero(props: SessionEmptyHeroProps) {
         >
           <Zap className="mt-0.5 size-4 shrink-0 text-blue-10" />
           <div>
-            <div className="text-[13px] font-medium text-foreground">Connect a model provider</div>
+            <div className="text-[13px] font-medium text-foreground">{t("hero.connect_provider_title")}</div>
             <div className="mt-0.5 text-[12px] text-muted-foreground">
-              Add an API key for Anthropic, OpenAI, Google, or other providers so tasks can run.
+              {t("hero.connect_provider_desc")}
             </div>
           </div>
         </button>

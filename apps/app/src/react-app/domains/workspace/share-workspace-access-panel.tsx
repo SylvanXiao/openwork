@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useId } from "react";
 import {
   Check,
@@ -152,9 +153,7 @@ export function ShareWorkspaceAccessPanel(
         <div className={surfaceCardClass}>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h3 className="text-[18px] font-semibold tracking-[-0.3px] text-dls-text">
-                Remote access
-              </h3>
+              <h3 className="text-[18px] font-semibold tracking-[-0.3px] text-dls-text">{t("ui_remote_access_ed92a4")}</h3>
               <p className="mt-1 text-[14px] leading-relaxed text-dls-secondary">
                 Off by default. Turn this on only when you want this worker
                 reachable from another machine.
@@ -164,7 +163,7 @@ export function ShareWorkspaceAccessPanel(
               <input
                 id={remoteAccessToggleId}
                 type="checkbox"
-                aria-label="Remote access"
+                aria-label={t("ui_remote_access_ed92a4")}
                 className="peer sr-only"
                 checked={props.remoteAccessEnabled}
                 onChange={(event) =>
@@ -244,7 +243,7 @@ export function ShareWorkspaceAccessPanel(
             onClick={props.onToggleCollaboratorExpanded}
             aria-expanded={props.collaboratorExpanded}
           >
-            <span>Optional collaborator access</span>
+            <span>{t("ui_optional_collaborator_access_1e425d")}</span>
             <ChevronDown
               size={13}
               className={`shrink-0 transition-transform ${

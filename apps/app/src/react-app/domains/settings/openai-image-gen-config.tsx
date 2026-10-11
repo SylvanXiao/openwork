@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useState } from "react";
 import { CheckCircle2, Image, Loader2, PlusIcon, XCircle } from "lucide-react";
 
@@ -55,13 +56,13 @@ export function OpenAiImageGenConfig(props: OpenAiImageGenConfigProps) {
     <Card variant="outline" size="sm">
       <CardHeader>
         <CardTitle>Configuration</CardTitle>
-        <CardDescription>Connect OpenAI image generation with an OpenAI API key.</CardDescription>
+        <CardDescription>{t("ui_connect_openai_image_generation_with_an__0c7d56")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {props.envKeyDetected ? (
           <Alert variant="warning">
             <Image />
-            <AlertTitle>API key found in environment</AlertTitle>
+            <AlertTitle>{t("ui_api_key_found_in_environment_65ae4a")}</AlertTitle>
             <AlertDescription>
               An existing OPENAI_API_KEY was detected. The key you save here will take precedence.
             </AlertDescription>
@@ -70,7 +71,7 @@ export function OpenAiImageGenConfig(props: OpenAiImageGenConfigProps) {
 
         <FieldGroup className="gap-4">
           <Field>
-            <FieldLabel htmlFor="openai-image-api-key">OpenAI API key</FieldLabel>
+            <FieldLabel htmlFor="openai-image-api-key">{t("ui_openai_api_key_723fe4")}</FieldLabel>
             <Input
               id="openai-image-api-key"
               type="password"

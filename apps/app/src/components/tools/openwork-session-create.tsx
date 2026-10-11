@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client"
 
 import { AlertTriangle, Check, MessageCircle } from "lucide-react"
@@ -95,12 +96,12 @@ export function OpenWorkSessionCreateTool({ part }: { part: DynamicToolUIPart })
   const { workspaceId: currentWorkspaceId } = useMessageList()
 
   if (part.state !== "output-available") {
-    return <Tool toolPart={part} title="Creating new chats" />
+    return <Tool toolPart={part} title={t("ui_creating_new_chats_640ae5")} />
   }
 
   const result = parseOpenWorkSessionCreateResult(part.output)
   if (!result) {
-    return <Tool toolPart={part} title="Created new chats" />
+    return <Tool toolPart={part} title={t("ui_created_new_chats_553bdb")} />
   }
 
   const allCreated = result.ok && result.created.length > 0 && result.failures.length === 0

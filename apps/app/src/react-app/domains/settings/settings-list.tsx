@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 import { SettingsInset } from "./settings-section";
@@ -100,7 +101,7 @@ export function SettingsListItemDescription({ children, className }: SettingsLis
 }
 
 export function SettingsListSearchInput({
-  placeholder = "Search...",
+  placeholder=t("ui_search_2a3732"),
   containerClassName,
   ...props
 }: React.ComponentProps<"input"> & { containerClassName?: string }) {

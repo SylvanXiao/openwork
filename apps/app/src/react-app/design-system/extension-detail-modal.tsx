@@ -374,7 +374,7 @@ export function ExtensionDetailModal({
       {resourceLabels.length > 0 || contributionLabels.length > 0 ? (
         <Card variant="outline" size="sm">
           <CardHeader>
-            <CardTitle>Extension manifest</CardTitle>
+            <CardTitle>{t("ui_extension_manifest_7a9430")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 text-sm">
@@ -513,7 +513,7 @@ export function ExtensionDetailModal({
               {oauth ? (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Authentication</span>
-                  <span className="font-medium text-card-foreground">OAuth required</span>
+                  <span className="font-medium text-card-foreground">{t("ui_oauth_required_597f09")}</span>
                 </div>
               ) : null}
 
@@ -542,14 +542,14 @@ export function ExtensionDetailModal({
 
               {preview ? (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Release stage</span>
+                  <span className="text-muted-foreground">{t("ui_release_stage_d5aa0b")}</span>
                   <span className="font-medium text-blue-11">Preview</span>
                 </div>
               ) : null}
 
               {beta ? (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Release stage</span>
+                  <span className="text-muted-foreground">{t("ui_release_stage_d5aa0b")}</span>
                   <span className="font-medium text-amber-11">Beta</span>
                 </div>
               ) : null}
@@ -605,7 +605,7 @@ export function ExtensionDetailModal({
       {showEnablementCard && !composerCapability && !uiControl ? (
         <Card variant="outline" size="sm">
           <CardHeader>
-            <CardTitle>What this enables</CardTitle>
+            <CardTitle>{t("ui_what_this_enables_b853fd")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-sm leading-relaxed text-muted-foreground">
@@ -779,20 +779,20 @@ function UiControlConnectionDetails(props: UiControlConnectionDetailsProps) {
     <div className="space-y-4">
       <Card variant="outline" size="sm">
         <CardHeader>
-          <CardTitle>How to connect another client</CardTitle>
+          <CardTitle>{t("ui_how_to_connect_another_client_123b2e")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2 text-sm leading-relaxed text-muted-foreground">
-            <div>TGWork desktop starts a private localhost bridge automatically.</div>
-            <div>Your MCP client starts <span className="font-mono text-card-foreground">openwork-ui-mcp</span> over stdio; the wrapper discovers the bridge and proxies UI tools to it.</div>
-            <div>Do not point clients at the random localhost bridge URL directly.</div>
+            <div>{t("ui_tgwork_desktop_starts_a_private_localhos_97f257")}</div>
+            <div>{t("ui_your_mcp_client_starts_3a7926")}<span className="font-mono text-card-foreground">openwork-ui-mcp</span>{t("ui_over_stdio_the_wrapper_discovers_the_bri_c6b0fe")}</div>
+            <div>{t("ui_do_not_point_clients_at_the_random_local_9bdea2")}</div>
           </div>
         </CardContent>
       </Card>
 
       <Card variant="outline" size="sm">
         <CardHeader>
-          <CardTitle>Claude Desktop, Codex, Cursor</CardTitle>
+          <CardTitle>{t("ui_claude_desktop_codex_cursor_55f4d6")}</CardTitle>
         </CardHeader>
         <CardContent>
           <pre className="max-h-[180px] overflow-x-auto rounded-xl border border-border p-3 text-xs leading-relaxed text-card-foreground">
@@ -825,7 +825,7 @@ function UiControlConnectionDetails(props: UiControlConnectionDetailsProps) {
                     Production discovery file
                   </TableCell>
                   <TableCell className="py-2 whitespace-normal">
-                    <span className="font-mono text-xs break-all">~/Library/Application Support/com.tgwork.app/openwork-ui-control.json</span>
+                    <span className="font-mono text-xs break-all">{t("ui_library_application_support_com_tgwork_a_3ebe13")}</span>
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">
@@ -833,7 +833,7 @@ function UiControlConnectionDetails(props: UiControlConnectionDetailsProps) {
                     Dev discovery file
                   </TableCell>
                   <TableCell className="py-2 whitespace-normal">
-                    <span className="font-mono text-xs break-all">~/Library/Application Support/com.tgwork.app.dev/openwork-ui-control.json</span>
+                    <span className="font-mono text-xs break-all">{t("ui_library_application_support_com_tgwork_a")}</span>
                   </TableCell>
                 </TableRow>
                 <TableRow className="*:border-border hover:bg-transparent [&>:not(:last-child)]:border-r">

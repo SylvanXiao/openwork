@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useMemo } from "react";
 import type { GeneratedArtifactViewRevision, WorkflowArtifactPayload } from "@openwork/types/workflows";
 import { McpAppSandboxView } from "@/components/chat/mcp-app-frame";
@@ -26,7 +27,7 @@ export function GeneratedAppPreview({ html, payload, title, revision }: {
     ? { client: openworkServerClient, workspaceId, sessionId: null, readOnly: true }
     : null, [openworkServerClient, workspaceId]);
   if (!origin || !workspaceId) {
-    return <p role="status" className="text-sm text-muted-foreground">Connect a workspace to open the preview.</p>;
+    return <p role="status" className="text-sm text-muted-foreground">{t("ui_connect_a_workspace_to_open_the_preview_bc100e")}</p>;
   }
   return <McpAppSandboxView origin={origin} app={resource} toolName={title} inputArguments={PREVIEW_ARGUMENTS}
     result={result} unavailableNotice="This app could not open. Try reopening it, or ask TGWork to fix the preview."

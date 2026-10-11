@@ -422,7 +422,7 @@ export function NewTaskComposer(props: NewTaskComposerProps) {
     {failedSubmission ? <button type="button" disabled={Boolean(props.draft || attachments.length)} className="mb-2 text-sm disabled:opacity-50" onClick={() => {
       restoreComposer(failedSubmission);
       setFailedSubmission(null);
-    }}>Clear the current draft to restore the unsent message</button> : null}
+    }}>{t("ui_clear_the_current_draft_to_restore_the_u_e6e605")}</button> : null}
     <ReactSessionComposer
       runModeControl={<WorkspaceRunModeMenu client={workspaceClient} workspaceId={workspaceId} busy={props.busy} />}
       draft={props.draft}

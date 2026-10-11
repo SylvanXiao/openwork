@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Download, Ellipsis, ExternalLink, FolderOpen, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
@@ -341,7 +342,7 @@ function ArtifactPanelView({ sessionId, client, workspaceId, workspaceRoot, isRe
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={(
-                    <Button variant="ghost" size="icon-sm" aria-label="Artifact actions">
+                    <Button variant="ghost" size="icon-sm" aria-label={t("ui_artifact_actions_efcd28")}>
                       <Ellipsis />
                     </Button>
                   )}
@@ -368,12 +369,12 @@ function ArtifactPanelView({ sessionId, client, workspaceId, workspaceRoot, isRe
             <Tooltip>
               <TooltipTrigger
                 render={(
-                  <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Close artifact">
+                  <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label={t("ui_close_artifact_929359")}>
                     <X />
                   </Button>
                 )}
               />
-              <TooltipContent>Close artifact</TooltipContent>
+              <TooltipContent>{t("ui_close_artifact_929359")}</TooltipContent>
             </Tooltip>
           </div>
         </div>

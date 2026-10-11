@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useEffect, useState } from "react";
 import { KeyRound } from "lucide-react";
 
@@ -28,14 +29,14 @@ export function LoginSyncCard() {
         >
           <KeyRound className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-medium text-dls-text">Keep selected logins in sync</p>
+            <p className="text-[13px] font-medium text-dls-text">{t("ui_keep_selected_logins_in_sync_02e8d8")}</p>
             <p className="text-xs text-muted-foreground">
               Choose one browser profile and the sites TGWork may keep reading. Nothing starts until you enable sync.
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-1">
-            <Button size="sm" variant="ghost" onClick={loginSync.dismissPrompt} data-testid="login-sync-not-now">Not now</Button>
-            <Button size="sm" onClick={() => setDialogOpen(true)} data-testid="login-sync-open">Set up sync</Button>
+            <Button size="sm" variant="ghost" onClick={loginSync.dismissPrompt} data-testid="login-sync-not-now">{t("ui_not_now")}</Button>
+            <Button size="sm" onClick={() => setDialogOpen(true)} data-testid="login-sync-open">{t("ui_set_up_sync_353ba0")}</Button>
           </div>
         </div>
       ) : null}

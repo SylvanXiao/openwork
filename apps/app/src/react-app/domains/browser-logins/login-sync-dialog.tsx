@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useCallback, useEffect, useState } from "react";
 import { Globe, Loader2, ShieldAlert } from "lucide-react";
 
@@ -125,7 +126,7 @@ export function LoginSyncDialog({ open, onOpenChange, onSyncEnabled }: LoginSync
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-lg sm:max-w-lg" data-testid="login-sync-dialog">
         <DialogHeader>
-          <DialogTitle>Sync logins from another browser</DialogTitle>
+          <DialogTitle>{t("ui_sync_logins_from_another_browser_a66874")}</DialogTitle>
           <DialogDescription>
             While enabled, TGWork keeps reading only the browser profile and sites you select. It never changes the source browser.
           </DialogDescription>
@@ -140,7 +141,7 @@ export function LoginSyncDialog({ open, onOpenChange, onSyncEnabled }: LoginSync
             {stage.sources ? (
               <>
                 {stage.sources.profiles.length > 0 ? (
-                  <ul className="flex flex-col gap-2" aria-label="Browser profiles to sync from">
+                  <ul className="flex flex-col gap-2" aria-label={t("ui_browser_profiles_to_sync_from_39ee2d")}>
                     {stage.sources.profiles.map((profile) => (
                       <li key={profile.id}>
                         <Button
@@ -156,7 +157,7 @@ export function LoginSyncDialog({ open, onOpenChange, onSyncEnabled }: LoginSync
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No supported browser profile with saved logins was found on this computer.</p>
+                  <p className="text-sm text-muted-foreground">{t("ui_no_supported_browser_profile_with_saved__f59d10")}</p>
                 )}
                 {stage.sources.availability.some((entry) => !entry.importable) ? (
                   <ul className="flex flex-col gap-1 text-xs text-muted-foreground">
@@ -214,7 +215,7 @@ export function LoginSyncDialog({ open, onOpenChange, onSyncEnabled }: LoginSync
                 <li key={site.site}>{site.site} · {site.synced} synced{site.failed > 0 ? ` · ${site.failed} failed` : ""}{site.removed > 0 ? ` · ${site.removed} removed` : ""}</li>
               ))}
             </ul>
-            <p className="text-xs text-muted-foreground">Pause, change a site's access, or disconnect from Settings → Permissions → Browser logins.</p>
+            <p className="text-xs text-muted-foreground">{t("ui_pause_change_a_site_s_access_or_disconne_badde8")}</p>
           </div>
         ) : null}
 
@@ -229,7 +230,7 @@ export function LoginSyncDialog({ open, onOpenChange, onSyncEnabled }: LoginSync
           ) : stage.kind === "done" ? (
             <Button onClick={() => onOpenChange(false)}>Done</Button>
           ) : (
-            <Button variant="ghost" onClick={() => onOpenChange(false)}>Not now</Button>
+            <Button variant="ghost" onClick={() => onOpenChange(false)}>{t("ui_not_now_3049da")}</Button>
           )}
         </DialogFooter>
       </DialogContent>

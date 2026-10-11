@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useState } from "react";
 import type { RecoveryActionResult, RecoveryRelease } from "@/app/lib/desktop";
 import type { DenAppVersionMetadata, DenDesktopConfig } from "@/app/lib/den";
@@ -110,7 +111,7 @@ export function LoadingOverlay() {
       <div className="flex w-full max-w-[320px] flex-col items-center gap-4 px-6 text-center">
         {error ? (
           <div className="flex w-full flex-col gap-3 text-[12px] leading-5">
-            <div className="text-base font-medium text-dls-primary">TGWork couldn't start</div>
+            <div className="text-base font-medium text-dls-primary">{t("ui_tgwork_couldn_t_start_ef5f15")}</div>
             <div className="text-dls-secondary">Reload to try again, or return to a version that works on this computer.</div>
             <button
               type="button"
@@ -162,7 +163,7 @@ export function LoadingOverlay() {
             ) : null}
             {actionState ? <div className="text-dls-secondary">{actionState}</div> : null}
             <details className="text-left text-dls-secondary">
-              <summary className="cursor-pointer">Technical details</summary>
+              <summary className="cursor-pointer">{t("ui_technical_details_52eb43")}</summary>
               <div className="mt-2 break-words">{error}</div>
             </details>
           </div>

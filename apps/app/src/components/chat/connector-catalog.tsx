@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client"
 
 import { useState } from "react"
@@ -60,22 +61,22 @@ export function ConnectorCatalogCard({ catalog }: { catalog: ConnectorCatalog })
       await openDesktopUrl(expected.toString())
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not open setup.") }
   }
-  return <section data-testid="connector-catalog" aria-label="Quick-add connectors" className="w-96 max-w-full self-start rounded-xl bg-muted/40 p-3">
+  return <section data-testid="connector-catalog" aria-label={t("ui_quick_add_connectors_0b739f")} className="w-96 max-w-full self-start rounded-xl bg-muted/40 p-3">
     <div className="mb-2 flex items-center justify-between gap-3">
       <p className="text-xs font-medium">{showAll ? "Quick-add connectors" : "Suggested connector"}</p>
       {!showAll ? <Button variant="ghost" size="sm" className="h-6 px-1.5 text-xs text-muted-foreground" onClick={() => setShowAll(true)}>Browse all {catalog.entries.length}</Button> : <span className="text-xs text-muted-foreground">{catalog.entries.length} available</span>}
     </div>
-    {showAll ? <div className="relative mb-2"><Search className="pointer-events-none absolute left-2 top-2 size-3.5 text-muted-foreground" /><Input aria-label="Filter connectors" value={query} onChange={event => setQuery(event.target.value)} placeholder="Find a connector…" className="h-8 border-0 bg-background/70 pl-7 text-xs shadow-none" /></div> : null}
+    {showAll ? <div className="relative mb-2"><Search className="pointer-events-none absolute left-2 top-2 size-3.5 text-muted-foreground" /><Input aria-label={t("ui_filter_connectors_19b6ae")} value={query} onChange={event => setQuery(event.target.value)} placeholder={t("ui_find_a_connector_686c62")} className="h-8 border-0 bg-background/70 pl-7 text-xs shadow-none" /></div> : null}
     <div className="max-h-80 overflow-y-auto">
       {entries.map(entry => {
         const added = Boolean(entry.serviceUrl && connectorIdentities.some(identity => identity.connectionId && identity.serviceUrl === entry.serviceUrl))
         return <div key={entry.id} data-connector-preset={entry.id} className="flex min-h-14 items-center gap-2.5 rounded-lg px-1 py-2">
           <ConnectorIcon entry={entry} />
           <div className="min-w-0 flex-1"><p className="truncate text-[13px] font-medium">{entry.name}</p><p className="text-[11px] text-muted-foreground">{added ? "Added to your organization" : SETUP_LABELS[entry.setup]}</p></div>
-          {!added ? <Button variant="ghost" size="sm" className="h-7 w-24 shrink-0 gap-1 px-2 text-xs" disabled={!canManage} onClick={() => void setup(entry)} aria-label={`Set up ${entry.name}`}>Set up<ArrowUpRight className="size-3.5 text-muted-foreground" /></Button> : <span aria-hidden="true" className="w-24 shrink-0" />}
+          {!added ? <Button variant="ghost" size="sm" className="h-7 w-24 shrink-0 gap-1 px-2 text-xs" disabled={!canManage} onClick={() => void setup(entry)} aria-label={`Set up ${entry.name}`}>{t("ui_set_up_b19159")}<ArrowUpRight className="size-3.5 text-muted-foreground" /></Button> : <span aria-hidden="true" className="w-24 shrink-0" />}
         </div>
       })}
-      {entries.length === 0 ? <p className="py-3 text-xs text-muted-foreground">No connectors match your search.</p> : null}
+      {entries.length === 0 ? <p className="py-3 text-xs text-muted-foreground">{t("ui_no_connectors_match_your_search_9e8b93")}</p> : null}
     </div>
     <p className="mt-2 text-[11px] text-muted-foreground">{canManage ? "Setup opens in organization settings." : "An organization admin can add these connectors for you."}</p>
     {error ? <p role="alert" className="mt-2 text-xs text-destructive">{error}</p> : null}

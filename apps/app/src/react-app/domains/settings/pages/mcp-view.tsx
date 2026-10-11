@@ -1290,7 +1290,7 @@ export function McpView(props: McpViewProps) {
             configSlot={(
               <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full border border-dls-border bg-dls-hover px-2 py-1 text-xs text-dls-secondary">Shared by your organization</span>
+                  <span className="rounded-full border border-dls-border bg-dls-hover px-2 py-1 text-xs text-dls-secondary">{t("ui_shared_by_your_organization_72a30a")}</span>
                   <span className="rounded-full border border-dls-border bg-dls-hover px-2 py-1 text-xs text-dls-secondary">{connection.credentialMode === "shared" ? "Org account" : "Your account"}</span>
                 </div>
                 {openInDenAction({ id: detailOrgMcpItem.id })}
@@ -1332,9 +1332,7 @@ export function McpView(props: McpViewProps) {
   return (
     <section className="w-full max-w-3xl animate-in fade-in duration-300">
       {props.builtInExtensionsDisabled && props.allowManageExtensions ? (
-        <div className="mb-5 rounded-xl border border-amber-6 bg-amber-2 px-4 py-3 text-xs text-amber-11">
-          Built-in TGWork extensions are disabled by your organization. Use Show hidden to review blocked built-ins.
-        </div>
+        <div className="mb-5 rounded-xl border border-amber-6 bg-amber-2 px-4 py-3 text-xs text-amber-11">{t("ui_built_in_tgwork_extensions_are_disabled__426e32")}</div>
       ) : null}
 
       {props.allowManageExtensions ? null : (
@@ -1342,10 +1340,10 @@ export function McpView(props: McpViewProps) {
           data-testid="manage-extensions-policy-notice"
           className="mb-5 rounded-xl border border-dls-border bg-dls-hover px-4 py-4 text-xs leading-5 text-dls-secondary"
         >
-          <p className="text-sm font-medium text-foreground">Your team’s tool access</p>
+          <p className="text-sm font-medium text-foreground">{t("ui_your_team_s_tool_access_955b66")}</p>
           <p className="mt-1">{manageExtensionsDisabledReason()}</p>
-          <p className="mt-2">Need an MCP server or skill? Ask your admin to share it with your team or allow local tools in Team → Access. You can still sign in to available connections below.</p>
-          {props.builtInExtensionsDisabled ? <p className="mt-2">Built-in TGWork extensions are disabled by your organization. Use Show hidden to review blocked built-ins.</p> : null}
+          <p className="mt-2">{t("ui_need_an_mcp_server_or_skill_ask_your_adm_118a5a")}</p>
+          {props.builtInExtensionsDisabled ? <p className="mt-2">{t("ui_built_in_tgwork_extensions_are_disabled__426e32")}</p> : null}
         </div>
       )}
 
@@ -1370,11 +1368,11 @@ export function McpView(props: McpViewProps) {
         />
       </div>
 
-      <div className="mb-7 flex flex-wrap items-center gap-2" aria-label="Library filters">
+      <div className="mb-7 flex flex-wrap items-center gap-2" aria-label={t("ui_library_filters_a1db0b")}>
         <div className="w-full sm:w-[220px]">
           <SettingsListSearchInput
             containerClassName="bg-background hover:bg-background"
-            placeholder="Search your library"
+            placeholder={t("ui_search_your_library_099339")}
             value={search}
             onChange={(e) => setSearch(e.currentTarget.value)}
           />
@@ -1741,7 +1739,7 @@ export function ExtensionStateTabs(props: {
   }>;
 
   return (
-    <div className="flex flex-wrap gap-6 border-b border-dls-border" role="tablist" aria-label="Library state">
+    <div className="flex flex-wrap gap-6 border-b border-dls-border" role="tablist" aria-label={t("ui_library_state_01417f")}>
       {tabs.filter((tab) => tab.state === "all" || tab.count !== 0).map((tab) => {
         const active = props.state === tab.state;
         return (

@@ -1,5 +1,6 @@
 /** @jsxImportSource react */
 import * as React from "react";
+import { t } from "@/i18n";
 import {
   Blocks,
   ArrowLeft,
@@ -303,7 +304,7 @@ function BrowserPanelContent({
     <>
       {isAvailable ? (
         <div data-browser-shortcut-tab={tab.id} className="flex min-h-9 shrink-0 items-center gap-2 border-b border-border px-3 text-xs">
-          <span className="shrink-0 font-medium">Built-in browser</span>
+          <span className="shrink-0 font-medium">{t("ui_built_in_browser_0c582f")}</span>
           <span role="status" className="min-w-0 flex-1 truncate text-muted-foreground">
             {tab.browserTask?.status === "paused" ? "You have control · resume when finished" : tab.browserTask?.status === "running" ? browserOperationLabels[tab.browserTask.operation ?? ""] ?? "Working on this page" : tab.browserTask?.status === "needs_attention" ? browserOperationLabels[tab.browserTask.operation ?? ""] ?? "Review this page" : "This conversation's tab"}
           </span>
@@ -324,7 +325,7 @@ function BrowserPanelContent({
                     size="icon-sm"
                     onClick={back}
                     disabled={suspended || busy || !tab.canGoBack}
-                    aria-label="Go back"
+                    aria-label={t("ui_go_back_22b653")}
                   >
                     <ArrowLeft />
                   </Button>
@@ -340,7 +341,7 @@ function BrowserPanelContent({
                     size="icon-sm"
                     onClick={forward}
                     disabled={suspended || busy || !tab.canGoForward}
-                    aria-label="Go forward"
+                    aria-label={t("ui_go_forward_06e732")}
                   >
                     <ArrowRight />
                   </Button>
@@ -356,7 +357,7 @@ function BrowserPanelContent({
                     size="icon-sm"
                     onClick={reload}
                     disabled={busy}
-                    aria-label="Reload page"
+                    aria-label={t("ui_reload_page_cb835a")}
                   >
                     {tab.status === "loading" || busy ? <Loader2 className="animate-spin" /> : <RotateCw />}
                   </Button>
@@ -380,7 +381,7 @@ function BrowserPanelContent({
                 onBlur={() => {
                   urlFocusedRef.current = false;
                 }}
-                placeholder="Enter URL..."
+                placeholder={t("ui_enter_url_dbbd9b")}
                 spellCheck={false}
                 autoComplete="off"
               />
@@ -414,7 +415,7 @@ function BrowserPanelContent({
                 />
                 <PopoverContent align="end" side="bottom" sideOffset={8} className="w-80 max-w-[calc(100vw-2rem)] gap-0 p-0">
                   <div className="border-b border-border px-4 py-3">
-                    <p className="text-sm font-semibold">Site tools</p>
+                    <p className="text-sm font-semibold">{t("ui_site_tools_a3bffc")}</p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       Actions offered by this page. Review the website and the requested action before allowing it.
                     </p>
@@ -435,7 +436,7 @@ function BrowserPanelContent({
                   </div>
                   {(tab.siteToolActivity ?? []).length > 0 ? (
                     <div className="border-t border-border px-4 py-3">
-                      <p className="mb-1.5 text-xs font-semibold">Recent activity</p>
+                      <p className="mb-1.5 text-xs font-semibold">{t("ui_recent_activity_f7ceab")}</p>
                       {(tab.siteToolActivity ?? []).slice(0, 5).map((activity, index) => (
                         <div key={`${activity.at}:${activity.name}:${index}`} className="flex items-center justify-between gap-3 py-1 text-[10px]">
                           <span className="min-w-0 truncate font-mono">{activity.name}</span>
@@ -444,7 +445,7 @@ function BrowserPanelContent({
                           </span>
                         </div>
                       ))}
-                      <p className="mt-1 text-[10px] text-muted-foreground">Arguments and results are not retained in this activity view.</p>
+                      <p className="mt-1 text-[10px] text-muted-foreground">{t("ui_arguments_and_results_are_not_retained_i_eb157a")}</p>
                     </div>
                   ) : null}
                 </PopoverContent>
@@ -460,8 +461,8 @@ function BrowserPanelContent({
           variant="ghost"
           size="icon-sm"
           onClick={onClose}
-          title="Close panel"
-          aria-label="Close panel"
+          title={t("ui_close_panel_8ead57")}
+          aria-label={t("ui_close_panel_8ead57")}
         >
           <X />
         </Button>
@@ -476,15 +477,15 @@ function BrowserPanelContent({
           <div ref={contentRef} data-browser-shortcut-tab={tab.id} className="h-full overflow-hidden">
             {suspended ? (
               <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
-                <p className="text-sm font-medium">Tab suspended</p>
-                <p className="text-sm text-muted-foreground">Reload opens the saved URL, not the previous page state.</p>
+                <p className="text-sm font-medium">{t("ui_tab_suspended_4db62b")}</p>
+                <p className="text-sm text-muted-foreground">{t("ui_reload_opens_the_saved_url_not_the_previ_6c0fde")}</p>
                 <Button variant="outline" size="sm" onClick={reload}>Reload</Button>
               </div>
             ) : null}
           </div>
         ) : null}
         {tab.browserApproval ? (
-          <div className="absolute inset-0 z-10 flex flex-col justify-center gap-3 overflow-y-auto bg-background p-5 text-sm" role="region" aria-label="Browser permission request">
+          <div className="absolute inset-0 z-10 flex flex-col justify-center gap-3 overflow-y-auto bg-background p-5 text-sm" role="region" aria-label={t("ui_browser_permission_request_137d8b")}>
             <h3 className="font-semibold">{tab.browserApproval.title}</h3>
             <p className="font-medium">{tab.browserApproval.message}</p>
             <p className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words text-muted-foreground">{tab.browserApproval.detail}</p>
@@ -728,7 +729,7 @@ export function SidePanel({
                 ))}
               </PanelTabList>
             </div>
-            {!activeTab ? <span className="sr-only">Panel destinations</span> : null}
+            {!activeTab ? <span className="sr-only">{t("ui_panel_destinations")}</span> : null}
             {activeTab && isBrowserAvailable ? (
               <Tooltip>
                 <TooltipTrigger
@@ -737,20 +738,20 @@ export function SidePanel({
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => createTab()}
-                      aria-label="New tab"
+                      aria-label={t("ui_new_tab_c8a19e")}
                     >
                       <Plus />
                     </Button>
                   )}
                 />
-                <TooltipContent>New tab</TooltipContent>
+                <TooltipContent>{t("ui_new_tab_c8a19e")}</TooltipContent>
               </Tooltip>
             ) : !activeTab ? (
               <Button
                 variant="ghost"
                 size="icon-sm"
                 onClick={onClose}
-                aria-label="Close panel"
+                aria-label={t("ui_close_panel_8ead57")}
               >
                 <X />
               </Button>

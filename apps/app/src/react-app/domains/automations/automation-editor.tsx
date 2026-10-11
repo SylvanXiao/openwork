@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useMemo, useRef, useState } from "react"
 import { AUTOMATION_FREE_MODEL, type AutomationExecutionTarget, type AutomationSchedule, type CreateAutomation } from "@openwork/types/automations"
 
@@ -172,7 +173,7 @@ export function AutomationEditor(props: AutomationEditorProps) {
           value={input.name}
           maxLength={120}
           required
-          placeholder="Daily project summary"
+          placeholder={t("ui_daily_project_summary_d5891a")}
           onChange={(event) => {
             const name = event.currentTarget.value
             setInput((current) => ({ ...current, name }))
@@ -182,7 +183,7 @@ export function AutomationEditor(props: AutomationEditorProps) {
 
       {pinnedWorkflow ? (
         <div className="rounded-xl border border-border bg-muted/30 p-3 text-sm" data-automation-pinned-workflow={pinnedWorkflow.configObjectVersionId}>
-          <p className="font-medium">Pinned Workflow</p>
+          <p className="font-medium">{t("ui_pinned_workflow_367d10")}</p>
           <p className="mt-1 text-muted-foreground">{pinnedWorkflow.title}</p>
           <p className="mt-1 break-all font-mono text-xs text-muted-foreground">Version {pinnedWorkflow.configObjectVersionId}</p>
         </div>
@@ -194,7 +195,7 @@ export function AutomationEditor(props: AutomationEditorProps) {
             className="min-h-36 resize-y"
             value={input.instructions}
             required
-            placeholder="Describe the outcome, sources to check, and what a useful result should include."
+            placeholder={t("ui_describe_the_outcome_sources_to_check_an_b94259")}
             onChange={(event) => {
               const instructions = event.currentTarget.value
               setInput((current) => ({ ...current, instructions }))
@@ -223,7 +224,7 @@ export function AutomationEditor(props: AutomationEditorProps) {
         </div>
         {input.schedule.kind === "once" ? (
           <div className="space-y-2">
-            <Label htmlFor="automation-once-at">Run at</Label>
+            <Label htmlFor="automation-once-at">{t("ui_run_at_5ae99e")}</Label>
             <Input
               id="automation-once-at"
               type="datetime-local"

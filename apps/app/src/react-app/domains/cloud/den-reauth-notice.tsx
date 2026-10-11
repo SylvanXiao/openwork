@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useEffect, useRef, useState } from "react";
 import { createDenClient, readDenSettings, writeDenSettings } from "@/app/lib/den";
 import { deepLinkBridgeEvent, type DeepLinkBridgeDetail } from "@/app/lib/deep-link-bridge";
@@ -103,25 +104,25 @@ export function DenReauthNotice({ onVerified, onCancel }: {
   }, [nonce]);
 
   return <div className="space-y-3 rounded-lg border p-4">
-    <p className="text-sm font-medium">Confirm your identity to share apps</p>
+    <p className="text-sm font-medium">{t("ui_confirm_your_identity_to_share_apps_2524dc")}</p>
     <p className="text-sm text-muted-foreground">Verify in your browser, then return here. Your selected apps and teammate’s email will be kept.</p>
     <Button type="button" disabled={busy || !user} onClick={() => {
       setError(null);
       void tryOpenBrowserAuthUrl(url.toString()).then((opened) => {
         if (!opened) setError("Your browser could not open. Copy the verification address below into your browser.");
       });
-    }}>Verify in browser</Button>
+    }}>{t("ui_verify_in_browser_dda292")}</Button>
     <details className="text-sm">
-      <summary className="cursor-pointer">Browser didn’t open?</summary>
-      <Input aria-label="Verification address" readOnly value={url.toString()} onFocus={(event) => event.target.select()} className="mt-2" />
+      <summary className="cursor-pointer">{t("ui_browser_didn_t_open_cea191")}</summary>
+      <Input aria-label={t("ui_verification_address_9d383e")} readOnly value={url.toString()} onFocus={(event) => event.target.select()} className="mt-2" />
     </details>
     <label className="block space-y-2 text-sm">
-      <span>Or paste your verification link</span>
+      <span>{t("ui_or_paste_your_verification_link_814fa6")}</span>
       <Input value={link} onChange={(event) => setLink(event.target.value)} disabled={busy} autoComplete="off" />
     </label>
     {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}
     <div className="flex justify-end gap-2">
-      <Button type="button" variant="outline" disabled={busy} onClick={onCancel}>Cancel verification</Button>
+      <Button type="button" variant="outline" disabled={busy} onClick={onCancel}>{t("ui_cancel_verification_b2f2a3")}</Button>
       <Button type="button" disabled={busy || !link.trim()} onClick={() => void finish(link)}>{busy ? "Confirming…" : "Confirm and share"}</Button>
     </div>
   </div>;

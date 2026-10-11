@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client"
 
 import { useState } from "react"
@@ -82,7 +83,7 @@ export function OpenWorkAutomationProposalTool({ part }: { part: DynamicToolUIPa
     : null
 
   if (!proposal) {
-    return <Tool toolPart={part} title="Proposed an Automation" />
+    return <Tool toolPart={part} title={t("ui_proposed_an_automation_9fa2d7")} />
   }
 
   // Pin the workspace of the pane this card renders in — renderer-owned state.
@@ -163,7 +164,7 @@ export function OpenWorkAutomationProposalTool({ part }: { part: DynamicToolUIPa
           <p className="truncate text-sm font-medium text-dls-primary" title={proposal.name}>{proposal.name}</p>
           <p className="text-xs text-dls-secondary">{formatAutomationSchedule(proposal.schedule)}</p>
           {modelLabel ? <p className="text-xs text-dls-secondary">Runs with {modelLabel}</p> : null}
-          {pinnedWorkspaceId && placement === "desktop" ? <p className="text-xs text-dls-secondary" data-automation-pinned-workspace={pinnedWorkspaceId}>Runs in this workspace</p> : null}
+          {pinnedWorkspaceId && placement === "desktop" ? <p className="text-xs text-dls-secondary" data-automation-pinned-workspace={pinnedWorkspaceId}>{t("ui_runs_in_this_workspace_cf0c7f")}</p> : null}
         </div>
         <p className="whitespace-pre-wrap text-sm text-dls-secondary">{proposal.instructions}</p>
       </div>

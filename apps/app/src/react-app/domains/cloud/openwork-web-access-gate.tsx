@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { AlertTriangle, ArrowUpRight } from "lucide-react";
 
@@ -105,9 +106,9 @@ export function OpenWorkWebAccessGateScreen(props: {
               <Button type="button" onClick={props.onRetry}>Retry</Button>
             )}
             {denied ? (
-              <Button type="button" variant="outline" onClick={props.onRetry}>Check again</Button>
+              <Button type="button" variant="outline" onClick={props.onRetry}>{t("ui_check_again_7cf37d")}</Button>
             ) : null}
-            <Button type="button" variant="ghost" onClick={props.onSignOut}>Sign out</Button>
+            <Button type="button" variant="ghost" onClick={props.onSignOut}>{t("ui_sign_out_c87aac")}</Button>
           </div>
         ) : null}
       </section>

@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useState } from "react";
 
 import {
@@ -87,7 +88,7 @@ export function AttributionStep({ onSubmit, onSkip }: AttributionStepProps) {
 
       <div className="relative z-10 mx-6 w-full max-w-md rounded-3xl border border-border bg-background px-8 py-10">
         <PageHeader className="mb-8 text-center">
-          <PageTitle>How did you hear about TGWork?</PageTitle>
+          <PageTitle>{t("ui_how_did_you_hear_about_tgwork_f3f940")}</PageTitle>
           <PageDescription>
             One quick question — it helps us know where to show up.
           </PageDescription>

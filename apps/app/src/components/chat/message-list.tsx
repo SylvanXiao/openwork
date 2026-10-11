@@ -178,7 +178,7 @@ class ToolMessage extends React.Component<ToolMessageProps, { failed: boolean }>
   render() {
     if (this.state.failed) {
       return (
-        <div className="text-xs text-muted-foreground">Tool step unavailable</div>
+        <div className="text-xs text-muted-foreground">{t("ui_tool_step_unavailable_4a6793")}</div>
       )
     }
     return <ToolMessageInner part={this.props.part} />
@@ -209,7 +209,7 @@ const ToolMessageInner = ({ part }: ToolMessageProps) => {
         <CirclePause aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
         <div>
           <div className="font-medium">Waiting for your action</div>
-          <div className="text-xs text-amber-11">Choose an option or approve the request to continue.</div>
+          <div className="text-xs text-amber-11">{t("ui_choose_an_option_or_approve_the_request__07798e")}</div>
         </div>
       </div>
     )
@@ -224,8 +224,8 @@ const ToolMessageInner = ({ part }: ToolMessageProps) => {
       >
         <AlertTriangle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
         <div>
-          <div className="font-medium">Task interrupted</div>
-          <div className="text-xs text-destructive/80">This step stopped before it finished. Retry to continue.</div>
+          <div className="font-medium">{t("ui_task_interrupted_8eb1c9")}</div>
+          <div className="text-xs text-destructive/80">{t("ui_this_step_stopped_before_it_finished_ret")}</div>
         </div>
       </div>
     )
@@ -478,7 +478,7 @@ function CopyMessageButton({ messages }: CopyMessageButtonProps) {
       <Button
         variant="ghost"
         size="icon"
-        aria-label="Copy message"
+        aria-label={t("ui_copy_message_f1019f")}
         onClick={() => void onCopy()}
       >
         {copied ? <Check /> : <Copy />}
@@ -772,7 +772,7 @@ const UserMessage = React.memo(
                         <Button
                           variant="ghost"
                           size="icon"
-                          aria-label="Edit message"
+                          aria-label={t("ui_edit_message_c12855")}
                           disabled={readOnly}
                           onClick={() => onEditUserMessage(message.id, messageText)}
                         >
@@ -792,7 +792,7 @@ const UserMessage = React.memo(
                         {branching ? <LoaderCircle className="motion-safe:animate-spin" /> : <Split className="rotate-90" />}
                       </Button>
                     </MessageAction>
-                    {branching ? <span role="status" className="sr-only">Branching...</span> : null}
+                    {branching ? <span role="status" className="sr-only">{t("ui_branching_a04119")}</span> : null}
                     <MessageAction tooltip="Revert">
                       <Button
                         variant="ghost"
@@ -981,7 +981,7 @@ function SessionErrorTechnicalDetails({ details, tone }: { details: string; tone
           aria-hidden="true"
           className={cn("size-3 shrink-0 transition-transform duration-150", open && "rotate-90")}
         />
-        <span className="shrink-0">Technical details</span>
+        <span className="shrink-0">{t("ui_technical_details_52eb43")}</span>
       </button>
       {open ? (
         <div
@@ -1152,7 +1152,7 @@ const RetryMessage = React.memo(({ status }: RetryMessageProps) => {
               </p>
               {freeModelLimit ? (
                 <RetryActionButton
-                  label="Connect a model provider"
+                  label={t("ui_connect_a_model_provider")}
                   onClick={() => dispatchAction({ target: "settings", action: "open", section: "providers" })}
                 />
               ) : action.link ? (
@@ -1429,7 +1429,7 @@ function MessageGroup({
                     {forkingMessageId === lastRealItem.message.id ? <LoaderCircle className="motion-safe:animate-spin" /> : <Split className="rotate-90" />}
                   </Button>
                 </MessageAction>
-                {forkingMessageId === lastRealItem.message.id ? <span role="status" className="sr-only">Branching...</span> : null}
+                {forkingMessageId === lastRealItem.message.id ? <span role="status" className="sr-only">{t("ui_branching_a04119")}</span> : null}
                 <MessageAction tooltip="Revert">
                   <Button
                     variant="ghost"

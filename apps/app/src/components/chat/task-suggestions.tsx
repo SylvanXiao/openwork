@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client"
 
 import {
@@ -76,7 +77,7 @@ export function TaskSuggestions({ className }: TaskSuggestionsProps) {
               <BoltIcon className="size-6 text-blue-10" aria-hidden />
             </DescriptiveButtonIcon>
             <DescriptiveButtonContent>
-              <DescriptiveButtonTitle>Connect a model provider</DescriptiveButtonTitle>
+              <DescriptiveButtonTitle>{t("ui_connect_a_model_provider_de2065")}</DescriptiveButtonTitle>
               <DescriptiveButtonDescription>
                 Add an API key for Anthropic, OpenAI, Google, or others
               </DescriptiveButtonDescription>
@@ -110,8 +111,8 @@ export function TaskSuggestions({ className }: TaskSuggestionsProps) {
                 <DocumentChartBarIcon className="size-6 text-green-10" aria-hidden />
               </DescriptiveButtonIcon>
               <DescriptiveButtonContent>
-                <DescriptiveButtonTitle>Edit a CSV</DescriptiveButtonTitle>
-                <DescriptiveButtonDescription>Create a sample spreadsheet</DescriptiveButtonDescription>
+                <DescriptiveButtonTitle>{t("ui_edit_a_csv_17f9a5")}</DescriptiveButtonTitle>
+                <DescriptiveButtonDescription>{t("ui_create_a_sample_spreadsheet_685014")}</DescriptiveButtonDescription>
               </DescriptiveButtonContent>
             </DescriptiveButton>
 
@@ -120,7 +121,7 @@ export function TaskSuggestions({ className }: TaskSuggestionsProps) {
                 <GlobeAltIcon className="size-6 text-blue-10" aria-hidden />
               </DescriptiveButtonIcon>
               <DescriptiveButtonContent>
-                <DescriptiveButtonTitle>Browse the web</DescriptiveButtonTitle>
+                <DescriptiveButtonTitle>{t("ui_browse_the_web_c16b1b")}</DescriptiveButtonTitle>
                 <DescriptiveButtonDescription>Search Craigslist for couches</DescriptiveButtonDescription>
               </DescriptiveButtonContent>
             </DescriptiveButton>
@@ -139,8 +140,8 @@ export function TaskSuggestions({ className }: TaskSuggestionsProps) {
                 <CubeIcon className="size-6 text-amber-10" aria-hidden />
               </DescriptiveButtonIcon>
               <DescriptiveButtonContent>
-                <DescriptiveButtonTitle>Connect an extension</DescriptiveButtonTitle>
-                <DescriptiveButtonDescription>Add MCPs and integrations</DescriptiveButtonDescription>
+                <DescriptiveButtonTitle>{t("ui_connect_an_extension_3719e1")}</DescriptiveButtonTitle>
+                <DescriptiveButtonDescription>{t("ui_add_mcps_and_integrations_653c7f")}</DescriptiveButtonDescription>
               </DescriptiveButtonContent>
             </DescriptiveButton>
           </>

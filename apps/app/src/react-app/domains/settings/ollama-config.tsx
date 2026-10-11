@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bot, CheckCircle2, Download, Loader2, RefreshCw, XCircle } from "lucide-react";
@@ -281,7 +282,7 @@ export function OllamaConfig(props: OllamaConfigProps) {
       <Card variant="outline" size="sm">
         <CardHeader>
           <CardTitle>Configuration</CardTitle>
-          <CardDescription>Connect to a local Ollama instance and choose a model.</CardDescription>
+          <CardDescription>{t("ui_connect_to_a_local_ollama_instance_and_c_c3e77b")}</CardDescription>
           <CardAction>
             <Button variant="ghost" size="icon-sm" onClick={() => void refetch()} disabled={isFetching}>
               <RefreshCw className={isFetching ? "animate-spin" : ""} />
@@ -301,7 +302,7 @@ export function OllamaConfig(props: OllamaConfigProps) {
               <EmptyMedia variant="icon">
                 <Download />
               </EmptyMedia>
-              <EmptyTitle>Ollama isn't installed or running</EmptyTitle>
+              <EmptyTitle>{t("ui_ollama_isn_t_installed_or_running_cddc4f")}</EmptyTitle>
               <EmptyDescription>
                 Download and start Ollama to use open-source models in your workspace.
               </EmptyDescription>
@@ -325,7 +326,7 @@ export function OllamaConfig(props: OllamaConfigProps) {
     <Card variant="outline" size="sm">
       <CardHeader>
         <CardTitle>Configuration</CardTitle>
-        <CardDescription>Connect to a local Ollama instance and choose a model.</CardDescription>
+        <CardDescription>{t("ui_connect_to_a_local_ollama_instance_and_c_c3e77b")}</CardDescription>
         <CardAction>
           <Button variant="ghost" size="icon-sm" onClick={() => void refetch()} disabled={isFetching}>
             <RefreshCw className={isFetching ? "animate-spin" : ""} />
@@ -361,7 +362,7 @@ export function OllamaConfig(props: OllamaConfigProps) {
         {status === "running" && (data?.models?.length ?? 0) > 0 ? (
           <div className="flex flex-col gap-2">
             <FieldSet className="gap-3">
-              <FieldLegend variant="label">Available models</FieldLegend>
+              <FieldLegend variant="label">{t("ui_available_models_29d8d0")}</FieldLegend>
               <FieldDescription>
                 Select from models already loaded in Ollama.
               </FieldDescription>
@@ -392,7 +393,7 @@ export function OllamaConfig(props: OllamaConfigProps) {
               <EmptyMedia variant="icon">
                 <Download />
               </EmptyMedia>
-              <EmptyTitle>No models loaded</EmptyTitle>
+              <EmptyTitle>{t("ui_no_models_loaded_9341d5")}</EmptyTitle>
               <EmptyDescription>
                 Pull a model from ollama.com/library to get started.
               </EmptyDescription>
@@ -433,7 +434,7 @@ export function OllamaConfig(props: OllamaConfigProps) {
               nativeButton
               render={<button type="button" />}
             />
-            <FieldLabel htmlFor="ollama-set-default">Use as default model in workspace</FieldLabel>
+            <FieldLabel htmlFor="ollama-set-default">{t("ui_use_as_default_model_in_workspace_a90a13")}</FieldLabel>
           </Field>
         </FieldGroup>
         <Button
@@ -520,7 +521,7 @@ function PullModelDialog(props: PullModelDialogProps) {
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
       <DialogContent className="w-full max-w-md sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Pull model</DialogTitle>
+          <DialogTitle>{t("ui_pull_model_753cea")}</DialogTitle>
           <DialogDescription>
             Download a model from ollama.com/library to your local Ollama instance.
           </DialogDescription>
@@ -528,7 +529,7 @@ function PullModelDialog(props: PullModelDialogProps) {
         <FieldSet className="w-full">
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="ollama-model-pull">Model to pull</FieldLabel>
+              <FieldLabel htmlFor="ollama-model-pull">{t("ui_model_to_pull_6059af")}</FieldLabel>
               <Input
                 id="ollama-model-pull"
                 type="text"

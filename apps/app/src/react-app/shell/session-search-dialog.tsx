@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useMemo, useState } from "react";
 import fuzzysort from "fuzzysort";
 import { ClockIcon, Loader2Icon, MessageSquareTextIcon, TypeIcon } from "lucide-react";
@@ -244,7 +245,7 @@ export function SessionSearchDialog(props: SessionSearchDialogProps) {
       }}
     >
       <CommandDialogPopup>
-        <CommandDialogTitle>Search sessions</CommandDialogTitle>
+        <CommandDialogTitle>{t("ui_search_sessions_df8ed2")}</CommandDialogTitle>
         <Command
           items={groups}
           filter={null}
@@ -254,7 +255,7 @@ export function SessionSearchDialog(props: SessionSearchDialogProps) {
           <CommandHeader>
             <CommandInput
               className="w-full"
-              placeholder="Search all sessions and messages…"
+              placeholder={t("ui_search_all_sessions_and_messages_dea7a6")}
             />
           </CommandHeader>
           <CommandPanel>
@@ -314,7 +315,7 @@ export function SessionSearchDialog(props: SessionSearchDialogProps) {
               {searching ? <Loader2Icon className="size-3 animate-spin" /> : null}
               {statusText}
             </span>
-            <span>↑↓ to navigate · ↵ to open</span>
+            <span>{t("ui_to_navigate_to_open_5eefda")}</span>
           </CommandFooter>
         </Command>
       </CommandDialogPopup>

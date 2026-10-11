@@ -183,7 +183,7 @@ export function CreateWorkspaceLocalPanel(
                         type="text"
                         value={props.projectLabel}
                         onChange={(event) => props.onProjectLabelInput(event.currentTarget.value)}
-                        placeholder="Billing API"
+                        placeholder={t("ui_billing_api_d85004")}
                         disabled={props.submitting}
                         className="mt-2 w-full rounded-[20px] border border-dls-border bg-dls-surface px-4 py-3 text-[14px] text-dls-text outline-none placeholder:text-dls-secondary transition-colors focus:border-dls-accent disabled:cursor-not-allowed disabled:opacity-60"
                       />

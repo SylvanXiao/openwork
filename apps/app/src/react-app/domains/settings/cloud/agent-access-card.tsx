@@ -351,7 +351,7 @@ export function AgentAccessCard(props: {
       <SettingsInset className="flex flex-col gap-3 bg-dls-surface sm:flex-row sm:items-center sm:justify-between" data-testid="agent-access-card">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="text-base font-semibold text-dls-text">Agent access ready</div>
+            <div className="text-base font-semibold text-dls-text">{t("ui_agent_access_ready_aca083")}</div>
             <SettingsStatusBadge label={summary.statusLabel} tone={summary.tone} />
           </div>
           <div className="text-sm text-dls-secondary">
@@ -372,7 +372,7 @@ export function AgentAccessCard(props: {
     <SettingsInset className="space-y-4 bg-dls-surface" data-testid="agent-access-card">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
-          <div className="text-base font-semibold text-dls-text">Agent access to connected services</div>
+          <div className="text-base font-semibold text-dls-text">{t("ui_agent_access_to_connected_services_783649")}</div>
           <div className="max-w-[62ch] text-sm text-dls-secondary">
             Lets agents use the exact TGWork Cloud tools for this active workspace and organization.
           </div>
@@ -382,11 +382,11 @@ export function AgentAccessCard(props: {
 
       <div className="grid gap-2 text-sm text-dls-secondary sm:grid-cols-2">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-dls-secondary">First issue</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-dls-secondary">{t("ui_first_issue_4c932a")}</div>
           <div className="mt-1 text-dls-text">{summary.stageLabel}</div>
         </div>
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-dls-secondary">Recommended action</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.14em] text-dls-secondary">{t("ui_recommended_action_f04eb3")}</div>
           <div className="mt-1 text-dls-text">{summary.recommendedAction}</div>
         </div>
       </div>
@@ -498,7 +498,7 @@ function AgentAccessAdvanced(props: {
           )}
           {traceLines.length ? (
             <div>
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-dls-secondary">Direct probe steps</div>
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-dls-secondary">{t("ui_direct_probe_steps_00099e")}</div>
               <div className="mt-1 space-y-0.5 font-mono text-xs text-dls-text">
                 {traceLines.map((line, index) => <div key={`${index}-${line}`}>{line}</div>)}
               </div>
@@ -506,7 +506,7 @@ function AgentAccessAdvanced(props: {
           ) : null}
           {refreshLines.length ? (
             <div>
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-dls-secondary">Last engine refresh</div>
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-dls-secondary">{t("ui_last_engine_refresh_56bbdc")}</div>
               <div className="mt-1 space-y-0.5 font-mono text-xs text-dls-text">
                 {refreshLines.map((line, index) => <div key={`${index}-${line}`}>{line}</div>)}
               </div>

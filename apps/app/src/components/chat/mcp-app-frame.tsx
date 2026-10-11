@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client"
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
@@ -230,14 +231,14 @@ export function McpAppDiagnosticNotice({ error, notice, onRetry }: { error: McpA
     <div className="mt-2 text-xs text-muted-foreground" role="status">
       <p>{notice} {error.message}</p>
       {error.causeCode === "server_unavailable" || error.causeCode === "mcp_unreachable" ? (
-        <p className="mt-1">The connection was not ready. Retry, or check the connection under Settings &gt; Library.</p>
+        <p className="mt-1">{t("ui_the_connection_was_not_ready_retry_or_ch_843721")}</p>
       ) : null}
       {onRetry ? (
         <button type="button" className="mt-1 underline underline-offset-2" onClick={onRetry}>Retry</button>
       ) : null}
       <details className="mt-1">
         <summary className="cursor-pointer select-none">Technical details ({error.code})</summary>
-        <p className="mt-1">Copy these details when reporting the rendering problem.</p>
+        <p className="mt-1">{t("ui_copy_these_details_when_reporting_the_re_dea0a4")}</p>
         <pre className="mt-1 max-h-48 overflow-auto whitespace-pre-wrap rounded-md bg-muted p-2 font-mono text-[11px] text-foreground">{details}</pre>
         <button
           type="button"
@@ -721,7 +722,7 @@ function EmbeddedMcpAppFrame({ part }: { part: DynamicToolUIPart }) {
     return <AppChatArtifact key={`${viewId}:${revisionId}:${receiptId}`} appId={viewId} revisionId={revisionId} title={title} receiptId={receiptId} />
   }
   if (!result) return null
-  if (!origin) return <p role="status">This App is missing its conversation origin. Reopen the conversation to use it.</p>
+  if (!origin) return <p role="status">{t("ui_this_app_is_missing_its_conversation_ori_f80c27")}</p>
   if (error) return <McpAppDiagnosticNotice error={error} notice={CHAT_MCP_APP_UNAVAILABLE_NOTICE} onRetry={() => setResolveToken((token) => token + 1)} />
   if (!app || resolvedFor.current !== resolution) return null
   return (

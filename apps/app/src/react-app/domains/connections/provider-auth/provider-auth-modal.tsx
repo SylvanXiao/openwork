@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import {
   CheckCircle2,
   ChevronLeft,
@@ -696,7 +697,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
     >
       <DialogContent className="flex max-h-[calc(100vh-2rem)] min-h-0 w-full max-w-lg flex-col overflow-hidden sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Connect providers</DialogTitle>
+          <DialogTitle>{t("ui_connect_providers_468547")}</DialogTitle>
           <DialogDescription>
             Sign in to services or use providers managed by your organization.
           </DialogDescription>
@@ -722,7 +723,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                     <input
                       ref={searchInputRef}
                       type="text"
-                      placeholder="Filter providers by name or ID"
+                      placeholder={t("ui_filter_providers_by_name_or_id_a4d1d7")}
                       value={searchQuery}
                       onChange={(event) => {
                         setSearchQuery(event.currentTarget.value);
@@ -813,7 +814,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                     </div>
                   )}
 
-                  <div className="text-[11px] text-gray-9">Arrow keys to navigate, Enter to select.</div>
+                  <div className="text-[11px] text-gray-9">{t("ui_arrow_keys_to_navigate_enter_to_select_c2b188")}</div>
                 </div>
               ) : null}
 
@@ -822,7 +823,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <div className="text-sm font-medium text-gray-12">{selectedEntry.name}</div>
-                      <div className="text-xs text-gray-10 mt-1">Choose how you'd like to connect.</div>
+                      <div className="text-xs text-gray-10 mt-1">{t("ui_choose_how_you_d_like_to_connect_364ce7")}</div>
                     </div>
                     <Button variant="outline" onClick={handleBack} disabled={actionDisabled}>
                       Back
@@ -880,7 +881,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                     </div>
                   ) : null}
                   <TextInput
-                    label="API key"
+                    label={t("ui_api_key_656a68")}
                     type="password"
                     placeholder={isOpencodeZenProvider(selectedEntry.id) ? "ock_..." : "sk-..."}
                     value={apiKeyInput}
@@ -913,7 +914,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                 <div className="rounded-xl border border-blue-6/50 bg-blue-2/25 shadow-sm p-5 space-y-4">
                   <div className="flex items-center justify-between gap-4">
                     <div>
-                      <div className="text-sm font-medium text-gray-12">TGWork Models</div>
+                      <div className="text-sm font-medium text-gray-12">{t("ui_tgwork_models_1887de")}</div>
                       <div className="text-xs text-gray-10 mt-1">
                         Frontier intelligence, hand picked for your team&apos;s most ambitious work.
                       </div>
@@ -935,7 +936,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <div className="text-sm font-medium text-gray-12">{selectedEntry.name}</div>
-                      <div className="text-xs text-gray-10 mt-1">Finish OAuth by pasting the authorization code.</div>
+                      <div className="text-xs text-gray-10 mt-1">{t("ui_finish_oauth_by_pasting_the_authorizatio_29bd1d")}</div>
                     </div>
                     <Button variant="outline" onClick={handleBack} disabled={actionDisabled}>
                       Back
@@ -950,9 +951,9 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                     </div>
                   ) : null}
                   <TextInput
-                    label="Authorization code"
+                    label={t("ui_authorization_code_69d803")}
                     type="text"
-                    placeholder="Paste code"
+                    placeholder={t("ui_paste_code_3b5671")}
                     value={oauthCodeInput}
                     onChange={(event) => {
                       setOauthCodeInput(event.currentTarget.value);
@@ -1000,10 +1001,10 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                   </div>
                   {isOpenAiHeadlessSession ? (
                     <div className="space-y-2 text-xs text-gray-9">
-                      <div>You'll need to sign in to your OpenAI account and provide the code below.</div>
-                      <div>The first time you do this you'll need to enable Device auth in your account settings.</div>
-                      <div>ChatGPT &gt; Account Settings &gt; Security &gt; Enable device code authorization</div>
-                      <div>When you're ready, copy the code below, and click &quot;Open Browser&quot;.</div>
+                      <div>{t("ui_you_ll_need_to_sign_in_to_your_openai_ac_141c89")}</div>
+                      <div>{t("ui_the_first_time_you_do_this_you_ll_need_t_e896e4")}</div>
+                      <div>{t("ui_chatgpt_gt_account_settings_gt_security__e85446")}</div>
+                      <div>{t("ui_when_you_re_ready_copy_the_code_below_an_919a89")}</div>
                     </div>
                   ) : (
                     <div className="text-xs text-gray-9">
@@ -1013,7 +1014,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                   {oauthDisplayCode ? (
                     <div className="rounded-xl border border-gray-6/70 bg-gray-2/40 p-3 flex items-center gap-3">
                       <div className="flex-1 min-w-0">
-                        <div className="text-[10px] uppercase tracking-wide text-gray-8">Confirmation code</div>
+                        <div className="text-[10px] uppercase tracking-wide text-gray-8">{t("ui_confirmation_code_5750c1")}</div>
                         <div className="text-sm text-gray-12 font-mono break-all">{oauthDisplayCode}</div>
                       </div>
                       <Button variant="outline" size="sm" className="shrink-0" onClick={() => void copyOauthDisplayCode()}>
@@ -1023,12 +1024,12 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                   ) : null}
                   {isOpenAiHeadlessSession && !oauthBrowserOpened ? (
                     <div className="flex items-center gap-2 text-xs text-gray-9">
-                      <span>Authorization checks will start after you click Open Browser.</span>
+                      <span>{t("ui_authorization_checks_will_start_after_yo_2c66a0")}</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 text-xs text-gray-9">
                       <Loader2 size={14} className={props.submitting || pollingBusy || oauthAutoBusy ? "animate-spin" : ""} />
-                      <span>Checking connection status automatically…</span>
+                      <span>{t("ui_checking_connection_status_automatically_a251ff")}</span>
                     </div>
                   )}
                   <div className="flex items-center justify-between gap-3">

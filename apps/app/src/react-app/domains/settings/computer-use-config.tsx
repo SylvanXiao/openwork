@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, CircleAlert, Eye, Hand, Loader2, MousePointer2, RefreshCw, ShieldCheck } from "lucide-react";
@@ -96,12 +97,12 @@ export function ComputerUseConfig({ connected, connecting, onConnect, onRefresh,
   return (
     <Card variant="outline" size="sm">
       <CardHeader>
-        <CardTitle>Work in an app you choose</CardTitle>
+        <CardTitle>{t("ui_work_in_an_app_you_choose_3e4783")}</CardTitle>
         <CardDescription>
           Approve one Mac app, choose its window, and decide how TGWork can help. Your input interrupts control; Stop in the preview ends access.
         </CardDescription>
         <CardAction>
-          <Button variant="ghost" size="icon-sm" aria-label="Refresh Computer Use status" onClick={() => void refresh()} disabled={busy}>
+          <Button variant="ghost" size="icon-sm" aria-label={t("ui_refresh_computer_use_status_a9aebf")} onClick={() => void refresh()} disabled={busy}>
             <RefreshCw className={cn(busy && "animate-spin")} />
           </Button>
         </CardAction>
@@ -119,7 +120,7 @@ export function ComputerUseConfig({ connected, connecting, onConnect, onRefresh,
         ) : null}
         {error ? <Alert variant="destructive"><CircleAlert /><AlertDescription className="break-words">{error}</AlertDescription></Alert> : null}
         <div className="space-y-3">
-          <p className="text-sm font-medium">You choose the scope</p>
+          <p className="text-sm font-medium">{t("ui_you_choose_the_scope_75ba62")}</p>
           <div className="grid gap-2">
             {modes.map(({ icon: Icon, name, description }) => (
               <div key={name} className="flex gap-3 rounded-xl border border-border p-3">
@@ -130,9 +131,9 @@ export function ComputerUseConfig({ connected, connecting, onConnect, onRefresh,
           </div>
         </div>
         <div className="space-y-3 border-t border-border pt-4">
-          <div><p className="text-sm font-medium">macOS permissions</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">These let the helper work. App access still needs your approval for each session.</p></div>
-          <PermissionRow title="Accessibility" description="Read and use app controls" granted={result?.accessibility} />
-          <PermissionRow title="Screen Recording" description="See the window you selected" granted={result?.screenRecording} />
+          <div><p className="text-sm font-medium">{t("ui_macos_permissions_e97cf3")}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">These let the helper work. App access still needs your approval for each session.</p></div>
+          <PermissionRow title="Accessibility" description={t("ui_read_and_use_app_controls_dc34d9")} granted={result?.accessibility} />
+          <PermissionRow title={t("ui_screen_recording_91d9ac")} description={t("ui_see_the_window_you_selected_056bb6")} granted={result?.screenRecording} />
           <Button variant="outline" className="min-h-10 w-full whitespace-normal" disabled={!supported || setup.isPending} onClick={() => setup.mutate()}>
             {setup.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
             Open permissions and session controls
@@ -144,7 +145,7 @@ export function ComputerUseConfig({ connected, connecting, onConnect, onRefresh,
       </CardContent>
       <CardFooter className="flex flex-wrap items-center justify-between gap-3 border-t border-border">
         <p className="max-w-sm text-xs text-muted-foreground">{ready ? "Mention an app in your next message, then approve the window when asked." : !connected ? "macOS access and enabling tools for this workspace are separate steps." : "Allow access, then return here. Status updates automatically."}</p>
-        {ready ? <Button variant="outline" onClick={() => void refresh()} disabled={busy}>Check readiness</Button> : null}
+        {ready ? <Button variant="outline" onClick={() => void refresh()} disabled={busy}>{t("ui_check_readiness_b05223")}</Button> : null}
       </CardFooter>
     </Card>
   );

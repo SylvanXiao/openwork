@@ -199,7 +199,7 @@ function AppPermissionsView() {
       <SettingsSection>
         <SettingsSectionHeader>
           <SettingsSectionHeaderContent>
-            <SettingsSectionHeaderTitle>Your app permissions</SettingsSectionHeaderTitle>
+            <SettingsSectionHeaderTitle>{t("ui_your_app_permissions_c2cf65")}</SettingsSectionHeaderTitle>
             <SettingsSectionHeaderDescription>
               These are your current permissions for this organization.
             </SettingsSectionHeaderDescription>
@@ -224,18 +224,18 @@ function AppPermissionsView() {
           <SettingsList>
             <SettingsListItem>
               <SettingsListItemContent>
-                <SettingsListItemTitle>OS commands</SettingsListItemTitle>
+                <SettingsListItemTitle>{t("ui_os_commands_b98165")}</SettingsListItemTitle>
               </SettingsListItemContent>
               <SettingsStatusBadge label={config.execution.commands === "deny" ? "Blocked" : config.execution.blockedCommands.length ? "Some commands restricted" : "Allowed"} tone="neutral" />
             </SettingsListItem>
             {config.execution.browserOrigins !== undefined ? <SettingsListItem>
               <SettingsListItemContent>
-                <SettingsListItemTitle>Approved websites</SettingsListItemTitle>
+                <SettingsListItemTitle>{t("ui_approved_websites_6fa934")}</SettingsListItemTitle>
                 <SettingsSectionHeaderDescription>{config.execution.browserOrigins.length ? config.execution.browserOrigins.join(", ") : "Browsing is blocked."}</SettingsSectionHeaderDescription>
               </SettingsListItemContent>
             </SettingsListItem> : null}
             {config.execution.blockBrowserUploads ? <SettingsListItem>
-              <SettingsListItemContent><SettingsListItemTitle>Browser uploads and form submissions</SettingsListItemTitle></SettingsListItemContent>
+              <SettingsListItemContent><SettingsListItemTitle>{t("ui_browser_uploads_and_form_submissions_457795")}</SettingsListItemTitle></SettingsListItemContent>
               <SettingsStatusBadge label="Blocked" tone="neutral" />
             </SettingsListItem> : null}
           </SettingsList>
@@ -340,9 +340,9 @@ export function CloudAccountView({ developerMode, session }: CloudAccountViewPro
 
   return (
     <Tabs defaultValue="account" className="w-full max-w-3xl gap-y-6">
-      <TabsList variant="line" aria-label="Account pages">
+      <TabsList variant="line" aria-label={t("ui_account_pages_809515")}>
         <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="permissions">App permissions</TabsTrigger>
+        <TabsTrigger value="permissions">{t("ui_app_permissions_7fd303")}</TabsTrigger>
       </TabsList>
       <TabsContent value="account">{accountContent}</TabsContent>
       <TabsContent value="permissions"><AppPermissionsView /></TabsContent>

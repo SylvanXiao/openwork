@@ -1,5 +1,6 @@
 /** @jsxImportSource react */
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { t } from "@/i18n";
 import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import {
@@ -295,10 +296,10 @@ function PreparedWorkspacePage({ prepared }: { prepared: PreparedBootstrapSummar
               {showSignInCode ? (
                 <div className="grid gap-3 rounded-2xl border border-dls-border bg-dls-surface p-4">
                   <Input
-                    aria-label="One-time sign-in code"
+                    aria-label={t("ui_one_time_sign_in_code_13728c")}
                     value={signInCode}
                     onChange={(event) => setSignInCode(event.currentTarget.value)}
-                    placeholder="Paste the code from your browser"
+                    placeholder={t("ui_paste_the_code_from_your_browser_f85a78")}
                     disabled={signInBusy}
                   />
                   <Button
@@ -504,12 +505,12 @@ export function OrgOnboardingPage() {
         <PageTitlebarRegion />
         <PageContainer>
           <PageHeader>
-            <PageTitle>Your organization</PageTitle>
+            <PageTitle>{t("ui_your_organization_fcfd8e")}</PageTitle>
           </PageHeader>
           <PageContent>
             <PageLoading>
               <PageLoadingSpinner />
-              <PageLoadingDescription>Loading organizations...</PageLoadingDescription>
+              <PageLoadingDescription>{t("ui_loading_organizations_1b32bb")}</PageLoadingDescription>
             </PageLoading>
           </PageContent>
         </PageContainer>
@@ -524,7 +525,7 @@ export function OrgOnboardingPage() {
         <PageTitlebarRegion />
         <PageContainer>
           <PageHeader>
-            <PageTitle>Choose your organization</PageTitle>
+            <PageTitle>{t("ui_choose_your_organization_8a6cdf")}</PageTitle>
             <Alert variant="destructive">
               <CircleAlert />
               <AlertDescription>
@@ -544,12 +545,12 @@ export function OrgOnboardingPage() {
         <PageTitlebarRegion />
         <PageContainer>
           <PageHeader>
-            <PageTitle>Your organization</PageTitle>
+            <PageTitle>{t("ui_your_organization_fcfd8e")}</PageTitle>
           </PageHeader>
           <PageContent>
             <PageLoading>
               <PageLoadingSpinner />
-              <PageLoadingDescription>Loading organizations...</PageLoadingDescription>
+              <PageLoadingDescription>{t("ui_loading_organizations_1b32bb")}</PageLoadingDescription>
             </PageLoading>
           </PageContent>
         </PageContainer>
@@ -740,7 +741,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
         <PageTitlebarRegion />
         <PageContainer>
           <PageHeader>
-            <PageTitle>Preparing workspace identity</PageTitle>
+            <PageTitle>{t("ui_preparing_workspace_identity_7d5763")}</PageTitle>
             <PageDescription>
               Applying {orgName || "your workspace"}&apos;s branding and checking for an application update.
             </PageDescription>
@@ -748,7 +749,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
           <PageContent>
             <PageLoading>
               <PageLoadingSpinner />
-              <PageLoadingDescription>Preparing workspace...</PageLoadingDescription>
+              <PageLoadingDescription>{t("ui_preparing_workspace_7f9c82")}</PageLoadingDescription>
             </PageLoading>
           </PageContent>
         </PageContainer>
@@ -763,7 +764,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
         <PageTitlebarRegion />
         <PageContainer>
           <PageHeader>
-            <PageTitle>Workspace identity is ready</PageTitle>
+            <PageTitle>{t("ui_workspace_identity_is_ready_c4dbde")}</PageTitle>
             <PageDescription>
               Restart TGWork once to finish applying {orgName || "your workspace"}&apos;s name and app icon everywhere.
             </PageDescription>
@@ -784,7 +785,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
           </PageHeader>
           <PageContent>
             <details className="mx-auto w-full max-w-md rounded-xl border border-dls-border bg-dls-surface px-4 py-3 text-sm">
-              <summary className="cursor-pointer font-medium">Why restart?</summary>
+              <summary className="cursor-pointer font-medium">{t("ui_why_restart_89ec6a")}</summary>
               <p className="mt-2 text-muted-foreground">
                 Restarting refreshes the workspace name and icon across your operating system and installs the prepared application update.
               </p>
@@ -816,7 +817,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
           <PageContent>
             <PageLoading>
               <PageLoadingSpinner />
-              <PageLoadingDescription>Loading available resources...</PageLoadingDescription>
+              <PageLoadingDescription>{t("ui_loading_available_resources_9ce1ed")}</PageLoadingDescription>
             </PageLoading>
           </PageContent>
         </PageContainer>
@@ -862,7 +863,7 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
           <PageContent>
             <PageLoading>
               <PageLoadingSpinner />
-              <PageLoadingDescription>Loading available resources...</PageLoadingDescription>
+              <PageLoadingDescription>{t("ui_loading_available_resources_9ce1ed")}</PageLoadingDescription>
             </PageLoading>
           </PageContent>
         ) : !hasResources ? (
@@ -897,8 +898,8 @@ export function ResourceSelectionPage({ autoContinue = false }: { autoContinue?:
                   {providers.length > 0 ? (
                     <Section
                       icon={<CloudIcon className="size-5 text-foreground/60" />}
-                      title="AI Providers"
-                      description="Models you can use in your workspace."
+                      title={t("ui_ai_providers_789e9f")}
+                      description={t("ui_models_you_can_use_in_your_workspace_dc1fc6")}
                       count={`${totalModels} model${totalModels === 1 ? "" : "s"}`}
                     >
                       {providers.map((provider) => (
@@ -1156,7 +1157,7 @@ function OrganizationSelectionPage({
       <PageTitlebarRegion />
       <PageContainer>
         <PageHeader>
-          <PageTitle>Choose your organization</PageTitle>
+          <PageTitle>{t("ui_choose_your_organization_8a6cdf")}</PageTitle>
           {error ? (
             <Alert variant="destructive">
               <CircleAlert />
@@ -1210,8 +1211,8 @@ export function OrganizationList({ orgs, value, onValueChange }: OrganizationLis
     <div className="flex flex-col gap-3">
       {orgs.length > 10 ? (
         <Input
-          aria-label="Search organizations"
-          placeholder="Search organizations..."
+          aria-label={t("ui_search_organizations_8076e2")}
+          placeholder={t("ui_search_organizations_d2ba76")}
           value={query}
           onChange={(event) => updateQuery(event.target.value)}
         />

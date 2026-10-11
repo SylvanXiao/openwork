@@ -482,8 +482,8 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
           >
             <Sparkles className="size-3.5 text-blue-11" />
             <span className="flex min-w-0 flex-col">
-              <span>TGWork Models</span>
-              <span className="text-[10.5px] text-muted-foreground">hosted frontier models</span>
+              <span>{t("ui_tgwork_models")}</span>
+              <span className="text-[10.5px] text-muted-foreground">{t("ui_hosted_frontier_models_f0c3b4")}</span>
             </span>
           </DropdownMenuItem>
         ) : null}
@@ -526,7 +526,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
             >
               <span className="inline-flex min-w-0 items-center gap-2">
                 <UserRound className="size-3.5" />
-                <span className="truncate">Sign in to TGWork Cloud</span>
+                <span className="truncate">{t("ui_sign_in_to_tgwork_cloud_b224c0")}</span>
               </span>
               <ArrowUpRight className="size-3.5" />
             </Button>

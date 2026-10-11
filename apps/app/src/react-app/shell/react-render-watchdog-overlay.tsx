@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useReducer } from "react";
 
 import {
@@ -118,7 +119,7 @@ export function ReactRenderWatchdogOverlay() {
             type="button"
             className="rounded px-1.5 py-0.5 text-[10px] text-dls-secondary hover:bg-dls-hover"
             onClick={() => dispatch({ type: "hide" })}
-            title="Hide (Cmd+Shift+L to toggle)"
+            title={t("ui_hide_cmd_shift_l_to_toggle_340210")}
           >
             ×
           </button>

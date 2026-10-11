@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
@@ -24,7 +25,7 @@ export function ComputerUseControls() {
     await invoke("computerUseAction", value);
   }, onSuccess: () => state.refetch() });
   if (!state.data?.length) return null;
-  return <aside aria-label="Computer Use controls" className="fixed bottom-6 right-6 z-50 flex w-96 max-w-[calc(100vw-3rem)] flex-col gap-3">
+  return <aside aria-label={t("ui_computer_use_controls_9c3c0a")} className="fixed bottom-6 right-6 z-50 flex w-96 max-w-[calc(100vw-3rem)] flex-col gap-3">
     {state.data.map((session) => {
       const approval = session.phase === "approval";
       const blocked = session.phase === "paused" && session.recoverable !== true;
@@ -38,12 +39,12 @@ export function ComputerUseControls() {
         <p className="mt-1 text-sm text-muted-foreground">{session.task}</p>
         {approval ? <>
           <label className="mt-3 block text-xs font-medium">Window
-            <select aria-label="Window to allow" className="mt-1 w-full rounded-md border border-border bg-background p-2 text-sm" value={selectedWindow} onChange={(event) => setWindows({ ...windows, [session.id]: Number(event.target.value) })}>
+            <select aria-label={t("ui_window_to_allow_1b89f4")} className="mt-1 w-full rounded-md border border-border bg-background p-2 text-sm" value={selectedWindow} onChange={(event) => setWindows({ ...windows, [session.id]: Number(event.target.value) })}>
               {session.windows?.map((window) => <option key={window.id} value={window.id}>{window.title}</option>)}
             </select>
           </label>
           <p className="my-3 text-xs text-muted-foreground">{session.mode === "observe" ? "Read this window. No clicks or typing." : session.mode === "assist" ? "Read and use this window’s app controls." : "Use this window’s mouse and keyboard. TGWork yields to your input, then refreshes the window before continuing. Stop ends access."} Access lasts up to 15 minutes. Window content goes to your selected model provider.</p>
-          <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => send("deny")}>Cancel</Button><Button disabled={selectedWindow === undefined || action.isPending} onClick={() => send("approve")}>Allow and start</Button></div>
+          <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => send("deny")}>Cancel</Button><Button disabled={selectedWindow === undefined || action.isPending} onClick={() => send("approve")}>{t("ui_allow_and_start_c385f6")}</Button></div>
         </> : <>
           <p className="mt-2 truncate text-xs text-muted-foreground">{session.windowTitle} · {session.mode === "observe" ? "Read only" : session.mode === "assist" ? "App controls" : "Mouse and keyboard"}</p>
           <p role="status" className="my-3 text-sm">{session.status}</p>

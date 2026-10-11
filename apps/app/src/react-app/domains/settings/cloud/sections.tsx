@@ -366,11 +366,11 @@ export function MarketplacePluginsSection({
             ) : null}
 
             {selectedRows.length > 0 && visibleRows.length === 0 ? (
-              <SettingsListEmptyState>No plugins match your search.</SettingsListEmptyState>
+              <SettingsListEmptyState>{t("ui_no_plugins_match_your_search_d62b31")}</SettingsListEmptyState>
             ) : null}
 
             {selectedMarketplace && selectedRows.length === 0 ? (
-              <SettingsListEmptyState>This collection does not have plugins yet.</SettingsListEmptyState>
+              <SettingsListEmptyState>{t("ui_this_collection_does_not_have_plugins_ye_f78f97")}</SettingsListEmptyState>
             ) : null}
           </TabsContent>
         </Tabs>
@@ -484,7 +484,7 @@ export function CloudProvidersSection({
               ))}
             </Accordion>
           ) : (
-            <SettingsListEmptyState>No providers match your search.</SettingsListEmptyState>
+            <SettingsListEmptyState>{t("ui_no_providers_match_your_search_1baadd")}</SettingsListEmptyState>
           )}
         </>
       ) : null}

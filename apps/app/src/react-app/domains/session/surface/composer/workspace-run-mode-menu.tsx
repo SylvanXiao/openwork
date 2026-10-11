@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Hand, LoaderCircle, ShieldAlert, ShieldCheck } from "lucide-react";
@@ -71,7 +72,7 @@ function WorkspaceRunModePicker({ client, workspaceId, busy }: { client: Openwor
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" sideOffset={10} className="w-[min(390px,calc(100vw-32px))] p-2">
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="px-3 text-sm">How should TGWork handle approvals?</DropdownMenuLabel>
+            <DropdownMenuLabel className="px-3 text-sm">{t("ui_how_should_tgwork_handle_approvals_e79971")}</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={mode.data?.mode ?? ""}>
               {modes.map((item) => (
                 <DropdownMenuRadioItem key={item.value} value={item.value} onClick={() => select(item.value)} aria-label={item.label} data-testid={`run-mode-${item.value}`} disabled={locked} className={`gap-3 py-3 ${item.value === "run-everything" ? "text-orange-600 dark:text-orange-400" : ""}`}>
@@ -85,24 +86,24 @@ function WorkspaceRunModePicker({ client, workspaceId, busy }: { client: Openwor
             </DropdownMenuRadioGroup>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <p className="px-3 py-2 text-xs text-muted-foreground">Applies to every chat in this workspace. Specific workspace rules still apply.</p>
+          <p className="px-3 py-2 text-xs text-muted-foreground">{t("ui_applies_to_every_chat_in_this_workspace__81ef56")}</p>
           {busy ? <p role="status" className="px-3 pb-2 text-xs text-muted-foreground">Wait for this workspace to finish before changing its mode.</p> : null}
           {mode.isError ? <p role="alert" className="px-3 pb-2 text-xs text-destructive">Run modes are unavailable. {mode.error.message}</p> : null}
           {mode.data?.reason ? <p role="status" className="px-3 pb-2 text-xs text-muted-foreground">{mode.data.reason}</p> : null}
-          {mode.data?.refreshPending ? <p role="status" className="px-3 pb-2 text-xs text-orange-600">Saved, but engine refresh is pending. Select the mode again to retry.</p> : null}
+          {mode.data?.refreshPending ? <p role="status" className="px-3 pb-2 text-xs text-orange-600">{t("ui_saved_but_engine_refresh_is_pending_sele_c19d8f")}</p> : null}
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialog open={confirm} onOpenChange={setConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Let TGWork keep going?</AlertDialogTitle>
+            <AlertDialogTitle>{t("ui_let_tgwork_keep_going_ddc234")}</AlertDialogTitle>
             <AlertDialogDescription>
               This changes every chat in this workspace. Tools can edit or delete files, run commands, and use the network without approval, including outside authorized folders. It can override global permission rules and repeated-action prompts. Specific workspace rules still apply; it does not grant operating-system or service access.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={mutation.isPending}>Cancel</AlertDialogCancel>
-            <AlertDialogAction disabled={locked} onClick={() => mutation.mutate("run-everything")}>Enable Keep going</AlertDialogAction>
+            <AlertDialogAction disabled={locked} onClick={() => mutation.mutate("run-everything")}>{t("ui_enable_keep_going_799aea")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

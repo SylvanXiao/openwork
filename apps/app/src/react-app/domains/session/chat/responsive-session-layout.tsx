@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import type { Ref } from "react";
 
 export type NarrowSessionPane = "chat" | "split" | "panel";
@@ -58,7 +59,7 @@ export function NarrowPaneSwitcher(props: {
       className="grid shrink-0 border-b border-border bg-dls-surface px-1"
       style={{ gridTemplateColumns: `repeat(${props.options.length}, minmax(0, 1fr))` }}
       role="tablist"
-      aria-label="Visible session pane"
+      aria-label={t("ui_visible_session_pane_f41185")}
       data-narrow-pane-switcher
     >
       {props.options.map((option, index) => {

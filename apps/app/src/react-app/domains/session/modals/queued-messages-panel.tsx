@@ -256,7 +256,7 @@ function QueuedDraftRow(props: {
             <QueuedDraftContent draft={props.item.draft} />
           </button>
         )}
-        {props.active ? <span role="status" className="block px-0.5 text-xs text-gray-10">Sending...</span> : null}
+        {props.active ? <span role="status" className="block px-0.5 text-xs text-gray-10">{t("ui_sending_7b0fee")}</span> : null}
       </div>
       <div className="mt-0.5 flex shrink-0 items-center gap-0.5">
         <button

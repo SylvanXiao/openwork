@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client"
 
 import * as React from "react"
@@ -50,7 +51,7 @@ export function EnvVarRequestTool({ part }: EnvVarRequestToolProps) {
   }, [key])
 
   if (!key) {
-    return <Tool toolPart={part} title="Requested environment variable" />
+    return <Tool toolPart={part} title={t("ui_requested_environment_variable_3013a5")} />
   }
 
   const save = () => {

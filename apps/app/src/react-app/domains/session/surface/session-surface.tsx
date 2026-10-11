@@ -923,7 +923,7 @@ function SessionErrorCard({ error, developerMode, onDismiss, onChangeModel, onOp
             type="button"
             className="shrink-0 rounded-full p-1 text-red-10 transition-colors hover:bg-red-3 hover:text-red-11"
             onClick={onDismiss}
-            aria-label="Dismiss error"
+            aria-label={t("ui_dismiss_error_74b39b")}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
           </button>
@@ -3245,10 +3245,10 @@ export function SessionSurface(props: SessionSurfaceProps) {
             {findOwned ? <div aria-hidden className="h-12" /> : null}
             {queuedDrainState.phase.kind === "admission_unknown" ? (
               <div role="alert" className="mb-4 rounded-xl border border-dls-border bg-dls-hover/60 px-4 py-3 text-sm">
-                <p className="font-medium">Message acceptance is unknown</p>
-                <p className="mt-1 text-dls-secondary">It may already be running. Sending is paused to avoid duplicates. Check acceptance or stop the run; Stop does not resend the message.</p>
+                <p className="font-medium">{t("ui_message_acceptance_is_unknown_670812")}</p>
+                <p className="mt-1 text-dls-secondary">{t("ui_it_may_already_be_running_sending_is_pau_737168")}</p>
                 <div className="mt-3 flex gap-3">
-                  <button type="button" className="underline" onClick={() => void checkUnknownAdmission(true)}>Check acceptance</button>
+                  <button type="button" className="underline" onClick={() => void checkUnknownAdmission(true)}>{t("ui_check_acceptance_a78b82")}</button>
                   <button type="button" className="underline" onClick={() => void handleAbort()}>Stop</button>
                 </div>
               </div>
@@ -3374,8 +3374,8 @@ export function SessionSurface(props: SessionSurfaceProps) {
             className="mx-3 mb-2 flex w-[calc(100%-1.5rem)] items-center gap-2 rounded-lg border border-amber-7/40 bg-amber-2/30 px-3 py-2 text-left text-xs text-amber-11 transition-colors hover:bg-amber-3/40"
             onClick={() => props.onOpenSettingsSection?.("providers")}
           >
-            <span className="font-medium">No AI model connected.</span>
-            <span className="text-amber-11/70">Add a provider to run tasks.</span>
+            <span className="font-medium">{t("ui_no_ai_model_connected_ef9d7b")}</span>
+            <span className="text-amber-11/70">{t("ui_add_a_provider_to_run_tasks_b13e98")}</span>
           </button>
         ) : null}
         {props.cloudMcpSubmissionState.status === "failed" ? (
@@ -3415,7 +3415,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
         ) : <>
         {failedDraft ? (
           <div className="mx-3 mb-2 flex items-center gap-3 text-xs text-red-11">
-            <span>Your unsent message is saved. Clear the current draft to restore it.</span>
+            <span>{t("ui_your_unsent_message_is_saved_clear_the_c_38ec71")}</span>
             <button type="button" disabled={Boolean(draft || attachments.length)} className="font-medium disabled:opacity-50" onClick={() => {
               const state = useComposerStateStore.getState();
               if (getComposerDraft(state, props.sessionId) || getComposerAttachments(state, props.sessionId).length) return;
@@ -3425,7 +3425,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
                 sessions: { ...state.sessions, [props.sessionId]: failedDraft },
                 failedDrafts,
               });
-            }}>Restore unsent message</button>
+            }}>{t("ui_restore_unsent_message_682295")}</button>
           </div>
         ) : null}
         {attachmentsUploading ? <div role="status" className="mx-3 mb-2 text-xs text-muted-foreground" data-attachment-status="uploading">

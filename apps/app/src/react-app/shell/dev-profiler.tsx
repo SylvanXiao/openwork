@@ -18,6 +18,7 @@
  * tools can read them.
  */
 
+import { t } from "@/i18n";
 import {
   Profiler,
   useEffect,
@@ -368,7 +369,7 @@ function DevProfilerOverlayVisible({ onHide }: { onHide: () => void }) {
               state.recent.length = 0;
               emit();
             }}
-            title="Reset counters"
+            title={t("ui_reset_counters_8256ff")}
           >
             reset
           </button>
@@ -384,7 +385,7 @@ function DevProfilerOverlayVisible({ onHide }: { onHide: () => void }) {
             type="button"
             className="rounded px-1.5 py-0.5 text-[10px] text-dls-secondary hover:bg-dls-hover"
             onClick={onHide}
-            title="Hide (Cmd+Shift+P to toggle)"
+            title={t("ui_hide_cmd_shift_p_to_toggle_47ce2d")}
           >
             ×
           </button>

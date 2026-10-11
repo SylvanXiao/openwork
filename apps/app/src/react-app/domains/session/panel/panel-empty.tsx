@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import * as React from "react";
 import { ArrowLeft, ArrowRight, FileText, Globe, Puzzle } from "lucide-react";
 
@@ -80,7 +81,7 @@ export function PanelEmpty({ onOpenBrowser, onOpenExtensions }: PanelEmptyAction
           <span className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-muted text-muted-foreground">
             <FileText aria-hidden="true" />
           </span>
-          <h2 className="text-base font-medium text-foreground">No files or artifacts yet</h2>
+          <h2 className="text-base font-medium text-foreground">{t("ui_no_files_or_artifacts_yet_e30aa9")}</h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Files and artifacts created in this session will appear here automatically.
           </p>
@@ -97,11 +98,11 @@ export function PanelEmpty({ onOpenBrowser, onOpenExtensions }: PanelEmptyAction
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4 sm:p-6">
       <div className="my-auto w-full max-w-xl self-center">
-        <h2 className="text-base font-medium text-foreground">Choose a destination</h2>
+        <h2 className="text-base font-medium text-foreground">{t("ui_choose_a_destination_fef3fa")}</h2>
         <p className="mt-1 text-sm leading-6 text-muted-foreground">
           Open a tool or return here whenever you want to switch.
         </p>
-        <div className="mt-5 grid gap-2" aria-label="Panel destinations">
+        <div className="mt-5 grid gap-2" aria-label={t("ui_panel_destinations_d44050")}>
           {destinations.map((item) => (
             <button
               key={item.id}

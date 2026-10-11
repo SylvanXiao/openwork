@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -84,7 +85,7 @@ export function DesktopIntegrationSection() {
   return (
     <LayoutSection>
       <LayoutSectionHeader>
-        <LayoutSectionTitle>AppImage desktop integration</LayoutSectionTitle>
+        <LayoutSectionTitle>{t("ui_appimage_desktop_integration_89b31f")}</LayoutSectionTitle>
         <LayoutSectionDescription>
           Control the launcher, icon, and openwork:// callback for this AppImage.
         </LayoutSectionDescription>

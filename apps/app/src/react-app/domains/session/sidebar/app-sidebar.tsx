@@ -966,7 +966,7 @@ export function AppSidebar(props: AppSidebarProps) {
           >
             <img
               src={brandLogoUrl}
-              alt="Organization logo"
+              alt={t("ui_organization_logo_5eeddc")}
               className="max-h-9 w-auto max-w-[140px] object-contain object-left"
             />
           </div>
@@ -980,14 +980,14 @@ export function AppSidebar(props: AppSidebarProps) {
           <div
             className="flex shrink-0 items-center justify-end gap-0.5 px-2 pb-1 max-lg:hidden mac:absolute mac:right-1.5 mac:top-[7px] mac:z-50 mac:p-0 mac:titlebar-no-drag"
             role="group"
-            aria-label="Conversation history controls"
+            aria-label={t("ui_conversation_history_controls_e6cc05")}
           >
             <Button
               variant="ghost"
               size="icon-xs"
               className="rounded-lg text-sidebar-foreground/60 transition-colors hover:text-sidebar-foreground disabled:opacity-40"
-              aria-label="Back in conversation history"
-              title="Back in conversation history"
+              aria-label={t("ui_back_in_conversation_history_36190e")}
+              title={t("ui_back_in_conversation_history_36190e")}
               data-conversation-history-control="back"
               disabled={!props.conversationHistory.canGoBack}
               onClick={() => props.conversationHistory?.onNavigate("back")}
@@ -998,8 +998,8 @@ export function AppSidebar(props: AppSidebarProps) {
               variant="ghost"
               size="icon-xs"
               className="rounded-lg text-sidebar-foreground/60 transition-colors hover:text-sidebar-foreground disabled:opacity-40"
-              aria-label="Forward in conversation history"
-              title="Forward in conversation history"
+              aria-label={t("ui_forward_in_conversation_history_b5d4ac")}
+              title={t("ui_forward_in_conversation_history_b5d4ac")}
               data-conversation-history-control="forward"
               disabled={!props.conversationHistory.canGoForward}
               onClick={() => props.conversationHistory?.onNavigate("forward")}
@@ -1059,7 +1059,7 @@ export function AppSidebar(props: AppSidebarProps) {
                       <AlertTriangle
                         data-automations-attention-indicator
                         className="ml-auto size-3.5 shrink-0 text-warning"
-                        aria-label="An Automation needs attention"
+                        aria-label={t("ui_an_automation_needs_attention_b38add")}
                       />
                     ) : null}
                   </span>

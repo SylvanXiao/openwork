@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ export function OpenWorkDenHelpLink() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>TGWork Den remote workers</DialogTitle>
+            <DialogTitle>{t("ui_tgwork_den_remote_workers_9111e0")}</DialogTitle>
             <DialogDescription>
               We recently upgraded our servers. If your remote worker was
               provisioned before that upgrade, it may no longer be compatible
@@ -45,7 +46,7 @@ export function OpenWorkDenHelpLink() {
           </DialogHeader>
 
           <div className="space-y-3 text-[13px] leading-5 text-gray-11">
-            <p>To get back online, you have two options:</p>
+            <p>{t("ui_to_get_back_online_you_have_two_options_6ac3de")}</p>
             <ul className="ml-4 list-disc space-y-2">
               <li>
                 Email{" "}

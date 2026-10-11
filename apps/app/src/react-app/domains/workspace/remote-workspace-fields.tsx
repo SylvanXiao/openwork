@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import type { Ref } from "react";
 import { Globe } from "lucide-react";
 
@@ -64,7 +65,7 @@ export function RemoteWorkspaceFields({
 
       <div className="mt-5 grid gap-4">
         <label className="grid gap-2">
-          <span className={inputLabelClass}>Worker URL</span>
+          <span className={inputLabelClass}>{t("ui_worker_url_477dd8")}</span>
           <input
             ref={hostInputRef}
             type="url"
@@ -80,7 +81,7 @@ export function RemoteWorkspaceFields({
         </label>
 
         <label className="grid gap-2">
-          <span className={inputLabelClass}>Access token</span>
+          <span className={inputLabelClass}>{t("ui_access_token_5bc7ab")}</span>
           <div className="flex items-center gap-2 rounded-xl border border-dls-border bg-dls-surface p-1.5">
             <input
               type={tokenVisible ? "text" : "password"}
@@ -106,7 +107,7 @@ export function RemoteWorkspaceFields({
 
         {showDirectory ? (
           <label className="grid gap-2">
-            <span className={inputLabelClass}>Remote directory</span>
+            <span className={inputLabelClass}>{t("ui_remote_directory_1bfdae")}</span>
             <input
               type="text"
               value={directory ?? ""}
@@ -130,7 +131,7 @@ export function RemoteWorkspaceFields({
             type="text"
             value={displayName}
             onChange={(event) => onDisplayNameInput(event.currentTarget.value)}
-            placeholder="Worker name"
+            placeholder={t("ui_worker_name_dd4b35")}
             disabled={submitting}
             className={inputClass}
           />

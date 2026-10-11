@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useState } from "react";
 import { ImageIcon, Monitor, Smartphone } from "lucide-react";
 import {
@@ -124,11 +125,11 @@ export function VisualizationTool({ part }: { part: AnyToolPart }) {
             Visualization · v{design.revision} · Mockup
           </div>
         </div>
-        <div className="flex gap-1" role="group" aria-label="Preview size">
+        <div className="flex gap-1" role="group" aria-label={t("ui_preview_size_0664d4")}>
           <Button
             variant={mobile ? "ghost" : "secondary"}
             size="sm"
-            aria-label="Desktop preview"
+            aria-label={t("ui_desktop_preview_50e7b0")}
             aria-pressed={!mobile}
             onClick={() => setMobile(false)}
           >
@@ -137,7 +138,7 @@ export function VisualizationTool({ part }: { part: AnyToolPart }) {
           <Button
             variant={mobile ? "secondary" : "ghost"}
             size="sm"
-            aria-label="Mobile preview"
+            aria-label={t("ui_mobile_preview_bfb5eb")}
             aria-pressed={mobile}
             onClick={() => setMobile(true)}
           >

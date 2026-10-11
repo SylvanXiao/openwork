@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client"
 
 import { Fragment, useState } from "react"
@@ -282,13 +283,13 @@ export function ToolAggregateGroup({ parts, messageId, thoughts = [], className 
         {status === "waiting" ? (
           <div className="mt-1 flex items-center gap-1.5 text-xs text-amber-11" role="status">
             <CirclePause aria-hidden="true" className="size-3.5 shrink-0" />
-            <span>Choose an option or approve the request to continue.</span>
+            <span>{t("ui_choose_an_option_or_approve_the_request__07798e")}</span>
           </div>
         ) : null}
         {status === "interrupted" ? (
           <div className="mt-1 flex items-center gap-1.5 text-xs text-destructive" role="alert">
             <AlertTriangle aria-hidden="true" className="size-3.5 shrink-0" />
-            <span>This step stopped before it finished. Retry to continue.</span>
+            <span>{t("ui_this_step_stopped_before_it_finished_ret_3d96cf")}</span>
           </div>
         ) : null}
         {failure ? (
@@ -331,14 +332,14 @@ export function ToolAggregateGroup({ parts, messageId, thoughts = [], className 
       {aggregateLifecycle === "waiting" ? (
         <div className="mt-1 flex items-center gap-1.5 text-xs text-amber-11" role="status">
           <CirclePause aria-hidden="true" className="size-3.5 shrink-0" />
-          <span>Choose an option or approve the request to continue.</span>
+          <span>{t("ui_choose_an_option_or_approve_the_request__07798e")}</span>
         </div>
       ) : null}
 
       {aggregateLifecycle === "unknown" ? (
         <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground" role="status">
           <CircleHelp aria-hidden="true" className="size-3.5 shrink-0" />
-          <span>No terminal result was observed. This step may still be running; check the session before retrying.</span>
+          <span>{t("ui_no_terminal_result_was_observed_this_ste_236b83")}</span>
         </div>
       ) : null}
 

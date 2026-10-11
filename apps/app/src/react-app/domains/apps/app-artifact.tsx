@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { AppActionsMenu } from "./app-actions-menu";
@@ -57,15 +58,15 @@ export function AppArtifact({ appId, revisionId, receiptId, onClose, onAsk }: Ap
       ]);
     },
   });
-  if (!client || !orgId) return <p className="p-6 text-sm text-muted-foreground">Sign in to open this app.</p>;
-  if (query.isPending) return <p className="flex items-center gap-2 p-6 text-sm" role="status"><Loader2 className="size-4 animate-spin" />Preparing app preview…</p>;
-  if (!app) return <div className="space-y-3 p-6"><p role="alert" className="text-sm">{query.error instanceof Error ? query.error.message : "This app could not be opened."}</p><Button variant="outline" onClick={() => void query.refetch()}>Try again</Button></div>;
+  if (!client || !orgId) return <p className="p-6 text-sm text-muted-foreground">{t("ui_sign_in_to_open_this_app_ef939c")}</p>;
+  if (query.isPending) return <p className="flex items-center gap-2 p-6 text-sm" role="status"><Loader2 className="size-4 animate-spin" />{t("ui_preparing_app_preview_715f2b")}</p>;
+  if (!app) return <div className="space-y-3 p-6"><p role="alert" className="text-sm">{query.error instanceof Error ? query.error.message : "This app could not be opened."}</p><Button variant="outline" onClick={() => void query.refetch()}>{t("ui_try_again_f915a9")}</Button></div>;
   return <section className="flex h-full min-h-0 flex-col bg-background" aria-label={`${app.view.title} app`}>
     <header className="flex items-center gap-2 border-b px-4 py-3" data-app-header>
       <div className="min-w-0 flex-1">
         <h2 className="truncate text-sm font-medium" title={app.view.title}>{app.view.title}</h2>
         <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap">
-          {saved ? <><Check className="size-3 shrink-0" />Saved app</> : app.view.activeRevisionId ? "Unsaved changes" : "App draft"}
+          {saved ? <><Check className="size-3 shrink-0" />{t("ui_saved_app_1d75c3")}</> : app.view.activeRevisionId ? "Unsaved changes" : "App draft"}
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-1">
@@ -76,7 +77,7 @@ export function AppArtifact({ appId, revisionId, receiptId, onClose, onAsk }: Ap
           busy={asking} onDeleted={onClose ?? (() => navigate("/dashboard"))}
           onRun={onAsk && saved ? () => void ask(`Run my saved app “${app.view.title}” using its existing workflow “${app.workflowTitle}”. Ask for any inputs you need, then show the new results in the saved app.`) : undefined}
           onEdit={onAsk && app.canManage ? () => void ask(`Help me improve my saved app “${app.view.title}”. Read its existing app source and workflow “${app.workflowTitle}”, ask what I want to change, and show a draft preview for me to save.`) : undefined} />
-        {onClose ? <Button variant="ghost" size="icon-sm" className="text-muted-foreground" onClick={onClose} aria-label="Close app"><X className="size-4" /></Button> : null}
+        {onClose ? <Button variant="ghost" size="icon-sm" className="text-muted-foreground" onClick={onClose} aria-label={t("ui_close_app_8276d5")}><X className="size-4" /></Button> : null}
       </div>
     </header>
     <div className="min-h-0 flex-1 space-y-4 overflow-auto p-4">
@@ -91,9 +92,9 @@ export function AppArtifact({ appId, revisionId, receiptId, onClose, onAsk }: Ap
         <form onSubmit={(event) => { event.preventDefault(); if (name.trim() && !save.isPending) save.mutate(); }}>
           <DialogHeader><DialogTitle>{app.view.activeRevisionId ? "Save changes" : "Save to your dashboard"}</DialogTitle><DialogDescription>Keep the workflow and app together for future use. Each new run supplies its own results.</DialogDescription></DialogHeader>
           <div className="space-y-5 py-5">
-            <div className="space-y-2"><Label htmlFor={`app-name-${appId}`}>App name</Label><Input id={`app-name-${appId}`} value={name} onChange={(event) => setName(event.target.value)} maxLength={255} required autoFocus disabled={save.isPending} /><p className="text-xs text-muted-foreground">My dashboard · Sharing stays the same</p></div>
+            <div className="space-y-2"><Label htmlFor={`app-name-${appId}`}>{t("ui_app_name_9b0fb9")}</Label><Input id={`app-name-${appId}`} value={name} onChange={(event) => setName(event.target.value)} maxLength={255} required autoFocus disabled={save.isPending} /><p className="text-xs text-muted-foreground">{t("ui_my_dashboard_sharing_stays_the_same_44a470")}</p></div>
             <label className="flex items-start gap-3"><Checkbox checked={useInWorkflow} onCheckedChange={(checked) => setUseInWorkflow(checked === true)} disabled={save.isPending} /><span className="text-sm">Use this view for future results<span className="mt-1 block text-xs text-muted-foreground">New results from {app.workflowTitle} will use this layout. Saving does not start or schedule a run.</span></span></label>
-            {app.view.activeRevisionId ? <p className="text-xs text-muted-foreground">Already-open results keep their current app version.</p> : null}
+            {app.view.activeRevisionId ? <p className="text-xs text-muted-foreground">{t("ui_already_open_results_keep_their_current__91866c")}</p> : null}
             {save.error ? <p role="alert" className="text-sm text-destructive">{save.error instanceof Error ? save.error.message : "The app could not be saved. Try again."}</p> : null}
           </div>
           <DialogFooter><Button type="button" variant="outline" disabled={save.isPending} onClick={() => setSaveOpen(false)}>Cancel</Button><Button type="submit" disabled={!name.trim() || save.isPending}>{save.isPending ? "Saving…" : app.view.activeRevisionId ? "Save changes" : "Save"}</Button></DialogFooter>

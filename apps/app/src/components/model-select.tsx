@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 "use client";
 
 import * as React from "react";
@@ -416,7 +417,7 @@ export function ModelSelect({
             <PopoverTrigger
               type="button"
               disabled={disabled}
-              aria-label="Change model"
+              aria-label={t("ui_change_model_323726")}
               aria-keyshortcuts="Meta+Alt+/"
               className="flex h-9 max-h-9 min-w-0 max-w-fit flex-1 items-center gap-1.5 rounded-md px-2.5 text-sm text-gray-10 transition-colors hover:bg-gray-3 hover:text-gray-12 disabled:pointer-events-none disabled:opacity-60"
             />
@@ -592,19 +593,19 @@ export function ModelSelect({
             <Command items={groups} value={search} onValueChange={setSearch}>
               <div className="flex min-h-0 flex-1 flex-col">
               <CommandHeader className="p-1.5 pb-1">
-                <CommandInput ref={searchInputRef} placeholder="Search models..." className="h-9 text-sm" />
+                <CommandInput ref={searchInputRef} placeholder={t("ui_search_models_55f447")} className="h-9 text-sm" />
               </CommandHeader>
               {openWorkModelsSyncing ? (
                 <div className="mx-1 mb-1 flex items-center gap-2 rounded-md border border-amber-6/60 bg-amber-2/40 px-2 py-1.5">
                   <ProviderIcon providerId={OPENWORK_MODELS_PROVIDER_ID} providerName={OPENWORK_MODELS_PROVIDER_NAME} className="size-3.5 shrink-0 text-amber-11" size={14} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-xs font-medium text-foreground">{OPENWORK_MODELS_PROVIDER_NAME}</span>
-                    <span className="block truncate text-[11px] text-muted-foreground">Included — pending workspace reload…</span>
+                    <span className="block truncate text-[11px] text-muted-foreground">{t("ui_included_pending_workspace_reload_b896a8")}</span>
                   </span>
                 </div>
               ) : null}
               <CommandPanel className="h-0 min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
-                <CommandEmpty>No models found.</CommandEmpty>
+                <CommandEmpty>{t("ui_no_models_found_014e7a")}</CommandEmpty>
                 <CommandList className="not-empty:scroll-py-1 not-empty:p-1">
                   {(group: ModelSelectGroup) => (
                     <CommandGroup key={group.value} items={group.items} className="[[role=group]+&]:mt-1">

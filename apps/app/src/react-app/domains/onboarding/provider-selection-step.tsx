@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import {
   Page,
   PageBackground,
@@ -30,7 +31,7 @@ export function ProviderSelectionStep({
 
       <div className="relative z-10 mx-6 w-full max-w-md rounded-3xl border border-border bg-background px-8 py-10">
         <PageHeader className="mb-8 text-center">
-          <PageTitle>Power your first task</PageTitle>
+          <PageTitle>{t("ui_power_your_first_task_9098bb")}</PageTitle>
           <PageDescription>
             Connect a model, then try a real task in chat so you can see TGWork work.
           </PageDescription>

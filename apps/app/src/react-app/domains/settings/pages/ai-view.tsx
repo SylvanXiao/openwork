@@ -169,7 +169,7 @@ export function AiSettingsView(props: AiSettingsViewProps) {
               type="button"
               className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full text-blue-11 transition-colors hover:bg-blue-3/70"
               onClick={() => void props.onDismissOpenWorkModels?.()}
-              aria-label="Dismiss TGWork Models banner"
+              aria-label={t("ui_dismiss_tgwork_models_banner_0f3166")}
             >
               <X className="size-3.5" />
             </button>
@@ -178,7 +178,7 @@ export function AiSettingsView(props: AiSettingsViewProps) {
                 <ProviderIcon providerId="openwork" size={22} className="mt-0.5 shrink-0 text-blue-11" />
                 <div className="min-w-0 space-y-2">
                   <div>
-                    <div className="text-sm font-medium text-dls-text">TGWork Models</div>
+                    <div className="text-sm font-medium text-dls-text">{t("ui_tgwork_models")}</div>
                     <div className="mt-0.5 text-xs text-muted-foreground">
                       Hosted frontier models for TGWork tasks without managing provider API keys.
                     </div>
@@ -279,7 +279,7 @@ export function AiSettingsView(props: AiSettingsViewProps) {
               <ProviderIcon providerId="openwork" size={20} className="text-muted-foreground" />
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-dls-text">TGWork Models</span>
+                  <span className="truncate text-sm font-medium text-dls-text">{t("ui_tgwork_models")}</span>
                   <span className="shrink-0 rounded-full border border-dls-border bg-dls-sidebar/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                     Not connected
                   </span>
@@ -306,7 +306,7 @@ export function AiSettingsView(props: AiSettingsViewProps) {
               <ProviderIcon providerId="openwork" size={20} className="text-amber-11" />
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium text-dls-text">TGWork Models</span>
+                  <span className="truncate text-sm font-medium text-dls-text">{t("ui_tgwork_models")}</span>
                   <span className="shrink-0 rounded-full border border-amber-6 bg-amber-3 px-2 py-0.5 text-[10px] font-medium text-amber-11">
                     Included — syncing
                   </span>

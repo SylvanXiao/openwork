@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useReducer } from "react";
 import { Download, Loader2, Search } from "lucide-react";
 
@@ -134,7 +135,7 @@ export function ClaudePluginImportModal(props: ClaudePluginImportModalProps) {
     >
       <DialogContent className="flex max-h-[90vh] min-h-0 w-full max-w-lg flex-col overflow-hidden sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Install a plugin from GitHub</DialogTitle>
+          <DialogTitle>{t("ui_install_a_plugin_from_github_9033ba")}</DialogTitle>
           <DialogDescription>
             Works with Claude Code plugins: a repo with .claude-plugin/plugin.json bundling an MCP
             server, skills, and commands.
@@ -145,7 +146,7 @@ export function ClaudePluginImportModal(props: ClaudePluginImportModalProps) {
           <div className="flex items-end gap-2">
             <div className="flex-1">
               <TextInput
-                label="GitHub repository"
+                label={t("ui_github_repository_4a6c78")}
                 placeholder="https://github.com/slackapi/slack-mcp-plugin"
                 value={state.url}
                 onChange={(event) =>
@@ -186,7 +187,7 @@ export function ClaudePluginImportModal(props: ClaudePluginImportModalProps) {
               </div>
 
               <div>
-                <div className="mb-1.5 text-xs font-medium text-dls-text">Will install</div>
+                <div className="mb-1.5 text-xs font-medium text-dls-text">{t("ui_will_install_673906")}</div>
                 <div className="space-y-2">
                   {groups.map((group) => (
                     <div key={group.type}>

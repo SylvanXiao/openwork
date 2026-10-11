@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useCallback, useEffect, useEffectEvent, useRef, useState, type RefObject } from "react";
 import { ChevronDown, ChevronUp, Search, X } from "lucide-react";
 
@@ -358,8 +359,8 @@ export function SessionFindBar({
             }
           }}
           className="h-7 w-48 bg-transparent px-1 text-sm text-dls-text outline-none placeholder:text-dls-secondary sm:h-8 sm:w-56"
-          placeholder="Find in conversation"
-          aria-label="Find in conversation"
+          placeholder={t("ui_find_in_conversation_6cade5")}
+          aria-label={t("ui_find_in_conversation_6cade5")}
         />
         <span className={cn(
           "min-w-14 text-right text-xs tabular-nums text-muted-foreground",
@@ -374,7 +375,7 @@ export function SessionFindBar({
                 type="button"
                 variant="ghost"
                 size="icon-xs"
-                aria-label="Previous match"
+                aria-label={t("ui_previous_match_afb1b7")}
                 disabled={totalMatches === 0}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={jumpToPrevious}
@@ -383,7 +384,7 @@ export function SessionFindBar({
               </Button>
             }
           />
-          <TooltipContent>Previous match (⇧↵)</TooltipContent>
+          <TooltipContent>{t("ui_previous_match")}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger
@@ -392,7 +393,7 @@ export function SessionFindBar({
                 type="button"
                 variant="ghost"
                 size="icon-xs"
-                aria-label="Next match"
+                aria-label={t("ui_next_match_7f4d21")}
                 disabled={totalMatches === 0}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={jumpToNext}
@@ -401,7 +402,7 @@ export function SessionFindBar({
               </Button>
             }
           />
-          <TooltipContent>Next match (↵)</TooltipContent>
+          <TooltipContent>{t("ui_next_match")}</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger
@@ -410,7 +411,7 @@ export function SessionFindBar({
                 type="button"
                 variant="ghost"
                 size="icon-xs"
-                aria-label="Close find"
+                aria-label={t("ui_close_find_b040fb")}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={closeFind}
               >
@@ -418,7 +419,7 @@ export function SessionFindBar({
               </Button>
             }
           />
-          <TooltipContent>Close (Esc)</TooltipContent>
+          <TooltipContent>{t("ui_close_esc_7a725a")}</TooltipContent>
         </Tooltip>
       </div>
     </div>

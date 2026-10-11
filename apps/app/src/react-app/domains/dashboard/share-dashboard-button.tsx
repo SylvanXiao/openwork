@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { useRef, useState, type FormEvent } from "react";
 import { Check, Loader2, Share2 } from "lucide-react";
 import type { SavedAppSummary } from "@openwork/types/workflows";
@@ -22,8 +23,8 @@ export function ShareDashboardButton({ apps }: { apps: SavedAppSummary[] }) {
     <Button variant="outline" onClick={() => setOpen(true)}><Share2 className="size-4" />Share</Button>
     {open ? <DialogContent className="max-h-[90dvh] overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>Share your dashboard</DialogTitle>
-        <DialogDescription>Choose apps to add to a teammate’s dashboard. They must belong to your organization.</DialogDescription>
+        <DialogTitle>{t("ui_share_your_dashboard_efb4b7")}</DialogTitle>
+        <DialogDescription>{t("ui_choose_apps_to_add_to_a_teammate_s_dashb_be88da")}</DialogDescription>
       </DialogHeader>
       <ShareDashboardForm apps={apps.filter((app) => app.canManage)} pending={pending} setPending={setPending} onClose={close}
         onVerifiedSession={(commit) => { commitSession.current = commit; }} />
@@ -81,7 +82,7 @@ function ShareDashboardForm({ apps, pending, setPending, onClose, onVerifiedSess
     }
   };
   if (!apps.length) return <div className="space-y-4">
-    <p className="text-sm text-muted-foreground">Add an app you manage to your dashboard first. Company apps and apps shared with you keep their existing access settings.</p>
+    <p className="text-sm text-muted-foreground">{t("ui_add_an_app_you_manage_to_your_dashboard__7cbf29")}</p>
     <Button variant="outline" onClick={onClose}>Done</Button>
   </div>;
   if (complete) return <div className="space-y-4">
@@ -90,12 +91,12 @@ function ShareDashboardForm({ apps, pending, setPending, onClose, onVerifiedSess
   </div>;
   return <form className="space-y-4" onSubmit={(event) => void share(event)}>
     <label className="block space-y-2 text-sm font-medium">
-      <span>Teammate’s email</span>
+      <span>{t("ui_teammate_s_email_9ac0f7")}</span>
       <Input type="email" autoComplete="email" placeholder="teammate@company.com" required maxLength={320} value={email}
         disabled={pending || needsReauth || shared.length > 0} onChange={(event) => setEmail(event.target.value)} />
     </label>
     <fieldset disabled={pending || needsReauth} className="space-y-2">
-      <legend className="mb-2 text-sm font-medium">Apps to share</legend>
+      <legend className="mb-2 text-sm font-medium">{t("ui_apps_to_share_3f9300")}</legend>
       <div className="max-h-60 space-y-2 overflow-auto">
         {apps.map((app) => <label key={app.view.id} className="flex items-center gap-3 rounded-lg border p-3 text-sm">
           <input type="checkbox" className="size-4" checked={selected.has(app.view.id)} disabled={shared.includes(app.view.id)}
@@ -105,7 +106,7 @@ function ShareDashboardForm({ apps, pending, setPending, onClose, onVerifiedSess
         </label>)}
       </div>
     </fieldset>
-    <p className="text-xs text-muted-foreground">Sharing gives view access to each app’s underlying workflow, its saved results, and other apps built from that workflow. Existing permissions stay in place. Company-managed apps are not included.</p>
+    <p className="text-xs text-muted-foreground">{t("ui_sharing_gives_view_access_to_each_app_s__08c5c7")}</p>
     {error ? <p role="alert" className="text-sm text-destructive">{error} Apps marked Shared are already available to your teammate. Retry to share the remaining apps.</p> : null}
     {needsReauth ? <DenReauthNotice onVerified={async (nextClient, commit) => {
       verifiedClient.current = nextClient;

@@ -106,7 +106,7 @@ export function CreateRemoteWorkspaceModal(
             showDirectory
             submitting={submitting}
             hostInputRef={inputRef}
-            title="Remote server details"
+            title={t("ui_remote_server_details_d0a775")}
             description="Use the URL your TGWork server shared with you. Add a token only if the server needs one."
           />
         </div>

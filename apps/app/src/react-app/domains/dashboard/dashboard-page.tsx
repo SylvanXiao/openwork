@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Blocks } from "lucide-react";
@@ -80,7 +81,7 @@ export function DashboardPage({ fallbackEndpoints, onCreateApp }: {
   if (denAuth.status === "checking" || (grantedReady && grantedQuery.isPending)) {
     return (
       <div className="mx-auto w-full max-w-6xl px-6 py-6" data-dashboard-page>
-        <div className="space-y-2 pt-3" role="status" aria-label="Loading dashboard">
+        <div className="space-y-2 pt-3" role="status" aria-label={t("ui_loading_dashboard_a3cb74")}>
           <Skeleton className="h-8 w-1/3" />
           <Skeleton className="h-40 w-full" />
         </div>
@@ -138,10 +139,10 @@ function DashboardBoard({ consentScopeKey, cacheScopeKey, grantedDashboards, gra
         <section key={dashboard.id} className="mb-6" data-granted-dashboard={dashboard.id}>
           <header className="mb-2 flex items-baseline gap-2">
             <h2 className="text-sm font-medium">{dashboard.name}</h2>
-            <span className="text-xs text-muted-foreground">From your company</span>
+            <span className="text-xs text-muted-foreground">{t("ui_from_your_company_21106e")}</span>
           </header>
           {dashboard.elements.length === 0 ? (
-            <p className="text-xs text-muted-foreground">This dashboard has no apps yet.</p>
+            <p className="text-xs text-muted-foreground">{t("ui_this_dashboard_has_no_apps_yet_984ff9")}</p>
           ) : (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,320px),1fr))] gap-4">
               {dashboard.elements.map((element) => {
@@ -166,7 +167,7 @@ function DashboardBoard({ consentScopeKey, cacheScopeKey, grantedDashboards, gra
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon"><Blocks /></EmptyMedia>
-            <EmptyTitle>No company apps yet</EmptyTitle>
+            <EmptyTitle>{t("ui_no_company_apps_yet_f12144")}</EmptyTitle>
             <EmptyDescription>
               Apps shared by your company will appear here.
             </EmptyDescription>

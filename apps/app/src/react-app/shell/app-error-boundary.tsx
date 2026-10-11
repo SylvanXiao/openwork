@@ -1,5 +1,6 @@
 /** @jsxImportSource react */
 
+import { t } from "@/i18n";
 import * as React from "react";
 import { formatCrashDiagnostic } from "@/app/lib/crash-diagnostics";
 import { openworkServerInfo, readDesktopDistributionInfo, revealDesktopItemInDir } from "@/app/lib/desktop";
@@ -98,7 +99,7 @@ function RecoveryScreen({ crash }: { crash: CrashDetails }) {
     <div className="flex h-screen w-screen items-center justify-center bg-background p-6" role="alert">
       <div className="flex w-full max-w-lg flex-col gap-4 text-sm">
         <div className="flex flex-col gap-1">
-          <h1 className="text-lg font-semibold text-foreground">TGWork hit an unexpected error</h1>
+          <h1 className="text-lg font-semibold text-foreground">{t("ui_tgwork_hit_an_unexpected_error_164fed")}</h1>
           <p className="text-muted-foreground">
             The window recovered instead of going blank. Reloading usually clears it.
           </p>
@@ -150,7 +151,7 @@ function RecoveryScreen({ crash }: { crash: CrashDetails }) {
                   </button>
                 ) : null}
               </div>
-              {copyError ? <p role="status" className="text-muted-foreground">Could not copy details. You can select and copy the text above.</p> : null}
+              {copyError ? <p role="status" className="text-muted-foreground">{t("ui_could_not_copy_details_you_can_select_an_aaae0a")}</p> : null}
               {logsError ? <p className="text-muted-foreground">{logsError}</p> : null}
             </div>
           ) : null}

@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import * as React from "react";
 import { X } from "lucide-react";
 import { Reorder } from "motion/react";
@@ -82,7 +83,7 @@ function PanelTabClose({
         active && "text-foreground hover:bg-muted hover:text-foreground",
         className,
       )}
-      title="Close tab"
+      title={t("ui_close_tab_484ef0")}
       aria-label={`Close tab: ${label}`}
       onClick={(event) => {
         event.stopPropagation();

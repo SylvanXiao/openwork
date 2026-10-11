@@ -373,8 +373,8 @@ function UnavailableWorkbenchPane(props: {
           <p className="mt-1 text-xs leading-5 text-muted-foreground">{props.message}</p>
         </div>
         <div className="flex justify-center gap-2">
-          <Button variant="outline" size="sm" onClick={props.onRetry}>Retry connection</Button>
-          <Button variant="ghost" size="sm" onClick={props.onClose}>Close pane</Button>
+          <Button variant="outline" size="sm" onClick={props.onRetry}>{t("ui_retry_connection_e359ce")}</Button>
+          <Button variant="ghost" size="sm" onClick={props.onClose}>{t("ui_close_pane_6e6957")}</Button>
         </div>
       </div>
     </div>
@@ -1482,7 +1482,7 @@ export function SessionPage(props: SessionPageProps) {
                       </Button>
                     }
                   />
-                  <TooltipContent>Back to parent chat</TooltipContent>
+                  <TooltipContent>{t("ui_back_to_parent_chat_ad1f5a")}</TooltipContent>
                 </Tooltip>
               ) : null}
               <h1 className="truncate text-[13px] font-medium text-dls-text">
@@ -1527,14 +1527,14 @@ export function SessionPage(props: SessionPageProps) {
                         variant="ghost"
                         size="icon-sm"
                         className="hidden rounded-xl text-gray-10 transition-colors hover:bg-muted hover:text-foreground lg:inline-flex"
-                        aria-label="Find in conversation"
+                        aria-label={t("ui_find_in_conversation_6cade5")}
                         onClick={() => useSessionFindStore.getState().openFind({ sessionId: findButtonSessionId })}
                       >
                         <TextSearch size={16} />
                       </Button>
                     }
                   />
-                  <TooltipContent>Find in conversation (⌘F)</TooltipContent>
+                  <TooltipContent>{t("ui_find_in_conversation_f_d4476d")}</TooltipContent>
                 </Tooltip>
               ) : null}
               <Tooltip>
@@ -1583,7 +1583,7 @@ export function SessionPage(props: SessionPageProps) {
                       variant="ghost"
                       size="icon-sm"
                       className="rounded-xl text-gray-10 transition-colors hover:bg-muted hover:text-foreground lg:hidden"
-                      aria-label="More actions"
+                      aria-label={t("ui_more_actions_284716")}
                     >
                       <MoreHorizontal size={18} />
                     </Button>
@@ -1594,9 +1594,7 @@ export function SessionPage(props: SessionPageProps) {
                     <DropdownMenuItem
                       onClick={() => useSessionFindStore.getState().openFind({ sessionId: findButtonSessionId })}
                     >
-                      <TextSearch className="size-4" />
-                      Find in conversation
-                    </DropdownMenuItem>
+                      <TextSearch className="size-4" />{t("ui_find_in_conversation_6cade5")}</DropdownMenuItem>
                   ) : null}
                   <DropdownMenuItem onClick={openArtifactRailPane}>
                     <FileText className="size-4" />
@@ -1621,7 +1619,7 @@ export function SessionPage(props: SessionPageProps) {
                       window.localStorage.removeItem("openwork.orgOnboardingSeen");
                     } catch {}
                   }}
-                  title="Clears acknowledged providers + org onboarding so they trigger again"
+                  title={t("ui_clears_acknowledged_providers_org_onboar_8c61fb")}
                 >
                   Reset notifications
                 </Button>
@@ -1867,7 +1865,7 @@ export function SessionPage(props: SessionPageProps) {
                   {props.notFoundMessage ? (
                     <div className="px-6 py-16 text-center">
                       <div className="mx-auto max-w-md rounded-2xl border border-dls-border bg-dls-card px-5 py-6 shadow-[var(--dls-card-shadow)]">
-                        <h3 className="text-base font-medium text-dls-text">Workspace or session not found</h3>
+                        <h3 className="text-base font-medium text-dls-text">{t("ui_workspace_or_session_not_found_b126c8")}</h3>
                         <p className="mt-2 text-sm leading-6 text-dls-secondary">{props.notFoundMessage}</p>
                       </div>
                     </div>

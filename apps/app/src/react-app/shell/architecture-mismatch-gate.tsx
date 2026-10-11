@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useCallback, useEffect, useReducer, type ReactNode } from "react";
 
 import { isDesktopRuntime } from "../../app/utils";
@@ -118,12 +119,12 @@ export function ArchitectureMismatchGate({ children }: ArchitectureMismatchGateP
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <div className="text-xs uppercase tracking-[0.2em] text-white/40">Running app</div>
+                  <div className="text-xs uppercase tracking-[0.2em] text-white/40">{t("ui_running_app_0c6097")}</div>
                   <div className="mt-2 text-2xl font-semibold text-white">{info.appArchLabel}</div>
                   <div className="mt-1 font-mono text-xs text-white/45">{info.appArch}</div>
                 </div>
                 <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4">
-                  <div className="text-xs uppercase tracking-[0.2em] text-emerald-100/70">Your system</div>
+                  <div className="text-xs uppercase tracking-[0.2em] text-emerald-100/70">{t("ui_your_system_d73de4")}</div>
                   <div className="mt-2 text-2xl font-semibold text-emerald-50">{info.systemArchLabel}</div>
                   <div className="mt-1 font-mono text-xs text-emerald-100/55">{info.systemArch}</div>
                 </div>
@@ -149,7 +150,7 @@ export function ArchitectureMismatchGate({ children }: ArchitectureMismatchGateP
 
             <aside className="border-t border-white/10 bg-gradient-to-br from-emerald-300/12 via-sky-300/8 to-transparent p-8 sm:p-10 lg:border-l lg:border-t-0 lg:p-12">
               <div className="space-y-5 rounded-[28px] border border-white/10 bg-black/25 p-6 text-sm leading-6 text-white/68">
-                <div className="text-lg font-semibold text-white">Why TGWork stopped here</div>
+                <div className="text-lg font-semibold text-white">{t("ui_why_tgwork_stopped_here_ab2ae4")}</div>
                 <p>
                   TGWork blocks startup when the installed app architecture does not match the machine architecture. This prevents runtime sidecars, browser tooling, and update downloads from continuing on the wrong build.
                 </p>

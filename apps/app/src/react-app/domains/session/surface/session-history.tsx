@@ -1,3 +1,4 @@
+import { t } from "@/i18n";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CancelledError, queryOptions, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
@@ -325,8 +326,8 @@ export function SessionHistoryLoading({ saved, failed = false }: { saved: Sessio
   const height = Math.max(200, (saved.geometry?.scrollHeight ?? 232) - 32);
   const top = saved.mode === "manual" ? Math.min(saved.scrollTop + 64, height - 120) : Math.max(64, height - 200);
   if (failed) return <div data-thread-placeholder style={{ minHeight: height }} />;
-  return <div data-thread-loading role="status" aria-live="polite" aria-label="Loading conversation" style={{ minHeight: height }}>
-    <span className="sr-only">Loading conversation</span>
+  return <div data-thread-loading role="status" aria-live="polite" aria-label={t("ui_loading_conversation_f27d60")} style={{ minHeight: height }}>
+    <span className="sr-only">{t("ui_loading_conversation_f27d60")}</span>
     {visible ? <div aria-hidden="true" data-thread-loading-visual className="flex items-center justify-center gap-2 text-sm text-dls-secondary" style={{ paddingTop: Math.max(32, top) }}>
       <LoaderCircle aria-hidden="true" className="size-4 motion-safe:animate-spin" />
       <span>{saved.mode === "manual" ? "Returning to your reading position…" : "Loading latest messages…"}</span>

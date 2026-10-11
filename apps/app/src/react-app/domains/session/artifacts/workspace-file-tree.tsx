@@ -1,4 +1,5 @@
 /** @jsxImportSource react */
+import { t } from "@/i18n";
 import { useEffect, useMemo, useRef } from "react";
 import { FileTree, useFileTree, useFileTreeSearch } from "@pierre/trees/react";
 import { useQuery } from "@tanstack/react-query";
@@ -150,7 +151,7 @@ export function WorkspaceFileTree({ client, workspaceId, workspaceName, selected
           <InputGroupAddon align="inline-start"><Search /></InputGroupAddon>
           <InputGroupInput
             aria-label={`Search ${workspaceName} files`}
-            placeholder="Search files"
+            placeholder={t("ui_search_files_61aef9")}
             value={search.value}
             onChange={(event) => {
               const value = event.target.value;
@@ -162,14 +163,14 @@ export function WorkspaceFileTree({ client, workspaceId, workspaceName, selected
         <Button
           variant="ghost"
           size="icon-xs"
-          aria-label="Refresh workspace files"
+          aria-label={t("ui_refresh_workspace_files_d52dd7")}
           onClick={() => void query.refetch()}
         >
           <RefreshCw className={cn(query.isFetching && "animate-spin")} />
         </Button>
       </div>
       {query.isError ? (
-        <p className="p-3 text-xs text-destructive">Could not load workspace files.</p>
+        <p className="p-3 text-xs text-destructive">{t("ui_could_not_load_workspace_files_d3c217")}</p>
       ) : (
         <FileTree
           model={model}
@@ -179,10 +180,10 @@ export function WorkspaceFileTree({ client, workspaceId, workspaceName, selected
         />
       )}
       {query.data?.incomplete ? (
-        <p role="status" className="border-t border-border px-2 py-1 text-[10px] text-muted-foreground">Some folders could not be read. Check their permissions and refresh.</p>
+        <p role="status" className="border-t border-border px-2 py-1 text-[10px] text-muted-foreground">{t("ui_some_folders_could_not_be_read_check_the_b8574e")}</p>
       ) : null}
       {query.data?.truncated ? (
-        <p className="border-t border-border px-2 py-1 text-[10px] text-muted-foreground">Showing the first 10,000 entries</p>
+        <p className="border-t border-border px-2 py-1 text-[10px] text-muted-foreground">{t("ui_showing_the_first_10_000_entries_7d0891")}</p>
       ) : null}
     </aside>
   );

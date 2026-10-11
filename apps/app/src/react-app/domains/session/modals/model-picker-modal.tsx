@@ -399,7 +399,7 @@ export function ModelPickerModal(props: ModelPickerModalProps) {
                     <p className="text-xs text-muted-foreground">{FAST_PRICING_WARNING}</p>
                   </div>
                 ) : null}
-                <div role="group" aria-label="Thinking and effort" className="mt-2 flex flex-wrap gap-2">
+                <div role="group" aria-label={t("ui_thinking_and_effort_d97a11")} className="mt-2 flex flex-wrap gap-2">
                   {behaviorControls.options.map((option) => (
                     <Button key={option.value === null ? "default" : `variant-${option.value}`} type="button" size="sm"
                       variant={option.value === currentBehavior.value ? "secondary" : "outline"}
