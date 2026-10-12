@@ -81,9 +81,22 @@ export function getConnectedProviderItems(value: ProviderListResponse | null | u
  * price; models without catalog pricing rank last (alphabetical tiebreak)
  * so a paid-but-priced model beats an unknown one.
  */
+// Providers that advertise as connected but reject engine calls from this
+// app: the opencode free tier only serves requests made inside the OpenCode
+// CLI, and openwork-free requires the hosted cloud account. Excluded from
+// the automatic default so the seeded model is actually usable (they stay
+// visible in the manual picker).
+const NON_CHAT_DEFAULT_PROVIDER_IDS = new Set(["opencode", "openwork-free"]);
+
+/** True for providers that show as connected but reject engine calls from this app. */
+export function isNonChatDefaultProvider(providerId: string | null | undefined): boolean {
+  return Boolean(providerId && NON_CHAT_DEFAULT_PROVIDER_IDS.has(providerId));
+}
+
 export function cheapestConnectedModel(value: ProviderListResponse | null | undefined): ModelRef | null {
   let best: { ref: ModelRef; cost: number; title: string } | null = null;
   for (const provider of getConnectedProviderItems(value)) {
+    if (NON_CHAT_DEFAULT_PROVIDER_IDS.has(provider.id)) continue;
     for (const [modelId, model] of Object.entries(provider.models ?? {})) {
       const input = Math.max(Number(model.cost?.input) || 0, 0);
       const output = Math.max(Number(model.cost?.output) || 0, 0);

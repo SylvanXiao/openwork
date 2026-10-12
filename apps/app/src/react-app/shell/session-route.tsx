@@ -283,6 +283,7 @@ import {
   cheapestConnectedModel,
   ensureProviderListQuery,
   getConnectedProviderItems,
+  isNonChatDefaultProvider,
   refreshProviderListQueries,
   useProviderListQuery,
 } from "@/react-app/infra/provider-list-query";
@@ -918,14 +919,33 @@ export function SessionRoute() {
     });
   // TGWork: seed the default model with the cheapest connected option before
   // the user ever picks one (token price ascending; free/local runtimes win).
-  // Every manual pick writes prefs.defaultModel, which stops this effect.
+  // Every manual pick writes prefs.defaultModel, which stops this effect —
+  // except a stale seed pointing at a provider that rejects engine calls from
+  // this app (opencode free tier / openwork-free): that gets re-seeded once.
   useEffect(() => {
     const data = providerListQuery.data;
-    if (!data || local.prefs.defaultModel) return;
+    if (!data) return;
+    const current = local.prefs.defaultModel;
+    if (current && !isNonChatDefaultProvider(current.providerID)) return;
     const cheapest = cheapestConnectedModel(data);
     if (!cheapest) return;
+    if (
+      current &&
+      current.providerID === cheapest.providerID &&
+      current.modelID === cheapest.modelID
+    ) {
+      return;
+    }
     local.setPrefs((previous) => {
-      if (previous.defaultModel) return previous;
+      const existing = previous.defaultModel;
+      if (existing && !isNonChatDefaultProvider(existing.providerID)) return previous;
+      if (
+        existing &&
+        existing.providerID === cheapest.providerID &&
+        existing.modelID === cheapest.modelID
+      ) {
+        return previous;
+      }
       return {
         ...previous,
         defaultModel: { providerID: cheapest.providerID, modelID: cheapest.modelID },
