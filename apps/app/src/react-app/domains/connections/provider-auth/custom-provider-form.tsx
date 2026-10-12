@@ -22,12 +22,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/sonner";
+import type { OpenworkServerClient } from "@/app/lib/openwork-server";
 import { useLocal } from "@/react-app/kernel/local-provider";
 import { refreshProviderListQueries } from "@/react-app/infra/provider-list-query";
 import { getReactQueryClient } from "@/react-app/infra/query-client";
 import { describeRouteError } from "@/react-app/shell/route-workspaces";
 import { reloadEngineWithDesktopFallback } from "@/react-app/shell/engine-reload-escalation";
-import { useWorkspace } from "@/react-app/shell/workspace-provider";
+import { useWorkspaceMaybe } from "@/react-app/shell/workspace-provider";
 import { TextInput } from "../../../design-system/text-input";
 
 type CustomProviderTemplate = {
@@ -92,9 +93,21 @@ function envNameForProviderId(providerId: string) {
 export default function CustomProviderForm(props: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /**
+   * Workspace context for callers rendered outside a WorkspaceProvider
+   * (e.g. the settings route). Falls back to useWorkspaceMaybe() when
+   * omitted; both absent disables the submit with an availability hint.
+   */
+  workspaceContext?: { openworkServerClient: OpenworkServerClient; workspaceId: string } | null;
 }) {
   const { open, onOpenChange } = props;
-  const { openworkServerClient, workspaceId } = useWorkspace();
+  const workspaceFromContext = useWorkspaceMaybe();
+  const openworkServerClient = props.workspaceContext?.openworkServerClient
+    ?? workspaceFromContext?.openworkServerClient
+    ?? null;
+  const workspaceId = props.workspaceContext?.workspaceId
+    ?? workspaceFromContext?.workspaceId
+    ?? "";
   const local = useLocal();
 
   const [templateId, setTemplateId] = useState<string>("custom");

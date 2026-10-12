@@ -26,6 +26,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/sonner";
+import type { OpenworkServerClient } from "@/app/lib/openwork-server";
 import { openDesktopUrl } from "@/app/lib/desktop";
 import { isDesktopRuntime } from "@/app/utils";
 import { compareProviders } from "@/app/utils/providers";
@@ -84,6 +85,12 @@ export type ProviderAuthModalProps = {
   showOpenWorkModelsSubscribe?: boolean;
   onSubscribeOpenWorkModels?: () => void | Promise<void>;
   onClose: () => void;
+  /**
+   * Workspace context for callers outside a WorkspaceProvider (settings
+   * route). Forwarded to the custom-provider form; the session surface
+   * callers can omit it — the form falls back to useWorkspaceMaybe().
+   */
+  workspaceContext?: { openworkServerClient: OpenworkServerClient; workspaceId: string } | null;
 };
 
 export default function ProviderAuthModal(props: ProviderAuthModalProps) {
@@ -1112,7 +1119,11 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
       </DialogContent>
       {/* Sibling dialog (not nested inside DialogContent) so Radix focus
           trapping does not fight between the two layers. */}
-      <CustomProviderForm open={customFormOpen} onOpenChange={setCustomFormOpen} />
+      <CustomProviderForm
+        open={customFormOpen}
+        onOpenChange={setCustomFormOpen}
+        workspaceContext={props.workspaceContext ?? null}
+      />
     </Dialog>
   );
 }
