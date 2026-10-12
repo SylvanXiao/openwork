@@ -54,12 +54,42 @@ if (!config.readOnly) {
   await migrateWorkspaceRuntimeConfigToEngineGlobal(config);
 }
 
+// When the web UI is served from disk (OPENWORK_WEB_ROOT), the page carries
+// an in-band bootstrap token, so binding beyond loopback hands full agent
+// control to everyone who can reach the port. Default is 127.0.0.1; warn
+// loudly if the user overrides it.
+function warnIfWebUiExposedBeyondLoopback(host: string): void {
+  if (!process.env.OPENWORK_WEB_ROOT?.trim()) return;
+  const value = host.trim().toLowerCase();
+  const isLoopback =
+    value === "localhost" ||
+    value === "::1" ||
+    value === "[::1]" ||
+    value === "127.0.0.1" ||
+    /^127(?:\.\d{1,3}){3}$/.test(value);
+  if (isLoopback) return;
+  console.warn(
+    [
+      "",
+      "==================================================================",
+      " SECURITY WARNING: web UI is served on a non-loopback address",
+      `   bind host: ${host}`,
+      " The page embeds a local access token: anyone who can open it gains",
+      " full control of this agent (files, terminal, tools). Keep the bind",
+      " at 127.0.0.1 unless you added your own authentication layer.",
+      "==================================================================",
+      "",
+    ].join("\n"),
+  );
+}
+
 // Bind the HTTP server before spawning the engine: serve-node may fall back
 // to an OS-assigned port on EADDRINUSE, and the engine's spawn-time env
 // (OPENWORK_SERVER_URL) must point at the port that actually bound, not the
 // requested one.
 const server = await startServer(config);
 config.port = server.port;
+warnIfWebUiExposedBeyondLoopback(config.host);
 const serverUrl = `http://${config.host === "0.0.0.0" ? "127.0.0.1" : config.host}:${server.port}`;
 const workerActivityHeartbeat = startWorkerActivityHeartbeat(config, logger);
 

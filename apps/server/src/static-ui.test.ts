@@ -140,7 +140,7 @@ describe("serveStaticUi", () => {
       if (!response) throw new Error("expected SPA fallback response");
       expect(response.status).toBe(200);
       expect(response.headers.get("Content-Type")).toBe("text/html; charset=utf-8");
-      expect(response.headers.get("Cache-Control")).toBe("no-cache");
+      expect(response.headers.get("Cache-Control")).toBe("no-store");
       expect(await response.text()).toContain("App shell");
     });
   });

@@ -84,7 +84,13 @@ function toWebRequest(
   hostname: string,
   port: number,
 ): { request: Request; detachCancellation: () => void } {
-  const url = `http://${hostname}:${port}${nodeReq.url ?? "/"}`;
+  // Clients behind forward proxies may send the request target in
+  // absolute-form (RFC 7230 §5.3.2), e.g. "http://host:port/path?query",
+  // instead of origin-form "/path?query". Only prepend the origin for
+  // origin-form targets, otherwise the URL ends up doubled and
+  // `new Request()` throws.
+  const target = nodeReq.url ?? "/";
+  const url = /^[a-z][a-z0-9+.-]*:\/\//i.test(target) ? target : `http://${hostname}:${port}${target}`;
   const method = nodeReq.method ?? "GET";
   const headers = new Headers();
   const controller = new AbortController();

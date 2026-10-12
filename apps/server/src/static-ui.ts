@@ -7,7 +7,11 @@ import type { ServerConfig } from "./types.js";
 const WEB_ROOT_ENV = "OPENWORK_WEB_ROOT";
 const WEB_BOOTSTRAP_TOKEN_ENV = "OPENWORK_WEB_BOOTSTRAP_TOKEN";
 const ASSET_CACHE = "public, max-age=31536000, immutable";
-const INDEX_CACHE = "no-cache";
+// index.html carries the injected bootstrap token — never let it be cached.
+const INDEX_CACHE = "no-store";
+// Minimal, non-breaking CSP: blocks plugin content and framing without
+// restricting the SPA's own scripts, styles, or connections.
+const HTML_CSP = "object-src 'none'; frame-ancestors 'none'; base-uri 'self'";
 
 type StaticUiConfig = Pick<ServerConfig, "token">;
 
@@ -27,10 +31,10 @@ export async function serveStaticUi(request: Request, config: StaticUiConfig): P
   }
 
   try {
-    const fileResponse = await serveFile(root, relativePath, url.pathname, method, config.token);
+    const fileResponse = await serveFile(root, relativePath, url.pathname, method, config.token, request);
     if (fileResponse) return fileResponse;
     if (url.pathname.startsWith("/assets/")) return null;
-    return serveFile(root, "index.html", "/index.html", method, config.token);
+    return serveFile(root, "index.html", "/index.html", method, config.token, request);
   } catch (error) {
     if (error instanceof ApiError) return jsonError(error);
     throw error;
@@ -52,6 +56,7 @@ async function serveFile(
   requestPathname: string,
   method: string,
   token: string,
+  request: Request,
 ): Promise<Response | null> {
   const filePath = await resolveWithinRoot(root, relativePath);
   const fileStat = await stat(filePath).catch(() => null);
@@ -59,22 +64,25 @@ async function serveFile(
 
   const extension = extname(relativePath).toLowerCase();
   const cacheControl = requestPathname.startsWith("/assets/") ? ASSET_CACHE : INDEX_CACHE;
+  const etag = `"${fileStat.mtimeMs.toString(16)}-${fileStat.size.toString(16)}"`;
+
+  if (request.headers.get("if-none-match") === etag) {
+    return new Response(null, { status: 304, headers: responseHeaders(extension, cacheControl, etag) });
+  }
+
   if (method === "HEAD") {
-    return new Response(null, {
-      status: 200,
-      headers: responseHeaders(extension, cacheControl),
-    });
+    return new Response(null, { status: 200, headers: responseHeaders(extension, cacheControl, etag) });
   }
 
   if (isTextExtension(extension)) {
     const body = await readFile(filePath, "utf8");
     const text = relativePath === "index.html" ? injectBootstrap(body, token) : body;
-    return withCacheControl(textResponse(extension, text), cacheControl);
+    return new Response(text, { status: 200, headers: responseHeaders(extension, cacheControl, etag) });
   }
 
   return new Response(await readFile(filePath), {
     status: 200,
-    headers: responseHeaders(extension, cacheControl),
+    headers: responseHeaders(extension, cacheControl, etag),
   });
 }
 
@@ -83,23 +91,18 @@ function isTextExtension(extension: string): boolean {
     extension === ".json" || extension === ".svg" || extension === ".map";
 }
 
-function textResponse(extension: string, body: string): Response {
-  if (extension === ".html") return htmlResponse(body);
-  if (extension === ".js" || extension === ".mjs") return jsResponse(body);
-  if (extension === ".css") return cssResponse(body);
-  if (extension === ".svg") return svgResponse(body);
-  return new Response(body, { status: 200, headers: { "Content-Type": contentType(extension) } });
-}
-
-function withCacheControl(response: Response, cacheControl: string): Response {
-  const headers = new Headers(response.headers);
-  headers.set("Cache-Control", cacheControl);
-  return new Response(response.body, { status: response.status, headers });
-}
-
-function responseHeaders(extension: string, cacheControl: string): Headers {
-  const headers = new Headers({ "Cache-Control": cacheControl });
-  headers.set("Content-Type", contentType(extension));
+function responseHeaders(extension: string, cacheControl: string, etag?: string): Headers {
+  const headers = new Headers({
+    "Cache-Control": cacheControl,
+    "Content-Type": contentType(extension),
+    "X-Content-Type-Options": "nosniff",
+  });
+  if (extension === ".html") {
+    headers.set("Content-Security-Policy", HTML_CSP);
+  }
+  if (etag) {
+    headers.set("ETag", etag);
+  }
   return headers;
 }
 
@@ -145,45 +148,5 @@ function jsonError(error: ApiError): Response {
   return new Response(JSON.stringify(formatError(error)), {
     status: error.status,
     headers: { "Content-Type": "application/json" },
-  });
-}
-
-function htmlResponse(body: string, status = 200): Response {
-  return new Response(body, {
-    status,
-    headers: {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-store",
-    },
-  });
-}
-
-function cssResponse(body: string): Response {
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/css; charset=utf-8",
-      "Cache-Control": "no-store",
-    },
-  });
-}
-
-function jsResponse(body: string): Response {
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/javascript; charset=utf-8",
-      "Cache-Control": "no-store",
-    },
-  });
-}
-
-function svgResponse(body: string): Response {
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "Content-Type": "image/svg+xml; charset=utf-8",
-      "Cache-Control": "no-store",
-    },
   });
 }

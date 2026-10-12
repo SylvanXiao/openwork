@@ -222,6 +222,11 @@ OpenCode，web app 自动走本地同 origin 连接——**无需云端登录**�
 > 说明：`start-web.mjs` 用 server 的 bun dev 入口（`bun --conditions=development src/cli.ts`）
 > 启动 `openwork-server`，所以**无需单独构建 server**。但仍需安装 bun（见 §1）。
 
+> ⚠️ **安全边界**：`start:web` 起的 server 默认只监听 `127.0.0.1`，且前端页面内置本地
+> 访问令牌（bootstrap token）——**能打开这个网页就等于完全控制本机 agent（文件/终端/工具）**。
+> 不要为了"局域网访问"把 server 绑到 `0.0.0.0`（`--host` / `OPENWORK_HOST`），除非你自加了
+> 认证层；检测到非 loopback 绑定时 server 启动会打印醒目安全警告。
+
 ### Port conflict / cross-project "串台" (Electron loads the wrong UI)
 `pnpm dev` defaults Vite to **port 5173** and `apps/desktop/scripts/electron-dev.mjs`
 **probes that port first** (`startUrl` + `viteProbeUrls`, then `looksLikeVite`).

@@ -105,8 +105,8 @@ The fastest path from a fresh clone to a running dev build.
 ### First run
 
 ```bash
-git clone https://github.com/SylvanXiao/tgwork.git
-cd tgwork
+git clone https://github.com/SylvanXiao/openwork.git
+cd openwork
 corepack enable
 pnpm install
 pnpm dev   # launches the Electron desktop app with hot reload
@@ -122,6 +122,8 @@ pnpm start:web         # serves it from the same-origin MIT openwork-server
 ```
 
 Then open <http://127.0.0.1:8787>. The server injects a local bootstrap token, so the app connects to your local machine only — nothing leaves your computer. Override the workspace with `OPENWORK_WEB_WORKSPACE=/path/to/folder` and the port with `OPENWORK_WEB_PORT=9000`. Full details in [DEV.md](./DEV.md#5-本地网页运行免安装包).
+
+> **Security boundary:** the server binds to `127.0.0.1` by default, and the page embeds a local access token — anyone who can open the page gains full control of the agent (files, terminal). Do **not** rebind the server to `0.0.0.0` for "LAN access" unless you add your own authentication layer; the launcher prints a loud warning on any non-loopback bind.
 
 > This differs from the dev-only "Headless web" workflow under [Local development](#local-development): `build:web:local` + `start:web` produces a production static bundle served by the MIT `openwork-server` with no Den dependency, whereas the headless workflow runs a Vite dev server and proxies Den Cloud.
 
