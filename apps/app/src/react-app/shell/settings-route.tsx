@@ -525,9 +525,6 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   const [baseUrl, setBaseUrl] = useState("");
   const [token, setToken] = useState("");
   const [openworkClient, setOpenworkClient] = useState<OpenworkServerClient | null>(null);
-  // Host-token endpoints (/env/*) are desktop-shell only; web mode has no host
-  // token by design, so calls must be skipped to avoid guaranteed 401s.
-  const [hasOpenworkHostToken, setHasOpenworkHostToken] = useState(false);
   const [activeClient, setActiveClient] = useState<Client | null>(null);
   const [busy, setBusy] = useState(false);
   const [busyLabel, setBusyLabel] = useState<string | null>(null);
@@ -1245,7 +1242,8 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
   }, []);
 
   useEffect(() => {
-    if (!openworkClient || !hasOpenworkHostToken) {
+    // /env/keys is host-token only; web clients never carry the host token.
+    if (!openworkClient || !openworkClient.hasHostToken) {
       setUserEnvKeys([]);
       return;
     }
@@ -1254,7 +1252,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       .then((response) => { if (!cancelled) setUserEnvKeys(response.keys); })
       .catch(() => { if (!cancelled) setUserEnvKeys([]); });
     return () => { cancelled = true; };
-  }, [openworkClient, hasOpenworkHostToken]);
+  }, [openworkClient]);
 
   const installOpenAiImageExtension = useCallback(async (apiKey: string) => {
     const resolvedApiKey = apiKey.trim();
@@ -1427,7 +1425,6 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
 
       if (!normalizedBaseUrl || !resolvedToken) {
         setOpenworkClient(null);
-        setHasOpenworkHostToken(false);
         setBaseUrl("");
         setToken("");
         setWorkspaces(desktopWorkspaces);
@@ -1533,7 +1530,6 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       if (!attempt.isCurrent()) return;
 
       setOpenworkClient(client);
-      setHasOpenworkHostToken(Boolean(resolvedHostToken));
       setBaseUrl(normalizedBaseUrl);
       setToken(resolvedToken);
       setWorkspaces(nextWorkspaces);

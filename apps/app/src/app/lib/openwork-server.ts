@@ -1608,6 +1608,9 @@ export function createOpenworkServerClient(options: { baseUrl: string; token?: s
   return {
     baseUrl,
     token,
+    // Host-token routes (/env/*) only authorize with the desktop shell's host
+    // token; web deployments never have it. Callers gate host-only reads here.
+    hasHostToken: Boolean(hostToken && hostToken.trim()),
     health: () =>
       requestJson<{ ok: boolean; version: string; uptimeMs: number }>(baseUrl, "/health", { token, hostToken, timeoutMs: timeouts.health }),
     runtimeVersions: () =>

@@ -32,6 +32,9 @@ export async function buildOpenworkEnvSystemContext(
   } = {},
 ): Promise<string | undefined> {
   if (!client) return undefined;
+  // /env/keys is host-token only; web clients never have the host token, and
+  // an unconditional call would 401 on every message send.
+  if (!client.hasHostToken) return undefined;
   const readPendingChanges = options.readPendingChanges ??
     (() => readOpenworkEnvPendingChanges(options.runtimeKey));
   if (readPendingChanges()) return undefined;

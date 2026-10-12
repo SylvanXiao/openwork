@@ -52,13 +52,14 @@ export function useEnvironmentVariableList(options: UseEnvironmentVariableListOp
   return useQuery({
     queryKey: environmentUserEnvQueryKey(options.runtimeKey),
     queryFn: async () => {
-      if (!options.client || options.isRemoteWorkspace) {
+      if (!options.client || options.isRemoteWorkspace || !options.client.hasHostToken) {
         return { items: [] };
       }
 
       return options.client.listUserEnv();
     },
-    enabled: options.client !== null && !options.isRemoteWorkspace,
+    // /env routes are host-token only; web clients never have the host token.
+    enabled: options.client !== null && options.client.hasHostToken && !options.isRemoteWorkspace,
     refetchOnWindowFocus: false,
   });
 }
@@ -105,9 +106,10 @@ export function EnvironmentVariableProvider({ children, client, runtimeKey, onAp
   const { data } = useQuery({
     queryKey: ["settings", "environment", "pending-changes", runtimeKey],
     queryFn: async () => {
-      if (!client) return false;
+      if (!client || !client.hasHostToken) return false;
       return (await client.getUserEnvStatus(runtimeKey)).pendingChanges;
     },
+    enabled: client !== null && client.hasHostToken,
     staleTime: 10_000,
     refetchOnWindowFocus: false,
   });
