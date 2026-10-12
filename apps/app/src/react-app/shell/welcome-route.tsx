@@ -33,7 +33,7 @@ import { JoinOrganizationDialog } from "../domains/cloud/join-organization-dialo
 import { resolveOpenworkConnection } from "./openwork-connection";
 import { captureAnalyticsEvent } from "../../app/lib/analytics";
 import { buildOpenworkWorkspaceBaseUrl, createOpenworkServerClient } from "../../app/lib/openwork-server";
-import { buildDenAuthUrl, DEFAULT_DEN_BASE_URL, readDenSettings } from "../../app/lib/den";
+import { buildDenAuthUrl, DEFAULT_DEN_BASE_URL, isDenCloudSigninConfigured, readDenSettings } from "../../app/lib/den";
 import { markDesktopSignInInitiated } from "../../app/lib/den-sign-in-intent";
 import { denSettingsChangedEvent } from "../../app/lib/den-session-events";
 import { writeActiveWorkspaceId, writeLastSessionFor, writeWorkspaceProjectDimension } from "./session-memory";
@@ -399,7 +399,7 @@ export function WelcomeRoute() {
         onManualFolderChange={setManualFolder}
         onUseManualFolder={handleUseManualFolder}
         showManualFolder={import.meta.env.DEV && isDesktopRuntime()}
-        onTeamSignIn={handleTeamSignIn}
+        onTeamSignIn={isDenCloudSigninConfigured() ? handleTeamSignIn : undefined}
         onJoinOrganization={() => setJoinOrganizationOpen(true)}
       />
       <JoinOrganizationDialog

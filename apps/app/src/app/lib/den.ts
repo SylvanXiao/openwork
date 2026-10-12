@@ -85,10 +85,15 @@ const ORG_SCOPE_HEADER = "x-openwork-org-id";
 const DEFAULT_DEN_TIMEOUT_MS = 12_000;
 
 export const DEFAULT_DEN_AUTH_NAME = "TGWork User";
-const BUILD_DEN_BASE_URL =
+// TGWork: the hosted fallback below points at the upstream OpenWork cloud,
+// which is NOT this fork's account system. Cloud sign-in surfaces therefore
+// only render when the build explicitly points at a Den deployment (or the
+// user already stored a custom Den URL) — see isDenCloudSigninConfigured().
+const BUILD_DEN_BASE_URL_EXPLICIT =
   (typeof import.meta !== "undefined" && typeof import.meta.env?.VITE_DEN_BASE_URL === "string"
     ? import.meta.env.VITE_DEN_BASE_URL
-    : "").trim() || "https://app.openworklabs.com";
+    : "").trim();
+const BUILD_DEN_BASE_URL = BUILD_DEN_BASE_URL_EXPLICIT || "https://app.openworklabs.com";
 const BUILD_DEN_REQUIRE_SIGNIN =
   (typeof import.meta !== "undefined" && typeof import.meta.env?.VITE_DEN_REQUIRE_SIGNIN === "string"
     ? /^(1|true|yes|on)$/i.test(import.meta.env.VITE_DEN_REQUIRE_SIGNIN.trim())
@@ -1405,8 +1410,26 @@ function canUseCloudWebAuthReturn(origin: string): boolean {
   }
 }
 
-export function buildDenAuthUrl(baseUrl: string, mode: "sign-in" | "sign-up"): string {
-  const target = new URL(resolveDenBaseUrls(baseUrl).baseUrl);
+/**
+ * TGWork: whether this app has a cloud control plane it may legitimately send
+ * the user to for sign-in. True only when the build explicitly set
+ * VITE_DEN_BASE_URL (self-hosted / fork-operated Den) or the user already
+ * stored a custom Den URL. Without it, sign-in surfaces must stay hidden —
+ * the hosted fallback points at the upstream OpenWork cloud, which is not
+ * this fork's account system.
+ */
+export function isDenCloudSigninConfigured(): boolean {
+  if (BUILD_DEN_BASE_URL_EXPLICIT) return true;
+  try {
+    const settings = readDenSettings();
+    const stored = settings.baseUrl?.trim();
+    return Boolean(stored) && denOriginComparisonKey(stored) !== denOriginComparisonKey(HOSTED_DEFAULT_DEN_BASE_URL);
+  } catch {
+    return false;
+  }
+}
+
+export function buildDenAuthUrl(baseUrl: string, mode: "sign-in" | "sign-up"): string {  const target = new URL(resolveDenBaseUrls(baseUrl).baseUrl);
   target.searchParams.set("mode", mode);
   const webReturnOrigin =
     isWebDeployment() && typeof window !== "undefined" ? window.location.origin : null;

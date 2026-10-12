@@ -36,6 +36,7 @@ import {
   buildDenAuthUrl,
   clearDenSession,
   createDenClient,
+  isDenCloudSigninConfigured,
   readDenBootstrapConfig,
   readDenSettings,
 } from "../../../../app/lib/den";
@@ -512,7 +513,7 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
             <LogOut className="size-3.5" />
             Log out
           </DropdownMenuItem>
-        ) : restoringSession ? null : (
+        ) : restoringSession ? null : isDenCloudSigninConfigured() ? (
           <div
             className="flex flex-col gap-2 px-2 py-2"
             onPointerDown={(event) => event.stopPropagation()}
@@ -582,6 +583,12 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
                 )}
               </div>
             ) : null}
+          </div>
+        ) : (
+          <div className="px-2 py-2">
+            <p className="text-[11px] leading-snug text-muted-foreground">
+              {t("account.local_mode_hint")}
+            </p>
           </div>
         )}
       </DropdownMenuContent>
