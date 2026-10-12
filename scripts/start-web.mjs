@@ -18,9 +18,10 @@
 // local access token — anyone who can open the page controls the agent. Do
 // NOT rebind to 0.0.0.0 without adding your own authentication layer.
 
-import { spawn } from "node:child_process";
-import { existsSync } from "node:fs";
-import { isAbsolute, resolve, dirname } from "node:path";
+import { spawn, spawnSync } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { homedir, platform } from "node:os";
+import { isAbsolute, resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -52,6 +53,74 @@ function resolveWorkspace() {
     if (value !== undefined) return value;
   }
   return process.env.OPENWORK_WEB_WORKSPACE || process.cwd();
+}
+
+/**
+ * Mirrors @openwork/paths openworkServerConfigPath(): the shared server.json
+ * lives in %APPDATA%/openwork (Windows) or ~/.config/openwork (others),
+ * unless OPENWORK_SERVER_CONFIG points elsewhere.
+ */
+function resolveServerConfigPath() {
+  const override = (process.env.OPENWORK_SERVER_CONFIG || "").trim();
+  if (override) return resolve(override);
+  if (platform() === "win32") {
+    const appData = process.env.APPDATA || join(homedir(), "AppData", "Roaming");
+    return join(appData, "openwork", "server.json");
+  }
+  return join(homedir(), ".config", "openwork", "server.json");
+}
+
+/**
+ * When server.json already carries authorizedRoots, the server trusts them and
+ * ignores OPENWORK_WORKSPACES (config.ts falls back to workspaces only when the
+ * list is empty). A workspace outside every authorized root fails every
+ * /workspace/* request with 403 workspace_unauthorized — so self-heal by
+ * appending the current workspace before boot. Best effort: a malformed or
+ * unwritable file must never block startup.
+ */
+function ensureWorkspaceAuthorized(workspacePath) {
+  const configPath = resolveServerConfigPath();
+  let config;
+  try {
+    config = JSON.parse(readFileSync(configPath, "utf8"));
+  } catch {
+    return; // missing/invalid file: server falls back to workspaces anyway
+  }
+  if (!Array.isArray(config.authorizedRoots) || config.authorizedRoots.length === 0) {
+    return;
+  }
+  const normalized = resolve(workspacePath);
+  const keyOf = (value) => resolve(String(value)).toLowerCase();
+  if (config.authorizedRoots.some((root) => keyOf(root) === keyOf(normalized))) return;
+  if (config.authorizedRoots.some((root) => keyOf(normalized).startsWith(keyOf(root) + "\\"))) return;
+  config.authorizedRoots.push(normalized);
+  try {
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
+    console.log(`[start-web] Authorized workspace added to ${configPath}`);
+  } catch (error) {
+    console.warn(`[start-web] Warning: could not update authorized roots (${error.message}).`);
+    console.warn(`[start-web] If workspace requests return 403, add "${normalized}" to authorizedRoots in ${configPath}.`);
+  }
+}
+
+/** Locates an opencode engine binary: desktop sidecar first, then PATH. */
+function resolveOpencodeBin() {
+  const sidecarNames = platform() === "win32"
+    ? ["opencode-x86_64-pc-windows-msvc.exe", "opencode.exe"]
+    : platform() === "darwin"
+      ? [process.arch === "arm64" ? "opencode-aarch64-apple-darwin" : "opencode-x86_64-apple-darwin"]
+      : [process.arch === "arm64" ? "opencode-aarch64-unknown-linux-gnu" : "opencode-x86_64-unknown-linux-gnu"];
+  const sidecarDir = resolve(root, "apps/desktop/resources/sidecars");
+  for (const name of sidecarNames) {
+    const candidate = join(sidecarDir, name);
+    if (existsSync(candidate)) return candidate;
+  }
+  const probe = spawnSync(platform() === "win32" ? "where" : "which", ["opencode"], {
+    shell: true,
+    encoding: "utf8",
+  });
+  const found = (probe.stdout || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean)[0];
+  return found || null;
 }
 
 const skipBuild = process.env.OPENWORK_WEB_SKIP_BUILD === "1";
@@ -88,11 +157,26 @@ if (!existsSync(appDist)) {
   fail(`Web UI not found at ${appDist}. Build it first: pnpm build:web:local`);
 }
 
+ensureWorkspaceAuthorized(workspace);
+
+const opencodeBin = resolveOpencodeBin();
+if (opencodeBin) {
+  console.log(`[start-web] OpenCode engine binary: ${opencodeBin}`);
+} else {
+  console.warn("[start-web] Warning: no opencode engine binary found (sidecars dir or PATH).");
+  console.warn("[start-web] The UI will load but chat/models need an engine. Install opencode or run pnpm prepare:sidecar.");
+}
+
 const env = {
   ...process.env,
   OPENWORK_WEB_ROOT: appDist,
   OPENWORK_WORKSPACES: workspace,
   OPENWORK_PORT: port,
+  // Spawn a managed opencode engine so chat/models work without the desktop
+  // app. The server only honors this when no explicit opencodeBaseUrl is set.
+  ...(opencodeBin && process.env.OPENWORK_WEB_MANAGE_ENGINE !== "0"
+    ? { OPENWORK_MANAGE_OPENCODE: "1", OPENWORK_OPENCODE_BIN: opencodeBin }
+    : {}),
   // Dev mode is opt-in: it relaxes loopback-only guards (e.g. trusting local
   // Den app-host endpoints). The no-install web path does not need it.
   ...(process.env.OPENWORK_WEB_DEV_MODE === "1" ? { OPENWORK_DEV_MODE: "1" } : {}),
