@@ -74,6 +74,37 @@ export function getConnectedProviderItems(value: ProviderListResponse | null | u
   );
 }
 
+/**
+ * TGWork: pick the cheapest model across connected providers to seed the
+ * default selection before the user picks one themselves. Local runtimes
+ * (cost 0/absent price with free flag) come first, then ascending token
+ * price; models without catalog pricing rank last (alphabetical tiebreak)
+ * so a paid-but-priced model beats an unknown one.
+ */
+export function cheapestConnectedModel(value: ProviderListResponse | null | undefined): ModelRef | null {
+  let best: { ref: ModelRef; cost: number; title: string } | null = null;
+  for (const provider of getConnectedProviderItems(value)) {
+    for (const [modelId, model] of Object.entries(provider.models ?? {})) {
+      const input = Math.max(Number(model.cost?.input) || 0, 0);
+      const output = Math.max(Number(model.cost?.output) || 0, 0);
+      const hasPricing = Boolean(model.cost);
+      // Local runtimes report 0 cost via the catalog; custom providers may
+      // omit cost entirely — treat "no cost data" as more expensive than any
+      // known price so a priced model wins the default slot.
+      const cost = hasPricing ? input + output : Number.POSITIVE_INFINITY;
+      const title = model.name ?? modelId;
+      if (
+        !best ||
+        cost < best.cost ||
+        (cost === best.cost && title.localeCompare(best.title) < 0)
+      ) {
+        best = { ref: { providerID: provider.id, modelID: modelId }, cost, title };
+      }
+    }
+  }
+  return best?.ref ?? null;
+}
+
 export function getConnectedProviderSnapshot(value: ProviderListResponse | null | undefined): ConnectedProviderSnapshot {
   return getConnectedProviderItems(value)
     .map((provider) => ({

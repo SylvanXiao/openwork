@@ -280,6 +280,7 @@ import type { OpenTarget } from "@/react-app/domains/session/artifacts/open-targ
 import { SettingsSurface } from "./settings-route";
 import { writeStoredDefaultModel } from "@/react-app/kernel/model-config";
 import {
+  cheapestConnectedModel,
   ensureProviderListQuery,
   getConnectedProviderItems,
   refreshProviderListQueries,
@@ -915,6 +916,23 @@ export function SessionRoute() {
       defaultModel: local.prefs.defaultModel,
       modelVariant: local.prefs.modelVariant ?? null,
     });
+  // TGWork: seed the default model with the cheapest connected option before
+  // the user ever picks one (token price ascending; free/local runtimes win).
+  // Every manual pick writes prefs.defaultModel, which stops this effect.
+  useEffect(() => {
+    const data = providerListQuery.data;
+    if (!data || local.prefs.defaultModel) return;
+    const cheapest = cheapestConnectedModel(data);
+    if (!cheapest) return;
+    local.setPrefs((previous) => {
+      if (previous.defaultModel) return previous;
+      return {
+        ...previous,
+        defaultModel: { providerID: cheapest.providerID, modelID: cheapest.modelID },
+        modelVariant: null,
+      };
+    });
+  }, [local, providerListQuery.data]);
   const {
     store: sessionProviderAuthStore,
     snapshot: sessionProviderAuthSnapshot,

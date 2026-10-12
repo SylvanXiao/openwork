@@ -1,7 +1,10 @@
 import { loopbackFetch } from "./server-fetch.js";
 
 const LOCAL_MODELS_URL = "http://localhost:8791/models";
-const PRODUCTION_MODELS_URL = "https://models.openworklabs.com/";
+// TGWork fork: use the upstream models.dev catalog (models.dev-format JSON,
+// same shape as LOCAL_MODELS_URL) instead of the OpenWork-hosted mirror, so
+// the local/no-install build has no dependency on openworklabs.com.
+const PRODUCTION_MODELS_URL = "https://models.dev/";
 
 type ResolveOpencodeModelsUrlOptions = {
   env?: NodeJS.ProcessEnv;

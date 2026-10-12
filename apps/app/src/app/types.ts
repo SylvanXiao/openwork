@@ -436,7 +436,16 @@ export type ModelOption = {
   isRecommended?: boolean;
   /** "cloud" for org-managed providers (lpr_*), undefined for local. */
   source?: "cloud";
+  /** USD per million tokens from the models.dev catalog, when known. */
+  costPerM?: { input: number; output: number };
 };
+
+/** Sort key for "cheapest first": local/free models first, unknown cost last. */
+export function modelCostSortKey(option: Pick<ModelOption, "costPerM" | "isFree">): number {
+  if (option.isFree) return 0;
+  if (!option.costPerM) return Number.POSITIVE_INFINITY;
+  return Math.max(option.costPerM.input, 0) + Math.max(option.costPerM.output, 0);
+}
 
 export type SelectedSessionSnapshot = {
   session: Session | null;

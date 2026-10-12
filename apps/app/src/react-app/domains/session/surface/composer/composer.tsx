@@ -2,7 +2,7 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import type { Agent } from "@opencode-ai/sdk/v2/client";
-import { AppWindowMac, Cloud, Monitor, ArrowUp, Check, ChevronDown, ChevronRight, FileText, LoaderCircle, Paperclip, Plus, RefreshCw, Settings, Square, Terminal, X, Zap } from "lucide-react";
+import { AppWindowMac, Cloud, Monitor, ArrowUp, Check, ChevronDown, ChevronRight, FileText, LoaderCircle, Paperclip, Plus, RefreshCw, Settings, Sparkles, Square, Terminal, X, Zap } from "lucide-react";
 import fuzzysort from "fuzzysort";
 import { toast } from "@/components/ui/sonner";
 import type { CloudImportedPlugin, CloudImportedPluginFile } from "@/app/cloud/import-state";
@@ -37,6 +37,7 @@ import {
   mergeComposerConnectionInventory,
 } from "./composer-connections";
 import { DevProfiler } from "@/react-app/shell/dev-profiler";
+import { useWorkspaceMaybe } from "@/react-app/shell/workspace-provider";
 
 type MentionItem = {
   id: string;
@@ -289,6 +290,49 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
   useEffect(() => {
     draftRef.current = props.draft;
   }, [props.draft]);
+
+  // TGWork: one-shot prompt enhancement via the workspace server. Uses the
+  // model the composer currently targets; the result replaces the draft and
+  // the toast offers one-click undo back to the original text.
+  const workspaceContext = useWorkspaceMaybe();
+  const [enhanceBusy, setEnhanceBusy] = useState(false);
+  const enhanceDisabled = enhanceBusy || props.busy || !props.draft.trim();
+  const handleEnhancePrompt = useCallback(async () => {
+    const original = props.draft;
+    const text = original.trim();
+    if (!text || enhanceBusy || props.busy) return;
+    const serverClient = workspaceContext?.openworkServerClient;
+    const workspaceId = workspaceContext?.workspaceId;
+    if (!serverClient || !workspaceId) {
+      toast.error(t("composer.enhance_unavailable"));
+      return;
+    }
+    setEnhanceBusy(true);
+    try {
+      const result = await serverClient.enhancePrompt(workspaceId, {
+        prompt: text,
+        model: {
+          providerID: props.selectedModel.providerID,
+          modelID: props.selectedModel.modelID,
+        },
+      });
+      const enhanced = result.enhanced?.trim();
+      if (!enhanced) throw new Error("empty response");
+      props.onDraftChange(enhanced);
+      toast.success(t("composer.prompt_enhanced"), {
+        action: {
+          label: t("common.undo"),
+          onClick: () => props.onDraftChange(original),
+        },
+      });
+    } catch (error) {
+      toast.error(t("composer.prompt_enhance_failed"), {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    } finally {
+      setEnhanceBusy(false);
+    }
+  }, [enhanceBusy, props.busy, props.draft, props.onDraftChange, props.selectedModel, workspaceContext]);
 
   // Follow-up message UX (only relevant while the agent is busy):
   // - Enter (and the send button) queues the message until the agent finishes.
@@ -1706,6 +1750,17 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
                   title={props.attachmentsDisabledReason ?? t("composer.attach_files")}
                 >
                   <Paperclip size={16} />
+                </button>
+                <button
+                  type="button"
+                  className={`inline-flex h-9 max-h-9 w-9 shrink-0 items-center justify-center rounded-md text-gray-10 transition-colors hover:bg-gray-3 ${
+                    enhanceDisabled ? "cursor-not-allowed opacity-60" : ""
+                  }`}
+                  onClick={() => void handleEnhancePrompt()}
+                  disabled={enhanceDisabled}
+                  title={t("composer.enhance_prompt")}
+                >
+                  {enhanceBusy ? <LoaderCircle size={16} className="animate-spin" /> : <Sparkles size={16} />}
                 </button>
 
                 </div>

@@ -1853,6 +1853,14 @@ export function createOpenworkServerClient(options: { baseUrl: string; token?: s
         method: "PATCH",
         body: payload,
       }),
+    enhancePrompt: (workspaceId: string, payload: { prompt: string; mode?: "general" | "coding" | "writing"; model?: { providerID: string; modelID: string } }) =>
+      requestJson<{ enhanced: string; mode: string }>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/prompt-enhance`, {
+        token,
+        hostToken,
+        method: "POST",
+        body: payload,
+        timeoutMs: 120_000,
+      }),
     getDesktopCloudSync: (workspaceId: string) =>
       requestJson<OpenworkDesktopCloudSyncState>(baseUrl, `/workspace/${encodeURIComponent(workspaceId)}/desktop-cloud-sync`, {
         token,

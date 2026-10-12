@@ -5,6 +5,7 @@ import * as React from "react";
 import { Check, ChevronDown, ChevronLeft, ChevronRight, Settings2, Star } from "lucide-react";
 
 import type { ModelBehaviorOption, ModelOption, ModelRef } from "@/app/types";
+import { modelCostSortKey } from "@/app/types";
 import { FAST_PRICING_WARNING, getModelBehaviorControls, getModelBehaviorSelection, getModelBehaviorSummary } from "@/app/lib/model-behavior";
 import { ProviderIcon } from "@/react-app/design-system/provider-icon";
 import {
@@ -118,6 +119,14 @@ function useModelOptions(
             behaviorValue: summary.value,
             behaviorOptions: summary.options,
             isFree: false,
+            ...(model.cost
+              ? {
+                  costPerM: {
+                    input: Number(model.cost.input) || 0,
+                    output: Number(model.cost.output) || 0,
+                  },
+                }
+              : {}),
           };
         }),
       );
@@ -161,12 +170,24 @@ function groupByProvider(modelOptions: ModelOption[]): ModelSelectGroup[] {
     groups.set(providerLabel, [item]);
   }
 
+  // TGWork: order models and providers cheapest-first (local/free models
+  // bubble up, unknown-cost entries sink), so the picker surfaces the
+  // lowest token price by default instead of alphabetical order.
   return [...groups.entries()]
     .map(([providerLabel, options]) => ({
       value: providerLabel,
-      items: [...options].sort((a, b) => a.option.title.localeCompare(b.option.title)),
+      items: [...options].sort(
+        (a, b) =>
+          modelCostSortKey(a.option) - modelCostSortKey(b.option) ||
+          a.option.title.localeCompare(b.option.title),
+      ),
     }))
-    .sort((a, b) => a.value.localeCompare(b.value));
+    .sort(
+      (a, b) =>
+        modelCostSortKey(a.items[0]?.option ?? { isFree: false }) -
+          modelCostSortKey(b.items[0]?.option ?? { isFree: false }) ||
+        a.value.localeCompare(b.value),
+    );
 }
 
 function isSameModel(a: ModelRef, b: ModelRef) {

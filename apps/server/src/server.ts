@@ -100,6 +100,7 @@ import { registerCoreRoutes } from "./routes/core.js";
 import { registerFileRoutes } from "./routes/files.js";
 import { registerOperationRoutes } from "./routes/operations.js";
 import { addRoute, matchRoute, type AuthMode, type RequestContext, type Route } from "./routes/registry.js";
+import { registerPromptEnhanceRoutes } from "./routes/prompt-enhance.js";
 import { registerSessionGroupRoutes } from "./routes/session-groups.js";
 import { registerUiControlRoutes } from "./routes/ui-control.js";
 import { registerWorkspaceRoutes } from "./routes/workspaces.js";
@@ -2515,6 +2516,16 @@ function createRoutes(
     requireClientScope,
     resolveWorkspace,
     resolveWorkspaceWithoutBootstrap,
+  });
+
+  registerPromptEnhanceRoutes({
+    routes,
+    config,
+    jsonResponse,
+    readJsonBody,
+    resolveWorkspaceWithoutBootstrap,
+    createWorkspaceOpencodeClient,
+    unwrapOpencodeResult,
   });
 
   registerCloudMcpRoutes({

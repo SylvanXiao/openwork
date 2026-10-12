@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
+  Plus,
   Search,
 } from "lucide-react";
 import {
@@ -36,6 +37,7 @@ import type {
   ProviderAuthProvider,
   ProviderOAuthStartResult,
 } from "./store";
+import CustomProviderForm from "./custom-provider-form";
 
 type ProviderAuthEntry = {
   id: string;
@@ -102,6 +104,7 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
   const [oauthAutoBusy, setOauthAutoBusy] = useState(false);
   const [oauthCodeCopied, setOauthCodeCopied] = useState(false);
   const [oauthBrowserOpened, setOauthBrowserOpened] = useState(false);
+  const [customFormOpen, setCustomFormOpen] = useState(false);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const providerPollRef = useRef<number | null>(null);
@@ -814,6 +817,23 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
                     </div>
                   )}
 
+                  <button
+                    type="button"
+                    className="w-full group flex items-center gap-3.5 rounded-xl border border-dashed border-gray-6 px-3.5 py-3 text-left transition-all duration-200 hover:bg-gray-3/30 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={actionDisabled}
+                    onClick={() => setCustomFormOpen(true)}
+                  >
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-[11px] border border-gray-5/60 bg-gray-1 shadow-sm">
+                      <Plus size={18} className="text-gray-11" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[14px] font-medium text-gray-12">Add custom provider</div>
+                      <div className="text-[11px] text-gray-9">
+                        OpenAI-compatible endpoint not in the list — relays (OneAPI/NewAPI), Ollama, LM Studio, vLLM.
+                      </div>
+                    </div>
+                  </button>
+
                   <div className="text-[11px] text-gray-9">{t("ui_arrow_keys_to_navigate_enter_to_select_c2b188")}</div>
                 </div>
               ) : null}
@@ -1090,6 +1110,9 @@ export default function ProviderAuthModal(props: ProviderAuthModalProps) {
           </div>
         </DialogFooter>
       </DialogContent>
+      {/* Sibling dialog (not nested inside DialogContent) so Radix focus
+          trapping does not fight between the two layers. */}
+      <CustomProviderForm open={customFormOpen} onOpenChange={setCustomFormOpen} />
     </Dialog>
   );
 }
