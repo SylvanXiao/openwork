@@ -2,6 +2,8 @@
 
 OpenWork is a free, open-source desktop app made for sharing AI workflows. It is an open-source alternative to Claude Cowork and Codex for macOS, Windows, and Linux.
 
+> **TGWork** is a community fork of [OpenWork](https://github.com/different-ai/openwork) (Different AI, Inc.). It inherits OpenWork's open-core license: the **MIT-licensed core** (everything outside `ee/`) is the part that is freely open source, while `ee/` stays under the **OpenWork EE License** (source-available, see [Licensing](#licensing)). TGWork's focus is **local-first, no-install** use — see [Local web (no install package)](#local-web-no-install-package). The `ee/` directory (including the Den control plane) is **not** part of the MIT open-source distribution and is subject to the EE License.
+
 Add one OpenWork MCP to Codex, Claude Code, Cursor, or another compatible agent and reuse the same skills, MCPs, and connected services across your tools, teammates, and machines. Create something once, share it with coworkers or friends, or keep it for yourself.
 
 The desktop app is there when you want a dedicated workspace, but it is not required. You can use OpenWork from the agent you already have. For larger organizations, the admin interface lets you publish capabilities, manage access, and configure shared or per-user connections.
@@ -104,11 +106,24 @@ The fastest path from a fresh clone to a running dev build.
 
 ```bash
 git clone https://github.com/SylvanXiao/tgwork.git
-cd openwork
+cd tgwork
 corepack enable
 pnpm install
 pnpm dev   # launches the Electron desktop app with hot reload
 ```
+
+### Local web (no install package, no Den)
+
+TGWork can run entirely in a browser — **no Electron installer and no Den cloud account required**. This is the recommended local-run path and uses only the MIT core (`ee/` is not involved):
+
+```bash
+pnpm build:web:local   # builds apps/app/dist (MIT UI, Den sign-in disabled)
+pnpm start:web         # serves it from the same-origin MIT openwork-server
+```
+
+Then open <http://127.0.0.1:8787>. The server injects a local bootstrap token, so the app connects to your local machine only — nothing leaves your computer. Override the workspace with `OPENWORK_WEB_WORKSPACE=/path/to/folder` and the port with `OPENWORK_WEB_PORT=9000`. Full details in [DEV.md](./DEV.md#5-本地网页运行免安装包).
+
+> This differs from the dev-only "Headless web" workflow under [Local development](#local-development): `build:web:local` + `start:web` produces a production static bundle served by the MIT `openwork-server` with no Den dependency, whereas the headless workflow runs a Vite dev server and proxies Den Cloud.
 
 ### Repository layout
 
