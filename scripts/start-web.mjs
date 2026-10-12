@@ -27,13 +27,13 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const appDist = resolve(root, "apps/app/dist");
 const serverDir = resolve(root, "apps/server");
 
-function fail(message: string): never {
+function fail(message) {
   console.error(`[start-web] ${message}`);
   process.exit(1);
 }
 
 /** Resolves the workspace from --workspace / --workspace= / OPENWORK_WEB_WORKSPACE / cwd. */
-function resolveWorkspace(): string {
+function resolveWorkspace() {
   const argv = process.argv.slice(2);
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
