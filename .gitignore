@@ -41,6 +41,9 @@ apps/desktop/server/
 # migration-release commit and removed by 03-post-migration-cleanup.mjs.
 # Allow git to see it so `cut-migration-release` can commit it.
 !.env.migration-release
+# Vite mode env files for the no-install local web build (commit so clones build).
+!.env.web
+!.env.web-local
 
 # Bun build artifacts
 *.bun-build

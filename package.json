@@ -14,6 +14,8 @@
     "dev:ui-demo": "pnpm --filter @openwork/ui-demo dev",
     "dev:web": "pnpm run dev:den:web",
     "dev:web-local": "DEN_ORG_MODE=${DEN_ORG_MODE:-multi_org} DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP=${DEN_SINGLE_ORG_ALLOW_PUBLIC_SIGNUP:-true} pnpm run dev:den",
+    "build:web:local": "pnpm --filter @openwork/app build:web:local",
+    "start:web": "node scripts/start-web.mjs",
     "dev:den": "node scripts/dev-local.mjs",
     "dev:enterprise-mock-lab": "pnpm --filter @openwork-ee/enterprise-mock-lab dev",
     "dev:diagnostics": "pnpm --filter @openwork-ee/diagnostics dev",

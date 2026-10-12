@@ -196,6 +196,32 @@ In China this mirror is far more reliable than GitHub. If even the mirror stalls
 download the zip manually in a browser from the same URL and let `install.js`
 use the cache, or set `ELECTRON_OVERRIDE_DIST_PATH` to a pre-extracted Electron.
 
+## 5. 本地网页运行（免安装包）
+
+不想打包/签名 Electron 安装包时，TGWork 可以完全在浏览器里跑，后端用本地 MIT 的
+`openwork-server`，**不需要 Den 云端、不需要安装任何东西**：
+
+```bash
+pnpm build:web:local   # 构建 web UI（VITE_OPENWORK_DEPLOYMENT=web，不强制 Den 登录）
+pnpm start:web         # 起 MIT server，在 http://127.0.0.1:8787 托管前端
+```
+
+`start:web`（= `scripts/start-web.mjs`）会在 `apps/app/dist` 缺失时先构建 UI，然后以
+`OPENWORK_WEB_ROOT` 指向构建产物来启动 MIT server。server 从同 origin 托管 SPA 并代理
+OpenCode，web app 自动走本地同 origin 连接——**无需云端登录**。
+
+可用环境变量 / 参数：
+- `OPENWORK_WEB_WORKSPACE=/path` 或 `--workspace /path`：agent 可读写的目录（默认：当前目录）。
+- `OPENWORK_WEB_PORT=9000`：监听端口。
+- `OPENWORK_WEB_SKIP_BUILD=1`：跳过 UI 构建（复用已有的 `apps/app/dist`）。
+
+浏览器打开 `http://127.0.0.1:<port>` 即可。它与桌面 app 是同一个本地 agent 工作区，
+区别只是少了桌面独占的 OS 集成（分享、桌面通知、本地自动化 runner、原生 connect-link）
+——这些被 `isDesktopRuntime()` 门控，在 web 形态下不会出现，不影响核心 agent / 文件 / 终端能力。
+
+> 说明：`start-web.mjs` 用 server 的 bun dev 入口（`bun --conditions=development src/cli.ts`）
+> 启动 `openwork-server`，所以**无需单独构建 server**。但仍需安装 bun（见 §1）。
+
 ### Port conflict / cross-project "串台" (Electron loads the wrong UI)
 `pnpm dev` defaults Vite to **port 5173** and `apps/desktop/scripts/electron-dev.mjs`
 **probes that port first** (`startUrl` + `viteProbeUrls`, then `looksLikeVite`).
