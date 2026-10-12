@@ -22,7 +22,7 @@ export type GeneralSettingsViewProps = {
   onNavigateTab: (tab: SettingsTab) => void;
   developerMode: boolean;
   onSendFeedback: () => void;
-  onJoinDiscord: () => void;
+  onJoinDiscord?: () => void;
   onReportIssue: () => void;
 };
 
@@ -140,14 +140,16 @@ export function GeneralSettingsView(props: GeneralSettingsViewProps) {
                 {t("settings.send_feedback")}
                 <ArrowUpRight size={11} />
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={props.onJoinDiscord}
-              >
-                {t("settings.join_discord")}
-                <ArrowUpRight size={11} />
-              </Button>
+              {props.onJoinDiscord ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={props.onJoinDiscord}
+                >
+                  {t("settings.join_discord")}
+                  <ArrowUpRight size={11} />
+                </Button>
+              ) : null}
               <Button
                 variant="outline"
                 size="sm"

@@ -1260,6 +1260,12 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
       setImageExtensionError("TGWork server is not connected.");
       return;
     }
+    // Saving the key writes a user env var (/env is host-token only), so this
+    // extension can only be managed from the desktop shell.
+    if (!openworkClient.hasHostToken) {
+      setImageExtensionError("This extension saves OPENAI_API_KEY on the TGWork host and is only available in the TGWork desktop app.");
+      return;
+    }
     if (!resolvedApiKey) {
       setImageExtensionError("OpenAI API key is required.");
       return;
@@ -1301,7 +1307,7 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
     setImageGenerationStatus(null);
     setImageGenerationError(null);
     try {
-      if (openworkClient) {
+      if (openworkClient && openworkClient.hasHostToken) {
         await openworkClient.upsertUserEnv([{ key: "OPENAI_API_KEY", value: apiKey }]);
         setUserEnvKeys((current) => Array.from(new Set([...current, "OPENAI_API_KEY"])));
       }
@@ -2365,7 +2371,6 @@ function SettingsRouteContent(props: SettingsSurfaceProps = {}) {
             onNavigateTab={(tab) => navigateSettingsPath(tab)}
             developerMode={developerMode}
             onSendFeedback={() => platform.openLink(buildFeedbackUrl({ entrypoint: "settings" }))}
-            onJoinDiscord={() => platform.openLink("https://discord.gg/VEhNQXxYMB")}
             onReportIssue={() => platform.openLink("https://github.com/SylvanXiao/tgwork/issues/new?template=bug.yml")}
           />
         );

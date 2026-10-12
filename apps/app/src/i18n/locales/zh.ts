@@ -366,6 +366,8 @@ export default {
   "account.providers_connected_one": "{count} 个模型提供商",
   "account.providers_connected_other": "{count} 个模型提供商",
   "account.local_mode_hint": "当前为本地模式，未配置云端同步。无需账号即可使用全部功能；如需云端登录，请在构建时配置 VITE_DEN_BASE_URL 指向你的云端。",
+  "account.local_mode_trigger": "账户",
+  "account.local_mode_trigger_detail": "本地模式",
   "app.compact_command_desc": "压缩此会话以减少上下文大小。",
   "app.error_audit_load": "加载审计日志失败。",
   "app.error_auth_failed": "认证失败",

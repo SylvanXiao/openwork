@@ -58,7 +58,7 @@ import {
   useOpenWorkModelsPromoEligibility,
 } from "../../cloud/openwork-models-promo";
 
-const DOCS_URL = "https://openworklabs.com/docs";
+const DOCS_URL = "https://github.com/SylvanXiao/tgwork#readme";
 const BOOT_STARTED_AT = Date.now();
 const INITIALIZING_MS = 15_000;
 
@@ -285,12 +285,17 @@ export function AccountStatusMenu(props: AccountStatusMenuProps) {
     status: denAuth.status,
     hasUser: user !== null,
   });
+  const cloudSigninConfigured = isDenCloudSigninConfigured();
   const accountLabel = signedIn
     ? user.name?.trim() || user.email
-    : restoringSession ? "TGWork Cloud" : "Sign in";
+    : restoringSession
+      ? "TGWork Cloud"
+      : cloudSigninConfigured ? "Sign in" : t("account.local_mode_trigger");
   const accountDetail = signedIn
     ? (user.name ? user.email : "TGWork Cloud")
-    : restoringSession ? "Restoring your session" : "Sync with TGWork Cloud";
+    : restoringSession
+      ? "Restoring your session"
+      : cloudSigninConfigured ? "Sync with TGWork Cloud" : t("account.local_mode_trigger_detail");
 
   const runtimeStatus = props.showConnectionStatus
     ? resolveRuntimeStatus({

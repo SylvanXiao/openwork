@@ -342,7 +342,7 @@ export function CommandPalette(props: CommandPaletteProps) {
       group: ACTIONS_GROUP,
       action: () => {
         props.onClose();
-        openUrl("https://openwork.dev/docs");
+        openUrl("https://github.com/SylvanXiao/tgwork#readme");
       },
     },
     {
@@ -353,7 +353,7 @@ export function CommandPalette(props: CommandPaletteProps) {
       group: ACTIONS_GROUP,
       action: () => {
         props.onClose();
-        openUrl("https://openwork.dev/feedback");
+        openUrl("https://github.com/SylvanXiao/tgwork/issues");
       },
     },
   ], [accessibleTargetCount, canMoveCurrentSessionToGroup, hasNestedModelPicker, props, sessionGroupCount, sessionNumberHelp]);

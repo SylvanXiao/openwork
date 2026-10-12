@@ -364,6 +364,8 @@ export default {
   "account.providers_connected_one": "{count} model provider",
   "account.providers_connected_other": "{count} model providers",
   "account.local_mode_hint": "Running locally — cloud sync is not configured. Everything works without an account; set VITE_DEN_BASE_URL to enable cloud sign-in.",
+  "account.local_mode_trigger": "Account",
+  "account.local_mode_trigger_detail": "Local mode",
   "app.compact_command_desc": "Summarize this session to reduce context size.",
   "app.error_audit_load": "Failed to load audit log.",
   "app.error_auth_failed": "Authentication failed",
