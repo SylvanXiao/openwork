@@ -98,9 +98,20 @@ export function registerPromptEnhanceRoutes(options: RegisterPromptEnhanceRoutes
           {
             sessionID: sessionId,
             ...(model ? { model } : {}),
-            // Belt and braces against the agent loop touching the workspace:
-            // disable the mutating tools for this ephemeral one-shot.
-            tools: { bash: false, edit: false, write: false, patch: false },
+            // Belt and braces against the agent loop touching anything: the
+            // wildcard disables every registered tool (some models ignore the
+            // system instruction and call ask/question mid-rewrite, which
+            // hangs the synchronous prompt), the named entries cover engines
+            // that ignore the wildcard.
+            tools: {
+              "*": false,
+              bash: false,
+              edit: false,
+              write: false,
+              patch: false,
+              ask: false,
+              question: false,
+            },
             system: ENHANCE_SYSTEM_INSTRUCTION,
             parts: [{ type: "text" as const, text: `${MODE_GUIDANCE[mode]}\n\n---\n\n${prompt}` }],
           },
@@ -116,7 +127,21 @@ export function registerPromptEnhanceRoutes(options: RegisterPromptEnhanceRoutes
         .join("\n")
         .trim();
       if (!enhanced) {
-        throw new ApiError(502, "enhance_empty_response", "The model returned no text for the enhanced prompt");
+        // The engine returns a completed assistant message with an `error`
+        // payload (e.g. provider 402 Insufficient Balance) and no text parts.
+        // Surface that instead of a misleading "empty response".
+        const info = result.info as { error?: { name?: unknown; data?: { message?: unknown } } } | undefined;
+        const errorName = typeof info?.error?.name === "string" ? info.error.name : "";
+        const errorMessage =
+          typeof info?.error?.data?.message === "string" ? info.error.data.message.trim() : "";
+        const detail = errorMessage || errorName;
+        throw new ApiError(
+          502,
+          "enhance_upstream_error",
+          detail
+            ? `The model failed to enhance the prompt: ${detail}`
+            : "The model returned no text for the enhanced prompt",
+        );
       }
       return jsonResponse({ enhanced, mode });
     } finally {

@@ -159,6 +159,11 @@ if (!existsSync(appDist)) {
 
 ensureWorkspaceAuthorized(workspace);
 
+// Isolate the web-local engine from the desktop app's opencode database.
+// Reusing a database written by a different engine version fails inserts
+// with FOREIGN KEY constraint errors, which crash every model response.
+const engineDb = resolveServerConfigPath().replace(/server\.json$/, "opencode-web-local.db");
+
 const opencodeBin = resolveOpencodeBin();
 if (opencodeBin) {
   console.log(`[start-web] OpenCode engine binary: ${opencodeBin}`);
@@ -175,7 +180,7 @@ const env = {
   // Spawn a managed opencode engine so chat/models work without the desktop
   // app. The server only honors this when no explicit opencodeBaseUrl is set.
   ...(opencodeBin && process.env.OPENWORK_WEB_MANAGE_ENGINE !== "0"
-    ? { OPENWORK_MANAGE_OPENCODE: "1", OPENWORK_OPENCODE_BIN: opencodeBin }
+    ? { OPENWORK_MANAGE_OPENCODE: "1", OPENWORK_OPENCODE_BIN: opencodeBin, OPENCODE_DB: engineDb }
     : {}),
   // Dev mode is opt-in: it relaxes loopback-only guards (e.g. trusting local
   // Den app-host endpoints). The no-install web path does not need it.
