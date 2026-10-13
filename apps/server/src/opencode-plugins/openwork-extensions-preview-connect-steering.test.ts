@@ -113,19 +113,19 @@ describe("composeOpenWorkExtensionDiscoveryInstruction", () => {
     expect(composeOpenWorkExtensionDiscoveryInstruction(state(null))).toBe(OPENWORK_CONNECT_SIGN_IN_INSTRUCTION);
   });
 
-  test("steers ready Connect users to verified openwork-cloud capabilities first", () => {
+  test("steers ready Connect users to verified tgwork-cloud capabilities first", () => {
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).toContain("verified ready for this exact workspace/model");
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).toContain("Discover the native Gmail draft schema");
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).toContain("host file transport");
     expect(OPENWORK_EXTENSION_DISCOVERY_INSTRUCTION).toContain("Do not use another route to bypass a failed connection");
     // Tool mechanics and the "only name what search returns" rule live once in
     // the base agent prompt; ready steering adds shared Google guidance to the signal.
-    expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).not.toContain("openwork-cloud_search_capabilities with");
+    expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).not.toContain("tgwork-cloud_search_capabilities with");
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).not.toContain("available_skills");
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).not.toContain("A successful search proves");
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).not.toContain("Skill creation:");
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).not.toContain("image generation");
-    // The detailed Connect contract ships as the openwork-cloud server's MCP
+    // The detailed Connect contract ships as the tgwork-cloud server's MCP
     // initialize instructions, present exactly when this steering is chosen.
     // Ready steering defers to it instead of restating it on every request.
     expect(OPENWORK_CLOUD_CONNECTION_INSTRUCTION).toContain("server instructions in this prompt are authoritative for search-first discovery, MCP Apps, connection_status results, schema guidance, and retry rules");
@@ -151,14 +151,14 @@ describe("composeOpenWorkExtensionDiscoveryInstruction", () => {
       expect(instruction).toContain("Never invent a connection status, connection id, or setup action");
       expect(instruction).toContain("if no live status action is available, report that limitation");
       expect(instruction).toContain("Cloud search results alone do not establish that upload is unavailable");
-      expect(instruction).toContain("when OpenWork host tools are exposed, first query extension.actions with extensionId openwork-cloud-uploads");
+      expect(instruction).toContain("when OpenWork host tools are exposed, first query extension.actions with extensionId tgwork-cloud-uploads");
       expect(instruction).toContain("Discover the native Gmail draft schema");
       expect(instruction).toContain("host file transport, preserving the selected connection");
       expect(instruction).toContain("including the selected connectionId");
       expect(instruction).toContain("sending is a separate, permissioned operation");
       expect(instruction).toContain("Do not retry or switch routes after an uncertain result");
       expect(instruction).toContain("Only if drive_upload_file is returned and the user authorizes the upload");
-      expect(instruction).toContain("execute that exact action through openwork_execute id extension.call with extensionId openwork-cloud-uploads and args containing path and optional folderId");
+      expect(instruction).toContain("execute that exact action through openwork_execute id extension.call with extensionId tgwork-cloud-uploads and args containing path and optional folderId");
       expect(instruction).toContain("up to 4 MiB under authorized roots");
       expect(instruction).toContain("preserves bytes outside model context");
       expect(instruction).toContain("only if gmail_create_draft_with_attachments is returned and the user authorizes draft creation");
@@ -180,7 +180,7 @@ describe("composeOpenWorkExtensionDiscoveryInstruction", () => {
     });
     expect(OPENWORK_CLOUD_SKILL_AUTHORING_INSTRUCTION).toContain("Skill creation: Cloud");
     expect(OPENWORK_CLOUD_SKILL_AUTHORING_INSTRUCTION).toContain("retrieve and follow the listed create-skill remote skill");
-    expect(OPENWORK_CLOUD_SKILL_AUTHORING_INSTRUCTION).toContain("openwork-cloud_execute_capability");
+    expect(OPENWORK_CLOUD_SKILL_AUTHORING_INSTRUCTION).toContain("tgwork-cloud_execute_capability");
     expect(OPENWORK_CLOUD_SKILL_AUTHORING_INSTRUCTION).toContain("exact <capability>");
     expect(OPENWORK_CLOUD_SKILL_AUTHORING_INSTRUCTION).toContain("OpenWork Cloud as a private plugin");
     expect(OPENWORK_CLOUD_SKILL_AUTHORING_INSTRUCTION).toContain("use share-plugin when the user wants a specific person or team to use a skill");
@@ -381,7 +381,7 @@ describe("composeOpenWorkExtensionDiscoveryInstruction", () => {
 describe("resolveOpenWorkExtensionDiscoveryInstruction", () => {
   test("uses engine connected status without fetching server connect state", async () => {
     const requests: unknown[] = [];
-    const client = engineMcpClient({ data: { "openwork-cloud": { status: "connected" } } }, requests);
+    const client = engineMcpClient({ data: { "tgwork-cloud": { status: "connected" } } }, requests);
     let serverFetchCalls = 0;
     const serverFetch = async (): Promise<Response> => {
       serverFetchCalls += 1;
@@ -400,7 +400,7 @@ describe("resolveOpenWorkExtensionDiscoveryInstruction", () => {
   });
 
   test("uses engine auth-needed status without fetching server connect state", async () => {
-    const client = engineMcpClient({ data: { "openwork-cloud": { status: "needs_auth" } } });
+    const client = engineMcpClient({ data: { "tgwork-cloud": { status: "needs_auth" } } });
     let serverFetchCalls = 0;
     const serverFetch = async (): Promise<Response> => {
       serverFetchCalls += 1;
@@ -429,8 +429,8 @@ describe("resolveOpenWorkExtensionDiscoveryInstruction", () => {
     expect(serverFetchCalls).toBe(0);
   });
 
-  test("fails open without server fetch when engine has an unknown openwork-cloud status", async () => {
-    const client = engineMcpClient({ data: { "openwork-cloud": { status: "starting" } } });
+  test("fails open without server fetch when engine has an unknown tgwork-cloud status", async () => {
+    const client = engineMcpClient({ data: { "tgwork-cloud": { status: "starting" } } });
     let serverFetchCalls = 0;
     const serverFetch = async (): Promise<Response> => {
       serverFetchCalls += 1;
@@ -441,7 +441,7 @@ describe("resolveOpenWorkExtensionDiscoveryInstruction", () => {
     expect(serverFetchCalls).toBe(0);
   });
 
-  test("reads Cloud-only server connect state when engine has no openwork-cloud entry", async () => {
+  test("reads Cloud-only server connect state when engine has no tgwork-cloud entry", async () => {
     process.env.OPENWORK_SERVER_URL = "http://openwork.test";
     process.env.OPENWORK_SERVER_TOKEN = "test-token";
     const client = engineMcpClient({ data: { other: { status: "connected" } } });

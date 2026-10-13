@@ -76,14 +76,14 @@ afterEach(async () => {
   else process.env.OPENWORK_DEV_MODE = previousDevMode;
 });
 
-async function createRoot(prefix = "openwork-cloud-mcp-"): Promise<string> {
+async function createRoot(prefix = "tgwork-cloud-mcp-"): Promise<string> {
   const root = await mkdtemp(join(tmpdir(), prefix));
   roots.push(root);
   return root;
 }
 
 async function createRuntimeDbRoot(): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "openwork-cloud-mcp-runtime-"));
+  const root = await mkdtemp(join(tmpdir(), "tgwork-cloud-mcp-runtime-"));
   runtimeDbRoots.push(root);
   return root;
 }
@@ -118,19 +118,19 @@ function startMockOpencode(options: MockOpencodeOptions = {}) {
       if (url.pathname.startsWith("/mcp/") && url.pathname.endsWith("/disconnect") && request.method === "POST") {
         // OpenCode closes the client and keeps the config; status is no longer
         // connected until a later POST /mcp re-registers it.
-        if (url.pathname === "/mcp/openwork-cloud/disconnect") registerCount = 0;
+        if (url.pathname === "/mcp/tgwork-cloud/disconnect") registerCount = 0;
         return Response.json(true);
       }
       if (url.pathname === "/mcp" && request.method === "GET") {
         statusReads += 1;
         if (options.delayMcpStatusMs) await new Promise((resolve) => setTimeout(resolve, options.delayMcpStatusMs));
         if (options.cloudFailedError) {
-          return Response.json({ "openwork-cloud": { status: "failed", error: options.cloudFailedError } });
+          return Response.json({ "tgwork-cloud": { status: "failed", error: options.cloudFailedError } });
         }
         if (options.connectAfterStatusReads && statusReads < options.connectAfterStatusReads) {
-          return Response.json({ "openwork-cloud": { status: "failed", error: "slow connect" } });
+          return Response.json({ "tgwork-cloud": { status: "failed", error: "slow connect" } });
         }
-        return Response.json(registerCount > 0 || options.initialConnected ? { "openwork-cloud": { status: "connected" } } : {});
+        return Response.json(registerCount > 0 || options.initialConnected ? { "tgwork-cloud": { status: "connected" } } : {});
       }
       if (url.pathname === "/experimental/tool/ids") {
         if (options.unsupportedToolIds) return Response.json({ code: "not_found" }, { status: 404 });
@@ -170,7 +170,7 @@ function startMockOpencode(options: MockOpencodeOptions = {}) {
           ? {
               protocolVersion: "2025-06-18",
               capabilities: { tools: {}, resources: {} },
-              serverInfo: { name: "openwork-cloud-test", version: "1.0.0" },
+              serverInfo: { name: "tgwork-cloud-test", version: "1.0.0" },
             }
           : rpc.method === "tools/list"
             ? { tools: (options.cloudToolNames ?? ["search_capabilities", "execute_capability"]).map((name) => ({ name, description: name, inputSchema: {} })) }
@@ -302,7 +302,7 @@ function cloudConfigForOpenwork(base: string): CloudConfig {
 
 async function reconcile(base: string, workspaceId = "ws_1", body: Record<string, unknown> = {}): Promise<Response> {
   const config = body.config ?? cloudConfigsByOpenworkBase.get(base) ?? CLOUD_CONFIG;
-  return fetch(`${base}/workspace/${workspaceId}/mcp/openwork-cloud/reconcile`, {
+  return fetch(`${base}/workspace/${workspaceId}/mcp/tgwork-cloud/reconcile`, {
     method: "POST",
     headers: headers(),
     body: JSON.stringify({ config, ...body }),
@@ -310,10 +310,10 @@ async function reconcile(base: string, workspaceId = "ws_1", body: Record<string
 }
 
 async function getHealth(base: string, workspaceId = "ws_1", query = ""): Promise<Response> {
-  return fetch(`${base}/workspace/${workspaceId}/mcp/openwork-cloud/health${query}`, { headers: headers() });
+  return fetch(`${base}/workspace/${workspaceId}/mcp/tgwork-cloud/health${query}`, { headers: headers() });
 }
 
-describe("openwork-cloud MCP strict reconcile", () => {
+describe("tgwork-cloud MCP strict reconcile", () => {
   test("clean ready persists desired config, verifies tools, and redacts the token", async () => {
     const root = await createRoot();
     const mock = startMockOpencode();
@@ -352,8 +352,8 @@ describe("openwork-cloud MCP strict reconcile", () => {
     expect(requireRecord(requireRecord(body.compatibility, "compatibility").opencode, "opencode").expectedVersion).toBeTruthy();
     expect(requireRecord(requireRecord(body.compatibility, "compatibility").experimentalToolIds, "experimentalToolIds")).toMatchObject({ includesMcpTools: true });
     expect(requireRecord(requireRecord(body.compatibility, "compatibility").experimentalProviderTools, "experimentalProviderTools")).toMatchObject({ includesMcpTools: true });
-    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["openwork-cloud"]?.url).toBe(cloudConfigForOpenwork(openwork.base).url);
-    expect((await readRuntimeOpencodeConfig(openwork.config, "ws_1")).mcp?.["openwork-cloud"]).toBeUndefined();
+    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["tgwork-cloud"]?.url).toBe(cloudConfigForOpenwork(openwork.base).url);
+    expect((await readRuntimeOpencodeConfig(openwork.config, "ws_1")).mcp?.["tgwork-cloud"]).toBeUndefined();
 
     const mcpPosts = mock.requests.filter((request) => request.method === "POST" && request.pathname === "/mcp");
     expect(mcpPosts.length).toBe(1);
@@ -394,15 +394,15 @@ describe("openwork-cloud MCP strict reconcile", () => {
 
     const runtime = await readRuntimeOpencodeConfig(openwork.config, "ws_1");
     expect(runtime.mcp?.["user-server"]).toEqual({ type: "remote", url: "https://user.example/mcp" });
-    expect(runtime.mcp?.["openwork-cloud"]).toBeUndefined();
-    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["openwork-cloud"]).toBeTruthy();
+    expect(runtime.mcp?.["tgwork-cloud"]).toBeUndefined();
+    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["tgwork-cloud"]).toBeTruthy();
     expect(Object.keys(runtime.mcp ?? {}).filter((name) => name.startsWith("openwork-connect-"))).toEqual([]);
     expect((await readOpenWorkConnectMcpAppHostCatalog(openwork.config, "ws_1")).servers).toEqual([
       expect.objectContaining({ connectionId, name: "Private fixture provider" }),
     ]);
 
     const registrations = mock.requests.filter((request) => request.method === "POST" && request.pathname === "/mcp");
-    expect(registrations.map((request) => requireRecord(request.body, "registration").name)).toEqual(["openwork-cloud"]);
+    expect(registrations.map((request) => requireRecord(request.body, "registration").name)).toEqual(["tgwork-cloud"]);
     expect(mock.requests.some((request) => request.pathname === "/mcp/openwork-connect-stale/disconnect")).toBe(true);
   });
 
@@ -426,7 +426,7 @@ describe("openwork-cloud MCP strict reconcile", () => {
     expect(inspectEngineMcpRegistration(
       openwork.config,
       openwork.config.workspaces[0]!,
-      "openwork-cloud",
+      "tgwork-cloud",
       cloudConfigForOpenwork(openwork.base),
     )).toBe("connected");
 
@@ -461,7 +461,7 @@ describe("openwork-cloud MCP strict reconcile", () => {
     expect(firstFailure(mismatch).code).toBe("cloud_token_org_mismatch");
     expect(firstFailure(mismatch).stage).toBe("desired_config");
 
-    expect((await readRuntimeOpencodeConfig(openwork.config, "ws_1")).mcp?.["openwork-cloud"]).toBeUndefined();
+    expect((await readRuntimeOpencodeConfig(openwork.config, "ws_1")).mcp?.["tgwork-cloud"]).toBeUndefined();
     expect(mock.requests.some((request) => request.method === "POST" && request.pathname === "/mcp")).toBe(false);
   });
 
@@ -479,8 +479,8 @@ describe("openwork-cloud MCP strict reconcile", () => {
     });
     expect(response.status).toBe(403);
 
-    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["openwork-cloud"]).toBeUndefined();
-    expect((await readRuntimeOpencodeConfig(openwork.config, "ws_1")).mcp?.["openwork-cloud"]).toBeUndefined();
+    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["tgwork-cloud"]).toBeUndefined();
+    expect((await readRuntimeOpencodeConfig(openwork.config, "ws_1")).mcp?.["tgwork-cloud"]).toBeUndefined();
     expect(mock.requests.some((request) => request.method === "POST" && request.pathname === "/mcp")).toBe(false);
   });
 
@@ -494,7 +494,7 @@ describe("openwork-cloud MCP strict reconcile", () => {
       config: { ...CLOUD_CONFIG, url },
     }));
     expect(body.phase).toBe("ready");
-    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["openwork-cloud"]?.url).toBe(url.slice(0, -1));
+    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["tgwork-cloud"]?.url).toBe(url.slice(0, -1));
   });
 
   test("GET health reports persisted malformed desired config even when the engine looks live", async () => {
@@ -503,7 +503,7 @@ describe("openwork-cloud MCP strict reconcile", () => {
     const openwork = await startOpenwork([workspace("ws_1", root, `http://127.0.0.1:${mock.server.port}`)]);
     await writeRuntimeOpencodeConfig(openwork.config, "ws_1", (current) => ({
       ...current,
-      mcp: { "openwork-cloud": { ...CLOUD_CONFIG, url: "https://api.openworklabs.com/mcp" } },
+      mcp: { "tgwork-cloud": { ...CLOUD_CONFIG, url: "https://api.openworklabs.com/mcp" } },
     }));
 
     const body = await responseRecord(await getHealth(openwork.base));
@@ -518,7 +518,7 @@ describe("openwork-cloud MCP strict reconcile", () => {
     const openwork = await startOpenwork([workspace("ws_1", root, `http://127.0.0.1:${mock.server.port}`)]);
     await writeRuntimeOpencodeConfig(openwork.config, "ws_1", (current) => ({
       ...current,
-      mcp: { "openwork-cloud": cloudConfigForOpenwork(openwork.base) },
+      mcp: { "tgwork-cloud": cloudConfigForOpenwork(openwork.base) },
     }));
 
     const body = await responseRecord(await getHealth(openwork.base));
@@ -533,7 +533,7 @@ describe("openwork-cloud MCP strict reconcile", () => {
     const openwork = await startOpenwork([workspace("ws_1", root, `http://127.0.0.1:${mock.server.port}`)]);
     await writeRuntimeOpencodeConfig(openwork.config, "ws_1", (current) => ({
       ...current,
-      mcp: { "openwork-cloud": cloudConfigForOpenwork(openwork.base) },
+      mcp: { "tgwork-cloud": cloudConfigForOpenwork(openwork.base) },
     }));
 
     const defaultBody = await responseRecord(await getHealth(openwork.base));
@@ -546,23 +546,23 @@ describe("openwork-cloud MCP strict reconcile", () => {
   });
 
   test("health probe timeout is bounded", async () => {
-    const previousTimeout = process.env.OPENWORK_CLOUD_MCP_PROBE_TIMEOUT_MS;
-    process.env.OPENWORK_CLOUD_MCP_PROBE_TIMEOUT_MS = "25";
+    const previousTimeout = process.env.TGWORK_CLOUD_MCP_PROBE_TIMEOUT_MS;
+    process.env.TGWORK_CLOUD_MCP_PROBE_TIMEOUT_MS = "25";
     try {
       const root = await createRoot();
       const mock = startMockOpencode({ initialConnected: true, delayMcpStatusMs: 100 });
       const openwork = await startOpenwork([workspace("ws_1", root, `http://127.0.0.1:${mock.server.port}`)]);
       await writeRuntimeOpencodeConfig(openwork.config, "ws_1", (current) => ({
         ...current,
-        mcp: { "openwork-cloud": cloudConfigForOpenwork(openwork.base) },
+        mcp: { "tgwork-cloud": cloudConfigForOpenwork(openwork.base) },
       }));
 
       const body = await responseRecord(await getHealth(openwork.base));
       expect(body.usable).toBe(false);
       expect(firstFailure(body).code).toBe("opencode_engine_unreachable");
     } finally {
-      if (previousTimeout === undefined) delete process.env.OPENWORK_CLOUD_MCP_PROBE_TIMEOUT_MS;
-      else process.env.OPENWORK_CLOUD_MCP_PROBE_TIMEOUT_MS = previousTimeout;
+      if (previousTimeout === undefined) delete process.env.TGWORK_CLOUD_MCP_PROBE_TIMEOUT_MS;
+      else process.env.TGWORK_CLOUD_MCP_PROBE_TIMEOUT_MS = previousTimeout;
     }
   });
 
@@ -575,12 +575,12 @@ describe("openwork-cloud MCP strict reconcile", () => {
     expect(response.status).toBe(200);
     expect(firstFailure(body).code).toBe("opencode_mcp_sync_failed");
     expect(delivery(body).appliedRevision).toBeNull();
-    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["openwork-cloud"]?.url).toBe(cloudConfigForOpenwork(openwork.base).url);
+    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["tgwork-cloud"]?.url).toBe(cloudConfigForOpenwork(openwork.base).url);
   });
 
   test("uses the exact secondary workspace directory", async () => {
-    const rootA = await createRoot("openwork-cloud-primary-");
-    const rootB = await createRoot("openwork-cloud-secondary-");
+    const rootA = await createRoot("tgwork-cloud-primary-");
+    const rootB = await createRoot("tgwork-cloud-secondary-");
     const mock = startMockOpencode();
     const baseUrl = `http://127.0.0.1:${mock.server.port}`;
     const openwork = await startOpenwork([
@@ -601,8 +601,8 @@ describe("openwork-cloud MCP strict reconcile", () => {
   });
 
   test("removes global desired state and disconnects every workspace directory", async () => {
-    const rootA = await createRoot("openwork-cloud-remove-a-");
-    const rootB = await createRoot("openwork-cloud-remove-b-");
+    const rootA = await createRoot("tgwork-cloud-remove-a-");
+    const rootB = await createRoot("tgwork-cloud-remove-b-");
     const mock = startMockOpencode();
     const baseUrl = `http://127.0.0.1:${mock.server.port}`;
     const openwork = await startOpenwork([
@@ -611,16 +611,16 @@ describe("openwork-cloud MCP strict reconcile", () => {
     ]);
     expect((await responseRecord(await reconcile(openwork.base))).phase).toBe("ready");
     const disconnectsBeforeRemoval = mock.requests
-      .filter((request) => request.pathname === "/mcp/openwork-cloud/disconnect").length;
+      .filter((request) => request.pathname === "/mcp/tgwork-cloud/disconnect").length;
 
-    const removed = await fetch(`${openwork.base}/workspace/ws_1/mcp/openwork-cloud`, {
+    const removed = await fetch(`${openwork.base}/workspace/ws_1/mcp/tgwork-cloud`, {
       method: "DELETE",
       headers: headers(),
     });
     expect(removed.status).toBe(200);
-    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["openwork-cloud"]).toBeUndefined();
+    expect((await readGlobalRuntimeOpencodeConfig(openwork.config)).mcp?.["tgwork-cloud"]).toBeUndefined();
     const disconnectDirectories = mock.requests
-      .filter((request) => request.pathname === "/mcp/openwork-cloud/disconnect")
+      .filter((request) => request.pathname === "/mcp/tgwork-cloud/disconnect")
       .slice(disconnectsBeforeRemoval)
       .map((request) => new URLSearchParams(request.search).get("directory"))
       .sort();
@@ -759,7 +759,7 @@ describe("openwork-cloud MCP strict reconcile", () => {
 
   test("health detects project tool denies while generic MCP add remains best-effort", async () => {
     const root = await createRoot();
-    await writeFile(join(root, "opencode.jsonc"), JSON.stringify({ tools: { deny: ["openwork-cloud_*"] } }), "utf8");
+    await writeFile(join(root, "opencode.jsonc"), JSON.stringify({ tools: { deny: ["tgwork-cloud_*"] } }), "utf8");
     const mock = startMockOpencode();
     const openwork = await startOpenwork([workspace("ws_1", root, `http://127.0.0.1:${mock.server.port}`)]);
 
@@ -779,14 +779,14 @@ describe("openwork-cloud MCP strict reconcile", () => {
 });
 
 async function engineRefresh(base: string, workspaceId = "ws_1", body?: Record<string, unknown>): Promise<Response> {
-  return fetch(`${base}/workspace/${workspaceId}/mcp/openwork-cloud/engine-refresh`, {
+  return fetch(`${base}/workspace/${workspaceId}/mcp/tgwork-cloud/engine-refresh`, {
     method: "POST",
     headers: headers(),
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
 }
 
-describe("openwork-cloud MCP engine refresh", () => {
+describe("tgwork-cloud MCP engine refresh", () => {
   test("disconnects the engine client, re-registers, and returns ordered refresh steps with probed health", async () => {
     const root = await createRoot();
     const mock = startMockOpencode({ initialConnected: true });
@@ -813,7 +813,7 @@ describe("openwork-cloud MCP engine refresh", () => {
     expect(health.usable).toBe(true);
     expect(delivery(health).state).toBe("ready");
 
-    const disconnects = mock.requests.filter((request) => request.pathname === "/mcp/openwork-cloud/disconnect");
+    const disconnects = mock.requests.filter((request) => request.pathname === "/mcp/tgwork-cloud/disconnect");
     expect(disconnects).toHaveLength(1);
     expectDirectoryQuery(disconnects[0]?.search, root);
     const registersAfterRefresh = mock.requests.filter((request) => request.pathname === "/mcp" && request.method === "POST").length;
@@ -834,7 +834,7 @@ describe("openwork-cloud MCP engine refresh", () => {
     expect(refresh.reason).toBe("desired_missing");
     expect(requireArray(refresh.steps, "refresh.steps")).toHaveLength(0);
     expect(requireRecord(body.health, "health").usable).toBe(false);
-    expect(mock.requests.filter((request) => request.pathname === "/mcp/openwork-cloud/disconnect")).toHaveLength(0);
+    expect(mock.requests.filter((request) => request.pathname === "/mcp/tgwork-cloud/disconnect")).toHaveLength(0);
   });
 
   test("rejects malformed JSON on engine refresh instead of silently ignoring it", async () => {
@@ -842,14 +842,14 @@ describe("openwork-cloud MCP engine refresh", () => {
     const mock = startMockOpencode({ initialConnected: true });
     const openwork = await startOpenwork([workspace("ws_1", root, `http://127.0.0.1:${mock.server.port}`)]);
 
-    const response = await fetch(`${openwork.base}/workspace/ws_1/mcp/openwork-cloud/engine-refresh`, {
+    const response = await fetch(`${openwork.base}/workspace/ws_1/mcp/tgwork-cloud/engine-refresh`, {
       method: "POST",
       headers: headers(),
       body: "not-json",
     });
     expect(response.status).toBe(400);
     expect((await responseRecord(response)).code).toBe("invalid_json");
-    expect(mock.requests.filter((request) => request.pathname === "/mcp/openwork-cloud/disconnect")).toHaveLength(0);
+    expect(mock.requests.filter((request) => request.pathname === "/mcp/tgwork-cloud/disconnect")).toHaveLength(0);
   });
 
   test("richer engine cert/TLS error strings stay classified as connection failures, not token problems", async () => {
@@ -869,7 +869,7 @@ describe("openwork-cloud MCP engine refresh", () => {
 
   test("token-expired engine errors keep their token classification", async () => {
     const root = await createRoot();
-    const mock = startMockOpencode({ cloudFailedError: "openwork-cloud bearer token expired" });
+    const mock = startMockOpencode({ cloudFailedError: "tgwork-cloud bearer token expired" });
     const openwork = await startOpenwork([workspace("ws_1", root, `http://127.0.0.1:${mock.server.port}`)]);
 
     const body = await responseRecord(await reconcile(openwork.base));

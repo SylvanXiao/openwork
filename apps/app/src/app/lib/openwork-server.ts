@@ -768,7 +768,7 @@ export type OpenworkCloudMcpHealth = {
   };
   desired: {
     present: boolean;
-    name: "openwork-cloud";
+    name: "tgwork-cloud";
     revision: string | null;
     config: Record<string, unknown> | null;
     token: {
@@ -832,7 +832,7 @@ export type OpenworkCloudMcpHealth = {
 
 export type OpenworkCloudMcpReconcilePayload = {
   workspaceId: string;
-  name: "openwork-cloud";
+  name: "tgwork-cloud";
   config: Record<string, unknown>;
   /** Desktop-private credential; the local server must never project it into OpenCode. */
   appHostAuthorization?: string;
@@ -2097,14 +2097,14 @@ export function createOpenworkServerClient(options: { baseUrl: string; token?: s
       const suffix = query.size ? `?${query.toString()}` : "";
       return requestJson<OpenworkCloudMcpHealth>(
         baseUrl,
-        `/workspace/${encodeURIComponent(workspaceId)}/mcp/openwork-cloud/health${suffix}`,
+        `/workspace/${encodeURIComponent(workspaceId)}/mcp/tgwork-cloud/health${suffix}`,
         { token, hostToken, timeoutMs: options?.probe ? timeouts.cloudMcpProbeHealth : timeouts.cloudMcpHealth },
       );
     },
     reconcileOpenworkCloudMcp: (workspaceId: string, payload: OpenworkCloudMcpReconcilePayload) =>
       requestJson<OpenworkCloudMcpHealth>(
         baseUrl,
-        `/workspace/${encodeURIComponent(workspaceId)}/mcp/openwork-cloud/reconcile`,
+        `/workspace/${encodeURIComponent(workspaceId)}/mcp/tgwork-cloud/reconcile`,
         {
           token,
           hostToken,
@@ -2119,7 +2119,7 @@ export function createOpenworkServerClient(options: { baseUrl: string; token?: s
     ) =>
       requestJson<OpenworkCloudMcpEngineRefreshResult>(
         baseUrl,
-        `/workspace/${encodeURIComponent(workspaceId)}/mcp/openwork-cloud/engine-refresh`,
+        `/workspace/${encodeURIComponent(workspaceId)}/mcp/tgwork-cloud/engine-refresh`,
         {
           token,
           hostToken,

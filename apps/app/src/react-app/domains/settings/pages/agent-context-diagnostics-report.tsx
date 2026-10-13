@@ -476,9 +476,9 @@ function CloudCatalog(props: {
 }) {
   const observed = props.report.observedCloudToolIds;
   const cloudMcp = props.report.mcps.find(
-    (mcp) => mcp.source === "config.remote" && mcp.name === "openwork-cloud" && mcp.path === "/mcp/agent",
+    (mcp) => mcp.source === "config.remote" && mcp.name === "tgwork-cloud" && mcp.path === "/mcp/agent",
   ) ?? props.report.mcps.find(
-    (mcp) => mcp.name === "openwork-cloud" && mcp.path === "/mcp/agent",
+    (mcp) => mcp.name === "tgwork-cloud" && mcp.path === "/mcp/agent",
   );
   const observedTerminalPath = cloudMcp?.path === "/mcp/agent" ? cloudMcp.path : null;
   return (

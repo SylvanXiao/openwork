@@ -27,7 +27,7 @@ export function orgMcpConnectionToComposerEntry(connection: DenExternalMcpConnec
     id: `org-mcp:${connection.id}`,
     name: connection.name,
     config: { type: "remote", url: connection.url },
-    origin: "openwork-connect",
+    origin: "tgwork-connect",
     marketplaceName: provider ?? "TGWork Cloud",
     orgMcpConnectionId: connection.id,
   };

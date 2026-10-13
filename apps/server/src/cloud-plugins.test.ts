@@ -29,7 +29,7 @@ function serverConfig(root: string): ServerConfig {
 }
 
 async function withWorkspace(fn: (input: { root: string; config: ServerConfig }) => Promise<void>) {
-  const root = await mkdtemp(join(tmpdir(), "openwork-cloud-plugin-"));
+  const root = await mkdtemp(join(tmpdir(), "tgwork-cloud-plugin-"));
   const previousDb = process.env.OPENWORK_RUNTIME_DB;
   process.env.OPENWORK_RUNTIME_DB = join(root, "runtime.sqlite");
   try {

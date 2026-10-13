@@ -35,7 +35,7 @@ export type ConnectPluginFile = {
   versionId: string | null;
   updatedAt: string | null;
   skillName?: string;
-  skillOrigin?: "openwork-connect";
+  skillOrigin?: "tgwork-connect";
   marketplaceName?: string;
   pluginName?: string;
   connectCapabilityName?: string;
@@ -172,7 +172,7 @@ function toSkill(
     description: object.description ?? undefined,
     content: object.latestVersion?.rawSourceText ?? undefined,
     trigger: skillTrigger(object),
-    origin: "openwork-connect",
+    origin: "tgwork-connect",
     marketplaceName: marketplace.name,
     pluginName: plugin.name,
     connectCapabilityName: marketplaceCapabilityName(plugin.id, object.id),
@@ -195,7 +195,7 @@ function toMcpEntries(
         id,
         name: displayName,
         config: { type: "remote", url: spec.url },
-        origin: "openwork-connect",
+        origin: "tgwork-connect",
         marketplaceName: marketplace.name,
         pluginName: plugin.name,
         connectCapabilityName: marketplaceCapabilityName(plugin.id, object.id),
@@ -320,7 +320,7 @@ export async function listAssignedConnectCapabilities(input: {
           versionId: object.latestVersion?.id ?? null,
           updatedAt: object.updatedAt,
           skillName: skill.name,
-          skillOrigin: "openwork-connect",
+          skillOrigin: "tgwork-connect",
           marketplaceName: skill.marketplaceName,
           pluginName: skill.pluginName,
           connectCapabilityName: skill.connectCapabilityName,

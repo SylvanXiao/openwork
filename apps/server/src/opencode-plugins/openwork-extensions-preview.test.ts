@@ -411,7 +411,7 @@ describe("OpenWorkExtensionsPreview session tools", () => {
           status: async () => ({
             data: {
               notion: { status: "connected" },
-              "openwork-cloud": { status: "connected" },
+              "tgwork-cloud": { status: "connected" },
             },
           }),
         },
@@ -459,7 +459,7 @@ describe("OpenWorkExtensionsPreview session tools", () => {
         .find((affordance) => affordance.id === "connect.capability.execute")?.executor,
     ).toEqual({
       kind: "tool",
-      tool: "openwork-cloud_execute_capability",
+      tool: "tgwork-cloud_execute_capability",
     });
   });
 
@@ -844,7 +844,7 @@ describe("OpenWorkExtensionsPreview session tools", () => {
     startFakeOpenWorkServer();
     const requests: unknown[] = [];
     const mcp = {
-      result: { data: { "openwork-cloud": { status: "connected" } } },
+      result: { data: { "tgwork-cloud": { status: "connected" } } },
       async status(request: unknown) {
         requests.push(request);
         return this.result;
@@ -865,7 +865,7 @@ describe("OpenWorkExtensionsPreview session tools", () => {
     startFakeOpenWorkServer();
     const requests: unknown[] = [];
     const mcp = {
-      result: { data: { "openwork-cloud": { status: "failed" } } },
+      result: { data: { "tgwork-cloud": { status: "failed" } } },
       async status(request: unknown) {
         requests.push(request);
         return this.result;
@@ -893,7 +893,7 @@ describe("OpenWorkExtensionsPreview session tools", () => {
     startFakeOpenWorkServer();
     const mcp = {
       async status() {
-        return { data: { "openwork-cloud": { status: "connected" } } };
+        return { data: { "tgwork-cloud": { status: "connected" } } };
       },
     };
     const plugin = await OpenWorkExtensionsPreview({ client: { mcp }, directory: "/tmp/archive" });

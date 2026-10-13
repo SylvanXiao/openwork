@@ -1,6 +1,6 @@
 import type { ModelRef, SuggestedPlugin } from "./types";
 import { t } from "../i18n";
-import { getDenMcpUrl } from "./lib/den";
+import { getDenMcpUrl, isDenCloudSigninConfigured } from "./lib/den";
 import { canonicalMcpServerName } from "./mcp";
 import {
   BUILT_IN_OPENWORK_EXTENSION_MANIFESTS,
@@ -43,7 +43,7 @@ export type McpDirectoryInfo = {
   /** Route OAuth through the local TGWork gateway instead of delegating it to OpenCode. */
   managedOAuth?: boolean;
   /** Identifies MCP entries owned by TGWork Connect instead of workspace configuration. */
-  managedBy?: "openwork-connect";
+  managedBy?: "tgwork-connect";
   oauthConfig?: {
     clientId?: string;
     clientSecret?: string;
@@ -155,10 +155,15 @@ export const MCP_QUICK_CONNECT: McpDirectoryInfo[] = [
     iconSrc: "/ext-context7.svg",
   },
   {
-    get name() { return t("mcp.quick_connect_openwork_cloud_title"); },
-    serverName: "openwork-cloud",
-    get description() { return t("mcp.quick_connect_openwork_cloud_desc"); },
+    get name() { return t("mcp.quick_connect_tgwork_cloud_title"); },
+    serverName: "tgwork-cloud",
+    get description() { return t("mcp.quick_connect_tgwork_cloud_desc"); },
     get url() {
+      // TGWork Connect is only reachable when a cloud control plane is
+      // actually configured. Without one there is no endpoint to point at:
+      // resolving getDenMcpUrl() would fall back to a hosted upstream that
+      // this build has no relationship with, so leave it unset instead.
+      if (!isDenCloudSigninConfigured()) return undefined;
       // The desktop app connects to the minimal, harness-facing surface
       // (/mcp/agent: search_capabilities + execute_capability only), not the
       // full catalog at bare /mcp. getDenMcpUrl heals stale web-app origins;
@@ -167,12 +172,12 @@ export const MCP_QUICK_CONNECT: McpDirectoryInfo[] = [
       try {
         return `${getDenMcpUrl()}/agent`;
       } catch {
-        return "https://api.app.openworklabs.com/mcp/agent";
+        return undefined;
       }
     },
     type: "remote",
     oauth: true,
-    managedBy: "openwork-connect",
+    managedBy: "tgwork-connect",
     kind: "mcp",
     iconSrc: "/openwork-mark.svg",
     // Auto-managed by the signed-in cloud reconciler (syncCloudControlMcp):

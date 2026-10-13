@@ -3,7 +3,7 @@ import { ApiError } from "./errors.js";
 const SKILL_NAME_REGEX = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const COMMAND_NAME_REGEX = /^[A-Za-z0-9_-]+$/;
 const MCP_NAME_REGEX = /^[A-Za-z0-9_-]+$/;
-const RESERVED_USER_MCP_NAMES = new Set(["openwork-cloud"]);
+const RESERVED_USER_MCP_NAMES = new Set(["tgwork-cloud"]);
 const RESERVED_USER_MCP_PREFIXES = ["openwork-connect-", "openwork-direct-"];
 
 export function validateSkillName(name: string): void {

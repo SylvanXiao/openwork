@@ -17,7 +17,7 @@ const receipt = { ok: true, draftId: "draft_1", draftUrl: "https://mail.google.c
 
 function invocation(body: unknown = draft, connectionId = "emc_selected") {
   return {
-    tool: "openwork-cloud_execute_capability",
+    tool: "tgwork-cloud_execute_capability",
     sessionID: "ses_current",
     callID: "call_current",
     args: { name: `native:${connectionId}:postCapabilitiesGoogleWorkspaceGmailDrafts`, body },
@@ -39,7 +39,7 @@ for (const connectionId of ["emc_selected", "google-workspace"]) {
       const output: Record<string, unknown> = { ...pending(), structuredContent: marker, output: JSON.stringify(marker) };
       await fulfill(invocation(body, connectionId), output);
       expect(requests).toEqual([{
-        extensionId: "openwork-cloud-uploads",
+        extensionId: "tgwork-cloud-uploads",
         action: "gmail_create_draft_with_attachments",
         args: {
           to: draft.to, cc: draft.cc, bcc: draft.bcc, subject: draft.subject,
@@ -63,7 +63,7 @@ test("only the managed execute tool and original native Gmail capability can ful
   const inputs = [
     { ...invocation(), tool: "openwork_cloud_execute_capability" },
     { ...invocation(), tool: "external_execute_capability" },
-    { ...invocation(), tool: "openwork-cloud_execute_capability_script" },
+    { ...invocation(), tool: "tgwork-cloud_execute_capability_script" },
     { ...invocation(), args: { name: "mcp:emc_selected:postCapabilitiesGoogleWorkspaceGmailDrafts", body: draft } },
     { ...invocation(), args: { name: "native:emc_selected:deleteDraft", body: draft } },
     invocation(draft, "emc_selected:spoof"),
@@ -272,7 +272,7 @@ test("pinned loader options retain the authenticated default host transport", as
       expect(request.headers.get("authorization")).toBe("Bearer fixture-host-token");
       const body: unknown = await request.json();
       expect(body).toMatchObject({
-        extensionId: "openwork-cloud-uploads", action: "gmail_create_draft_with_attachments",
+        extensionId: "tgwork-cloud-uploads", action: "gmail_create_draft_with_attachments",
         args: { paths: ["notes.txt"], connectionId: "emc_selected" },
         context: { directory: "/workspace", sessionId: "ses_current", callId: "call_current" },
       });

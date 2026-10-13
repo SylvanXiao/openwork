@@ -92,7 +92,7 @@ generation, and local managed gateway connection/credential/registration
 revisions. Named-entry generations are process-local, like the leases, and track
 host runtime writes including removal/restoration. Unrelated provider, plugin,
 and other MCP edits do not invalidate a lease. Private Connect hosts track the
-`openwork-cloud` runtime entry as well as their private authorization generation.
+`tgwork-cloud` runtime entry as well as their private authorization generation.
 File-backed configuration is compared by its
 observed values; edits restored between observations are not observable history.
 Provider-side account changes that leave all host-visible credentials and

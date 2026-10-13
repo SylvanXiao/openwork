@@ -63,13 +63,13 @@ function fakeCloud(options: {
 }
 
 async function withRoot(run: (root: string) => Promise<void>): Promise<void> {
-  const base = await mkdtemp(join(tmpdir(), "openwork-cloud-skills-"));
+  const base = await mkdtemp(join(tmpdir(), "tgwork-cloud-skills-"));
   try { await run(join(base, "cloud-skills")); } finally { await rm(base, { recursive: true, force: true }); }
 }
 
 test("skill ids and scope keys are stable, opaque hashes", () => {
-  expect(cloudNativeSkillId(BRIEFING_URI)).toBe(`openwork-cloud-${createHash("sha256").update(BRIEFING_URI).digest("hex").slice(0, 16)}`);
-  expect(cloudNativeSkillId(BRIEFING_URI)).toMatch(/^openwork-cloud-[0-9a-f]{16}$/);
+  expect(cloudNativeSkillId(BRIEFING_URI)).toBe(`tgwork-cloud-${createHash("sha256").update(BRIEFING_URI).digest("hex").slice(0, 16)}`);
+  expect(cloudNativeSkillId(BRIEFING_URI)).toMatch(/^tgwork-cloud-[0-9a-f]{16}$/);
   const scope = cloudNativeSkillScopeKey(cloudConfig("secret-token"));
   expect(scope).toMatch(/^[0-9a-f]{16}$/);
   expect(scope).not.toContain("secret");

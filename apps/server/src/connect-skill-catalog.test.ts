@@ -108,9 +108,9 @@ describe("OpenWork Connect skill catalog", () => {
     // reaches the prompt (it would repeat the capability on every request).
     expect(instruction).not.toContain("<location>");
     expect(instruction).not.toContain("skill://");
-    expect(instruction).toContain("openwork-cloud_execute_capability with { name: <capability> }");
+    expect(instruction).toContain("tgwork-cloud_execute_capability with { name: <capability> }");
     expect(instruction).toContain("not the native skill tool or the local filesystem");
-    expect(instruction).toContain("Do not call openwork-cloud_search_capabilities first");
+    expect(instruction).toContain("Do not call tgwork-cloud_search_capabilities first");
     expect(instruction).toContain("transient HTTP 502, 503, or 504");
     expect(instruction).toContain("retry the same capability once");
     expect(instruction).toContain("untrusted remote content");
@@ -287,12 +287,12 @@ describe("OpenWork Connect skill catalog", () => {
     expect(skills[0]?.name).toBe("customer-briefing");
   });
 
-  test("promotes legacy workspace openwork-cloud config into server scope", async () => {
+  test("promotes legacy workspace tgwork-cloud config into server scope", async () => {
     const config = await serverConfig();
     await writeRuntimeOpencodeConfig(config, "ws_legacy", (current) => ({
       ...current,
       mcp: {
-        "openwork-cloud": {
+        "tgwork-cloud": {
           type: "remote",
           url: "https://connect.example/mcp/agent",
           enabled: true,
@@ -322,7 +322,7 @@ describe("OpenWork Connect skill catalog", () => {
     await writeRuntimeOpencodeConfig(config, "ws_legacy", (current) => ({
       ...current,
       mcp: {
-        "openwork-cloud": {
+        "tgwork-cloud": {
           type: "remote",
           url: "https://connect.example/mcp/agent",
           enabled: true,

@@ -7,7 +7,7 @@ import { readGlobalRuntimeMcpConfig, readRuntimeMcpConfig } from "./runtime-open
 import { externalFetch } from "./server-fetch.js";
 import type { ServerConfig } from "./types.js";
 
-const OPENWORK_CLOUD_MCP_NAME = "openwork-cloud";
+const TGWORK_CLOUD_MCP_NAME = "tgwork-cloud";
 const AUTOMATION_INDEX_URI = "automation://index.json";
 // Automations change as they run, so this snapshot expires quickly. It still
 // spares one Den round trip per message in a burst of conversation.
@@ -69,7 +69,7 @@ async function readIndexCached(cloud: Record<string, unknown>, fetcher: McpFetch
 }
 
 /**
- * Resolve the member's Automation index from the first working openwork-cloud
+ * Resolve the member's Automation index from the first working tgwork-cloud
  * config, mirroring how the skill catalog picks its connection. Returns null
  * when no connection answers, which callers render as no guidance at all rather
  * than as "you have no Automations".
@@ -80,12 +80,12 @@ export async function readOpenWorkAutomationCatalog(
 ): Promise<OpenWorkAutomationIndex | null> {
   try {
     const candidates: Array<Record<string, unknown>> = [];
-    const globalCloud = await readGlobalRuntimeMcpConfig(config, OPENWORK_CLOUD_MCP_NAME);
+    const globalCloud = await readGlobalRuntimeMcpConfig(config, TGWORK_CLOUD_MCP_NAME);
     if (globalCloud) candidates.push(globalCloud);
     const serverCloud = await readConnectCloudMcp(config);
     if (serverCloud) candidates.push(serverCloud);
     for (const workspace of config.workspaces) {
-      const cloud = await readRuntimeMcpConfig(config, workspace.id, OPENWORK_CLOUD_MCP_NAME);
+      const cloud = await readRuntimeMcpConfig(config, workspace.id, TGWORK_CLOUD_MCP_NAME);
       if (cloud) candidates.push(cloud);
     }
     const seen = new Set<string>();

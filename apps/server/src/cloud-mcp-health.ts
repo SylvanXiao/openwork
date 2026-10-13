@@ -20,10 +20,10 @@ import { externalFetch } from "./server-fetch.js";
 import type { ServerConfig, WorkspaceInfo } from "./types.js";
 import { validateMcpConfig } from "./validators.js";
 
-export const OPENWORK_CLOUD_MCP_NAME = "openwork-cloud";
+export const TGWORK_CLOUD_MCP_NAME = "tgwork-cloud";
 export const OPENWORK_CLOUD_EXPECTED_TOOLS = [
-  "openwork-cloud_search_capabilities",
-  "openwork-cloud_execute_capability",
+  "tgwork-cloud_search_capabilities",
+  "tgwork-cloud_execute_capability",
 ] satisfies string[];
 const OPENWORK_CLOUD_DIRECT_TOOL_NAMES = [
   "search_capabilities",
@@ -36,7 +36,7 @@ export const OPENWORK_CLOUD_PLUGIN_CANARIES = [
 
 const POLL_DELAYS_MS = [0, 250, 750, 1500, 3000];
 function engineProbeTimeoutMs(): number {
-  return Number(process.env.OPENWORK_CLOUD_MCP_PROBE_TIMEOUT_MS ?? "") || 5_000;
+  return Number(process.env.TGWORK_CLOUD_MCP_PROBE_TIMEOUT_MS ?? "") || 5_000;
 }
 
 type WorkspaceOpencodeClient = ReturnType<typeof createOpencodeClient>;
@@ -233,7 +233,7 @@ export type CloudMcpHealth = {
   };
   desired: {
     present: boolean;
-    name: typeof OPENWORK_CLOUD_MCP_NAME;
+    name: typeof TGWORK_CLOUD_MCP_NAME;
     revision: string | null;
     config: RedactedCloudMcpConfig | null;
     token: CloudMcpTokenHealth;
@@ -373,7 +373,7 @@ export type CloudMcpEngineServerStatus = {
 /**
  * The engine's own view of every MCP server it tracks, read over the OpenCode
  * SDK. Support triage needs the siblings: "everything failed" points at the
- * engine host's network path, "only openwork-cloud failed" points at the Cloud
+ * engine host's network path, "only tgwork-cloud failed" points at the Cloud
  * endpoint or token, and an absent entry means the dynamic registration was
  * lost (e.g. after an engine state rebuild) and must be re-applied.
  */
@@ -714,7 +714,7 @@ function isLoopbackHostname(hostname: string): boolean {
 }
 
 /**
- * Whether a proposed openwork-cloud endpoint may be persisted as the
+ * Whether a proposed tgwork-cloud endpoint may be persisted as the
  * account-global desired config by a collaborator-scoped client.
  *
  * The desired config is global: one write reconfigures Connect for every
@@ -771,7 +771,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Reconnect OpenWork Cloud",
-      message: "openwork-cloud must be configured as a remote MCP endpoint.",
+      message: "tgwork-cloud must be configured as a remote MCP endpoint.",
       details: { type: typeof config.type === "string" ? config.type : null },
     };
   }
@@ -782,7 +782,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Enable Agent access in Settings → Connect",
-      message: "openwork-cloud desired config is disabled.",
+      message: "tgwork-cloud desired config is disabled.",
       aliases: ["cloud_disabled"],
       details: { enabled: config.enabled ?? null },
     };
@@ -796,7 +796,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Reconnect OpenWork Cloud",
-      message: "openwork-cloud URL must be a valid http(s) endpoint at /mcp/agent.",
+      message: "tgwork-cloud URL must be a valid http(s) endpoint at /mcp/agent.",
       details: { url: typeof config.url === "string" ? sanitizeDiagnosticString(config.url) : null },
     };
   }
@@ -808,7 +808,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Reconnect OpenWork Cloud",
-      message: "openwork-cloud desired config is missing an Authorization header.",
+      message: "tgwork-cloud desired config is missing an Authorization header.",
       aliases: ["openwork_cloud_auth_required"],
     };
   }
@@ -819,7 +819,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Reconnect OpenWork Cloud",
-      message: "openwork-cloud desired config must use the minted bearer token, not OAuth.",
+      message: "tgwork-cloud desired config must use the minted bearer token, not OAuth.",
       aliases: ["openwork_cloud_auth_invalid"],
       details: { oauth: config.oauth === undefined ? "missing" : "configured" },
     };
@@ -833,7 +833,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Choose the matching organization, then Repair and test",
-      message: "openwork-cloud token organization does not match the active organization.",
+      message: "tgwork-cloud token organization does not match the active organization.",
       details: { tokenOrganizationId, activeOrganizationId },
     };
   }
@@ -846,7 +846,7 @@ function strictCloudMcpDesiredConfigProblem(config: Record<string, unknown>, met
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Reconnect OpenWork Cloud",
-      message: "openwork-cloud desired config is not a valid remote MCP config.",
+      message: "tgwork-cloud desired config is not a valid remote MCP config.",
       details: { error: error instanceof Error ? error.message : String(error) },
     };
   }
@@ -946,9 +946,9 @@ async function readPersistedDesiredConfig(
   config: ServerConfig,
   workspaceId: string,
 ): Promise<Record<string, unknown> | undefined> {
-  const globalEntry = runtimeMcpMap(await readGlobalRuntimeOpencodeConfig(config))[OPENWORK_CLOUD_MCP_NAME];
+  const globalEntry = runtimeMcpMap(await readGlobalRuntimeOpencodeConfig(config))[TGWORK_CLOUD_MCP_NAME];
   if (globalEntry) return globalEntry;
-  return runtimeMcpMap(await readRuntimeOpencodeConfig(config, workspaceId))[OPENWORK_CLOUD_MCP_NAME];
+  return runtimeMcpMap(await readRuntimeOpencodeConfig(config, workspaceId))[TGWORK_CLOUD_MCP_NAME];
 }
 
 export async function migrateOpenworkCloudMcpRuntimeConfig(
@@ -957,12 +957,12 @@ export async function migrateOpenworkCloudMcpRuntimeConfig(
   const rows = await listRuntimeOpencodeConfigRows(config);
   const globalRow = rows.find((row) => row.workspaceId === ENGINE_GLOBAL_RUNTIME_CONFIG_ID);
   const globalEntry = globalRow
-    ? runtimeMcpMap(globalRow.value)[OPENWORK_CLOUD_MCP_NAME]
+    ? runtimeMcpMap(globalRow.value)[TGWORK_CLOUD_MCP_NAME]
     : undefined;
   const legacyCandidates: Array<{ config: Record<string, unknown>; updatedAt: number; workspaceId: string }> = [];
   for (const row of rows) {
     if (row.workspaceId === ENGINE_GLOBAL_RUNTIME_CONFIG_ID) continue;
-    const entry = runtimeMcpMap(row.value)[OPENWORK_CLOUD_MCP_NAME];
+    const entry = runtimeMcpMap(row.value)[TGWORK_CLOUD_MCP_NAME];
     if (!entry || !isRecord(entry)) continue;
     const normalized = canonicalizeCloudMcpConfig(entry);
     const metadata = defaultDesiredMetadata(normalized, true);
@@ -984,19 +984,19 @@ export async function migrateOpenworkCloudMcpRuntimeConfig(
   if (!globalEntry) {
     const result = await writeGlobalRuntimeOpencodeConfig(config, (current) => ({
       ...current,
-      mcp: { ...runtimeMcpMap(current), [OPENWORK_CLOUD_MCP_NAME]: selected },
+      mcp: { ...runtimeMcpMap(current), [TGWORK_CLOUD_MCP_NAME]: selected },
     }));
     changed = result.changed;
   }
   for (const row of rows) {
     if (
       row.workspaceId === ENGINE_GLOBAL_RUNTIME_CONFIG_ID
-      || !Object.hasOwn(runtimeMcpMap(row.value), OPENWORK_CLOUD_MCP_NAME)
+      || !Object.hasOwn(runtimeMcpMap(row.value), TGWORK_CLOUD_MCP_NAME)
     ) continue;
     const result = await writeRuntimeOpencodeConfig(config, row.workspaceId, (current) => ({
       ...current,
       mcp: Object.fromEntries(Object.entries(runtimeMcpMap(current))
-        .filter(([name]) => name !== OPENWORK_CLOUD_MCP_NAME)),
+        .filter(([name]) => name !== TGWORK_CLOUD_MCP_NAME)),
     }));
     changed = result.changed || changed;
   }
@@ -1004,7 +1004,7 @@ export async function migrateOpenworkCloudMcpRuntimeConfig(
 }
 
 /**
- * Removes the `openwork-cloud` entry everywhere, together with every directly
+ * Removes the `tgwork-cloud` entry everywhere, together with every directly
  * exposed connection entry: those carry the same member credential and have no
  * meaning once the member is signed out. Returns the runtime names removed so
  * the caller can disconnect them from the engine.
@@ -1014,7 +1014,7 @@ export async function removeOpenworkCloudMcpDesiredConfig(
 ): Promise<{ changed: boolean; removedNames: string[] }> {
   const { CONNECT_DIRECT_MCP_SERVER_NAME_PREFIX } = await import("./connect-mcp-server-catalog.js");
   const ownedByCloud = (name: string) =>
-    name === OPENWORK_CLOUD_MCP_NAME || name.startsWith(CONNECT_DIRECT_MCP_SERVER_NAME_PREFIX);
+    name === TGWORK_CLOUD_MCP_NAME || name.startsWith(CONNECT_DIRECT_MCP_SERVER_NAME_PREFIX);
   let changed = false;
   const removedNames = new Set<string>();
   for (const row of await listRuntimeOpencodeConfigRows(config)) {
@@ -1048,7 +1048,7 @@ function expectedDirectToolNames(): string[] {
 }
 
 function prefixedCloudToolId(name: string): string {
-  return `${OPENWORK_CLOUD_MCP_NAME}_${name}`;
+  return `${TGWORK_CLOUD_MCP_NAME}_${name}`;
 }
 
 function expectedCanaries(): string[] {
@@ -1147,7 +1147,7 @@ function opencodeRequestFailure(stage: CloudMcpFailureStage, path: string, respo
     stage,
     retryable: response.status >= 500,
     recommendedAction: response.status >= 500 ? "Retry after OpenCode is healthy" : "Update OpenWork",
-    message: "OpenCode request failed while checking openwork-cloud MCP readiness.",
+    message: "OpenCode request failed while checking tgwork-cloud MCP readiness.",
     aliases: stage === "provider_projection" ? ["provider_projection_unavailable"] : undefined,
     details: { path, status: response.status, error },
   });
@@ -1719,8 +1719,8 @@ function statusFailure(status: McpStatus | undefined): CloudMcpFailure {
       code: "cloud_mcp_missing",
       stage: "engine_delivery",
       retryable: true,
-      recommendedAction: "Run reconcile to register openwork-cloud with OpenCode",
-      message: "OpenCode does not report an openwork-cloud MCP status.",
+      recommendedAction: "Run reconcile to register tgwork-cloud with OpenCode",
+      message: "OpenCode does not report an tgwork-cloud MCP status.",
       aliases: ["cloud_status_missing"],
     });
   }
@@ -1729,8 +1729,8 @@ function statusFailure(status: McpStatus | undefined): CloudMcpFailure {
       code: "cloud_mcp_disabled",
       stage: "engine_delivery",
       retryable: false,
-      recommendedAction: "Enable the openwork-cloud MCP entry",
-      message: "openwork-cloud MCP is disabled.",
+      recommendedAction: "Enable the tgwork-cloud MCP entry",
+      message: "tgwork-cloud MCP is disabled.",
       aliases: ["cloud_disabled"],
     });
   }
@@ -1740,7 +1740,7 @@ function statusFailure(status: McpStatus | undefined): CloudMcpFailure {
       stage: "transport_auth",
       retryable: false,
       recommendedAction: "Reconnect OpenWork Cloud",
-      message: "openwork-cloud MCP needs authentication.",
+      message: "tgwork-cloud MCP needs authentication.",
       aliases: ["openwork_cloud_auth_required"],
     });
   }
@@ -1750,7 +1750,7 @@ function statusFailure(status: McpStatus | undefined): CloudMcpFailure {
       stage: "engine_delivery",
       retryable: false,
       recommendedAction: "Reconnect OpenWork Cloud or update OpenWork",
-      message: "openwork-cloud MCP needs OAuth client registration.",
+      message: "tgwork-cloud MCP needs OAuth client registration.",
       aliases: ["openwork_cloud_client_registration_required"],
       details: { error: status.error },
     });
@@ -1763,7 +1763,7 @@ function statusFailure(status: McpStatus | undefined): CloudMcpFailure {
     stage: "engine_delivery",
     retryable: true,
     recommendedAction: "Retry reconcile",
-    message: "openwork-cloud MCP is not connected.",
+    message: "tgwork-cloud MCP is not connected.",
     aliases: ["cloud_connection_failed"],
   });
 }
@@ -1784,22 +1784,22 @@ function inferFailedStatus(error: string): CloudMcpFailure {
     lower.includes("self signed") ||
     lower.includes("self-signed");
   if (!certTransport && lower.includes("expired")) {
-    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud", message: "openwork-cloud token is expired.", aliases: ["openwork_cloud_token_expired"], details: { error } });
+    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud", message: "tgwork-cloud token is expired.", aliases: ["openwork_cloud_token_expired"], details: { error } });
   }
   if (!certTransport && (lower.includes("missing_mcp_token") || lower.includes("missing mcp token") || lower.includes("provide a bearer token"))) {
-    return failure({ code: "missing_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Refresh OpenWork Cloud authentication", message: "openwork-cloud token is missing.", aliases: ["openwork_cloud_auth_required"], details: { error } });
+    return failure({ code: "missing_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Refresh OpenWork Cloud authentication", message: "tgwork-cloud token is missing.", aliases: ["openwork_cloud_auth_required"], details: { error } });
   }
   if (!certTransport && (lower.includes("invalid_token") || lower.includes("unauthorized") || lower.includes("401") || lower.includes("auth"))) {
-    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud", message: "openwork-cloud authentication failed.", aliases: ["openwork_cloud_auth_invalid"], details: { error } });
+    return failure({ code: "invalid_mcp_token", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud", message: "tgwork-cloud authentication failed.", aliases: ["openwork_cloud_auth_invalid"], details: { error } });
   }
   if (!certTransport && (lower.includes("invalid_grant") || lower.includes("session") || lower.includes("revoked"))) {
-    return failure({ code: "mcp_session_revoked", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud", message: "openwork-cloud session was revoked.", details: { error } });
+    return failure({ code: "mcp_session_revoked", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud", message: "tgwork-cloud session was revoked.", details: { error } });
   }
   if (lower.includes("membership") || lower.includes("member")) {
     return failure({ code: "mcp_membership_revoked", stage: "transport_auth", retryable: false, recommendedAction: "Ask an organization admin to grant access", message: "OpenWork Cloud membership is required.", aliases: ["openwork_cloud_membership_required"], details: { error } });
   }
   if (lower.includes("insufficient_scope") || lower.includes("scope")) {
-    return failure({ code: "insufficient_mcp_scope", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud with the required scopes", message: "openwork-cloud token is missing required scopes.", aliases: ["openwork_cloud_scope_missing"], details: { error } });
+    return failure({ code: "insufficient_mcp_scope", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud with the required scopes", message: "tgwork-cloud token is missing required scopes.", aliases: ["openwork_cloud_scope_missing"], details: { error } });
   }
   if (lower.includes("forbidden") || lower.includes("403") || lower.includes("policy")) {
     return failure({ code: "wrong_mcp_resource", stage: "transport_auth", retryable: false, recommendedAction: "Check organization policy and resource access", message: "OpenWork Cloud denied access to this resource.", aliases: ["openwork_cloud_resource_forbidden"], details: { error } });
@@ -1808,14 +1808,14 @@ function inferFailedStatus(error: string): CloudMcpFailure {
     return failure({ code: "wrong_mcp_resource", stage: "transport_auth", retryable: false, recommendedAction: "Reconnect OpenWork Cloud or choose an accessible organization", message: "OpenWork Cloud resource was not found.", aliases: ["openwork_cloud_resource_not_found"], details: { error } });
   }
   if (lower.includes("client registration")) {
-    return failure({ code: "opencode_mcp_sync_failed", stage: "engine_delivery", retryable: false, recommendedAction: "Reconnect OpenWork Cloud or update OpenWork", message: "openwork-cloud needs client registration.", aliases: ["openwork_cloud_client_registration_required"], details: { error } });
+    return failure({ code: "opencode_mcp_sync_failed", stage: "engine_delivery", retryable: false, recommendedAction: "Reconnect OpenWork Cloud or update OpenWork", message: "tgwork-cloud needs client registration.", aliases: ["openwork_cloud_client_registration_required"], details: { error } });
   }
   return failure({
     code: "opencode_mcp_sync_failed",
     stage: "engine_delivery",
     retryable: true,
     recommendedAction: "Retry reconcile or reconnect OpenWork Cloud",
-    message: "openwork-cloud MCP connection failed.",
+    message: "tgwork-cloud MCP connection failed.",
     aliases: ["cloud_connection_failed"],
     details: { error },
   });
@@ -1844,7 +1844,7 @@ function engineInspectionFromStatuses(statuses: Record<string, McpStatus>): Clou
     .slice(0, 50);
   return {
     checked: true,
-    cloudPresent: Boolean(statuses[OPENWORK_CLOUD_MCP_NAME]),
+    cloudPresent: Boolean(statuses[TGWORK_CLOUD_MCP_NAME]),
     serverCount: Object.keys(statuses).length,
     servers,
   };
@@ -1914,12 +1914,12 @@ async function inspectOpenworkCloud(input: {
   }
 
   const engineInspection = engineInspectionFromStatuses(statusResult.data ?? {});
-  const cloudStatus = statusResult.data?.[OPENWORK_CLOUD_MCP_NAME];
+  const cloudStatus = statusResult.data?.[TGWORK_CLOUD_MCP_NAME];
   if (cloudStatus) {
     input.refreshRegistrationFromLiveStatus?.(
       input.config,
       input.workspace,
-      OPENWORK_CLOUD_MCP_NAME,
+      TGWORK_CLOUD_MCP_NAME,
       input.desiredConfig,
       cloudStatus.status,
       "error" in cloudStatus && typeof cloudStatus.error === "string" ? cloudStatus.error : null,
@@ -2114,8 +2114,8 @@ function firstFailureFromDenies(denies: McpToolDeny[]): CloudMcpFailure | null {
     code: "cloud_tools_denied",
     stage: "prerequisites",
     retryable: false,
-    recommendedAction: "Remove project/global OpenCode tool denies for openwork-cloud tools",
-    message: "OpenCode configuration denies one or more openwork-cloud tools.",
+    recommendedAction: "Remove project/global OpenCode tool denies for tgwork-cloud tools",
+    message: "OpenCode configuration denies one or more tgwork-cloud tools.",
     details: { denies },
   });
 }
@@ -2209,7 +2209,7 @@ async function readOpenworkCloudMcpHealthInternal(
   }
   let delivery = cloudMcpDeliveryState.snapshot(input.workspace, input.directory, desired.revision);
   const toolDenies = desired.present
-    ? await diagnoseMcpToolDenies(input.workspace.path, OPENWORK_CLOUD_MCP_NAME, expectedTools())
+    ? await diagnoseMcpToolDenies(input.workspace.path, TGWORK_CLOUD_MCP_NAME, expectedTools())
     : [];
   const failures: CloudMcpFailure[] = [];
 
@@ -2219,7 +2219,7 @@ async function readOpenworkCloudMcpHealthInternal(
       stage: "desired_config",
       retryable: false,
       recommendedAction: "Connect OpenWork Cloud",
-      message: "No global openwork-cloud MCP desired config is persisted.",
+      message: "No global tgwork-cloud MCP desired config is persisted.",
       aliases: ["cloud_desired_missing"],
     }));
   }
@@ -2308,7 +2308,7 @@ async function readOpenworkCloudMcpHealthInternal(
     },
     desired: {
       present: desired.present,
-      name: OPENWORK_CLOUD_MCP_NAME,
+      name: TGWORK_CLOUD_MCP_NAME,
       revision: desired.revision,
       config: desired.redactedConfig,
       token: desired.metadata.token,
@@ -2365,7 +2365,7 @@ async function persistDesiredConfig(config: ServerConfig, desiredConfig: Record<
     ...current,
     mcp: {
       ...runtimeMcpMap(current),
-      [OPENWORK_CLOUD_MCP_NAME]: desiredConfig,
+      [TGWORK_CLOUD_MCP_NAME]: desiredConfig,
     },
   }));
   // Connect is server/account-scoped: keep a host-level copy for catalog + skill injection.
@@ -2381,7 +2381,7 @@ function registrationFailure(failures: CloudMcpRuntimeRegistrationFailure[]): Cl
     stage: "engine_delivery",
     retryable: failures.some((item) => item.status === undefined || item.status >= 500),
     recommendedAction: "Retry reconcile after OpenCode is reachable",
-    message: "Failed to dynamically register openwork-cloud with OpenCode.",
+    message: "Failed to dynamically register tgwork-cloud with OpenCode.",
     aliases: ["cloud_registration_failed"],
     details: { failures },
   });
@@ -2408,12 +2408,12 @@ async function pollConnected(input: {
       lastFailure = statusResult.failure;
       continue;
     }
-    const cloudStatus = statusResult.data?.[OPENWORK_CLOUD_MCP_NAME];
+    const cloudStatus = statusResult.data?.[TGWORK_CLOUD_MCP_NAME];
     if (cloudStatus) {
       input.refreshRegistrationFromLiveStatus?.(
         input.config,
         input.workspace,
-        OPENWORK_CLOUD_MCP_NAME,
+        TGWORK_CLOUD_MCP_NAME,
         input.desiredConfig,
         cloudStatus.status,
       );
@@ -2491,10 +2491,10 @@ export async function reconcileOpenworkCloudMcp(input: {
         const directory = workspace.workspaceType === "local" ? workspace.path : workspace.directory ?? null;
         if (!directory) return;
         await input.createWorkspaceOpencodeClient(input.config, workspace).mcp.disconnect({
-          name: OPENWORK_CLOUD_MCP_NAME,
+          name: TGWORK_CLOUD_MCP_NAME,
           ...locationParams(directory),
         }).catch(() => undefined);
-        await input.registerRuntimeMcp(input.config, workspace, [OPENWORK_CLOUD_MCP_NAME], { throwOnFailure: false })
+        await input.registerRuntimeMcp(input.config, workspace, [TGWORK_CLOUD_MCP_NAME], { throwOnFailure: false })
           .catch(() => undefined);
       }));
   }
@@ -2544,7 +2544,7 @@ export async function reconcileOpenworkCloudMcp(input: {
   }
 
   cloudMcpDeliveryState.markRegistering(input.workspace, input.directory, desiredRevision);
-  const registration = await input.registerRuntimeMcp(input.config, input.workspace, [OPENWORK_CLOUD_MCP_NAME], { throwOnFailure: false });
+  const registration = await input.registerRuntimeMcp(input.config, input.workspace, [TGWORK_CLOUD_MCP_NAME], { throwOnFailure: false });
   if (registration.failures.length > 0) {
     const registrationError = registrationFailure(registration.failures);
     cloudMcpDeliveryState.markFailed(input.workspace, input.directory, desiredRevision, registrationError);
@@ -2674,7 +2674,7 @@ export async function refreshOpenworkCloudMcpEngine(input: {
   try {
     const opencode = input.createWorkspaceOpencodeClient(input.config, input.workspace);
     const result = await withEngineProbeTimeout(() => opencode.mcp.disconnect({
-      name: OPENWORK_CLOUD_MCP_NAME,
+      name: TGWORK_CLOUD_MCP_NAME,
       ...locationParams(input.directory),
     }));
     steps.push({

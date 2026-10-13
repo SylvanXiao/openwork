@@ -56,7 +56,7 @@ describe("Connect state inspection", () => {
       const sqlite = new Database(process.env.OPENWORK_RUNTIME_DB, { create: true });
       sqlite.run("CREATE TABLE runtime_opencode_configs (workspace_id TEXT PRIMARY KEY NOT NULL, config_json TEXT NOT NULL, updated_at INTEGER NOT NULL)");
       sqlite.query("INSERT INTO runtime_opencode_configs (workspace_id, config_json, updated_at) VALUES (?, ?, ?)")
-        .run(ENGINE_GLOBAL_RUNTIME_CONFIG_ID, JSON.stringify({ mcp: { "openwork-cloud": { type: "remote" } } }), 124);
+        .run(ENGINE_GLOBAL_RUNTIME_CONFIG_ID, JSON.stringify({ mcp: { "tgwork-cloud": { type: "remote" } } }), 124);
       sqlite.close();
       expect(await inspectConnectSnapshot(config)).toMatchObject({
         snapshot: { cloudMcpPresent: true },
@@ -176,7 +176,7 @@ describe("Connect state inspection", () => {
       sqlite.query("INSERT INTO runtime_opencode_configs (workspace_id, config_json, updated_at) VALUES (?, ?, ?)")
         .run("first", JSON.stringify({ mcp: {} }), 1234);
       sqlite.query("INSERT INTO runtime_opencode_configs (workspace_id, config_json, updated_at) VALUES (?, ?, ?)")
-        .run("second", JSON.stringify({ mcp: { "openwork-cloud": { type: "remote" } } }), 1234);
+        .run("second", JSON.stringify({ mcp: { "tgwork-cloud": { type: "remote" } } }), 1234);
       sqlite.close();
 
       expect(await inspectConnectSnapshot(config, { maxRuntimeRows: 1 })).toMatchObject({

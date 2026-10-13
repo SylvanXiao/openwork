@@ -138,7 +138,7 @@ export function cloudMcpAdvancedRows(health: OpenworkCloudMcpHealth | null): Clo
     if (inspection.cloudPresent === false) {
       rows.push({
         label: "Engine registration",
-        value: "openwork-cloud is not registered in the engine (the dynamic entry is lost after an engine restart) — use Refresh engine connection",
+        value: "tgwork-cloud is not registered in the engine (the dynamic entry is lost after an engine restart) — use Refresh engine connection",
         tone: "error",
       });
     }
@@ -229,7 +229,7 @@ export function buildCloudMcpSupportBundle(input: {
   capturedAt?: string;
 }): string {
   const bundle = {
-    kind: "openwork-cloud-mcp-diagnostic",
+    kind: "tgwork-cloud-mcp-diagnostic",
     capturedAt: input.capturedAt ?? new Date().toISOString(),
     context: {
       workspaceId: input.context?.workspaceId ?? null,

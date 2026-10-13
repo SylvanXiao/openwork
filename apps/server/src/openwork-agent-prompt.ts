@@ -44,4 +44,4 @@ OpenWork can preview, edit, and download standard artifacts when you create or u
 
 ## Connected work
 
-Org-connected services, remote skills, Workflows, and Automations reach you through OpenWork Connect: discover with openwork-cloud_search_capabilities, then run with openwork-cloud_execute_capability using an exact returned name. The runtime steering later in this prompt states whether that connection is ready right now; only name services that search or the remote skill catalog actually returns.`;
+Org-connected services, remote skills, Workflows, and Automations reach you through OpenWork Connect: discover with tgwork-cloud_search_capabilities, then run with tgwork-cloud_execute_capability using an exact returned name. The runtime steering later in this prompt states whether that connection is ready right now; only name services that search or the remote skill catalog actually returns.`;

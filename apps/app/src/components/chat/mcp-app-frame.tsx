@@ -69,7 +69,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function preservedResult(part: DynamicToolUIPart): PreservedMcpAppResult | null {
-  if (part.toolName === "openwork-cloud_search_capabilities" && (!isRecord(part.input) || (part.input.intent !== "connect" && part.input.type !== "connectors"))) return null
+  if (part.toolName === "tgwork-cloud_search_capabilities" && (!isRecord(part.input) || (part.input.intent !== "connect" && part.input.type !== "connectors"))) return null
   const openwork = isRecord(part.callProviderMetadata?.openwork) ? part.callProviderMetadata.openwork : null
   const result = openwork && isRecord(openwork.mcpResult)
     ? openwork.mcpResult
@@ -93,7 +93,7 @@ export function hasPreservedMcpAppResult(part: DynamicToolUIPart): boolean {
 }
 
 export function connectorCatalogFromPart(part: DynamicToolUIPart) {
-  if (part.toolName !== "openwork-cloud_search_capabilities" || part.state !== "output-available") return null
+  if (part.toolName !== "tgwork-cloud_search_capabilities" || part.state !== "output-available") return null
   if (!isRecord(part.input) || (part.input.intent !== "connect" && part.input.type !== "connectors")) return null
   let value: unknown = preservedResult(part)?.structuredContent ?? part.output
   if (typeof value === "string") {
@@ -611,8 +611,8 @@ export function McpAppFrame({ part }: { part: DynamicToolUIPart }) {
   // First-party connection UI is native, including historical app launches.
   // Never route an unsupported connection response back into the old iframe.
   const launch = gatewayMcpAppLaunch(result?._meta)
-  if (part.toolName === "openwork-cloud_connection_action"
-    || (part.toolName.startsWith("openwork-cloud_") && !launch?.connectionId && launch?.resourceUri === legacyConnectionActionAppResourceUri)) return null
+  if (part.toolName === "tgwork-cloud_connection_action"
+    || (part.toolName.startsWith("tgwork-cloud_") && !launch?.connectionId && launch?.resourceUri === legacyConnectionActionAppResourceUri)) return null
   return <EmbeddedMcpAppFrame part={part} />
 }
 

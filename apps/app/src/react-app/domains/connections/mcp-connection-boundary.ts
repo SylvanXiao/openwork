@@ -9,5 +9,5 @@ export function conflictsWithOpenworkConnect(
     description: "",
     oauth: false,
   });
-  return entry.managedBy !== "openwork-connect" && serverName === CLOUD_MCP_SERVER_NAME;
+  return entry.managedBy !== "tgwork-connect" && serverName === CLOUD_MCP_SERVER_NAME;
 }

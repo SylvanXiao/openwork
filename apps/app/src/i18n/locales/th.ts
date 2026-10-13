@@ -900,7 +900,7 @@ export default {
   "settings.server_endpoints_desc": "Read-only view of the URLs TGWork will use after local overrides and bootstrap files are applied.",
   "settings.server_endpoints_local_dev": "Local dev server",
   "settings.server_endpoints_mismatch": "Doesn't match API endpoint",
-  "settings.server_endpoints_not_configured": "No openwork-cloud MCP entry configured",
+  "settings.server_endpoints_not_configured": "No tgwork-cloud MCP entry configured",
   "settings.server_endpoints_org": "Organization server",
   "settings.server_endpoints_source_bootstrap": "From bootstrap file",
   "settings.server_endpoints_source_custom": "Custom",

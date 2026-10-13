@@ -260,7 +260,7 @@ export function NewTaskComposer(props: NewTaskComposerProps) {
           name: entry.name,
           config: entry.config as McpServerEntry["config"],
           source: entry.source,
-          origin: entry.name === "openwork-cloud" ? "openwork-connect" : "local",
+          origin: entry.name === "tgwork-cloud" ? "tgwork-connect" : "local",
         } satisfies McpServerEntry));
         void connectPromise.then((connect) => {
           if (mcpConnectPushRef.current !== pushId) return;

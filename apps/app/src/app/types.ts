@@ -282,7 +282,7 @@ export type WorkspaceOpenworkConfig = {
   } | null;
 };
 
-export type CapabilityOrigin = "local" | "openwork-connect";
+export type CapabilityOrigin = "local" | "tgwork-connect";
 
 export type SkillCard = {
   name: string;

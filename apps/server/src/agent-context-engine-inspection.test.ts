@@ -22,7 +22,7 @@ describe("agent diagnostics effective engine inspection", () => {
         default_agent: "openwork",
         plugin: [["file:///plugins/openwork-extensions-preview.ts", { secret: "not-copied" }]],
         mcp: {
-          "openwork-cloud": {
+          "tgwork-cloud": {
             type: "remote",
             url: "https://api.openworklabs.com/mcp/agent",
             headers: { Authorization: "Bearer NOT_REPORTED" },
@@ -34,7 +34,7 @@ describe("agent diagnostics effective engine inspection", () => {
         mode: "primary",
         prompt: "search_capabilities execute_capability ## OpenWork Artifacts",
         hidden: false,
-        permission: [{ permission: "openwork-cloud_*", pattern: "*", action: "allow" }],
+        permission: [{ permission: "tgwork-cloud_*", pattern: "*", action: "allow" }],
         options: { secret: "not-copied" },
       }],
     });
@@ -43,20 +43,20 @@ describe("agent diagnostics effective engine inspection", () => {
       defaultAgent: "openwork",
       pluginSpecs: ["file:///plugins/openwork-extensions-preview.ts"],
       agents: [{ name: "openwork", mode: "primary", hidden: false }],
-      mcps: [{ name: "openwork-cloud" }],
+      mcps: [{ name: "tgwork-cloud" }],
     });
     expect(snapshot).not.toHaveProperty("agents.0.options");
   });
 
   test("mirrors OpenCode's last-match whole-resource tool visibility rule", () => {
     const rules = [
-      { permission: "openwork-cloud_*", pattern: "*", action: "allow" as const },
-      { permission: "openwork-cloud_search_*", pattern: "tenant-a", action: "deny" as const },
-      { permission: "openwork-cloud_execute_capability", pattern: "*", action: "deny" as const },
+      { permission: "tgwork-cloud_*", pattern: "*", action: "allow" as const },
+      { permission: "tgwork-cloud_search_*", pattern: "tenant-a", action: "deny" as const },
+      { permission: "tgwork-cloud_execute_capability", pattern: "*", action: "deny" as const },
     ];
 
-    expect(effectiveToolDecision(rules, "openwork-cloud_search_capabilities")).toBe("allow");
-    expect(effectiveToolDecision(rules, "openwork-cloud_execute_capability")).toBe("deny");
+    expect(effectiveToolDecision(rules, "tgwork-cloud_search_capabilities")).toBe("allow");
+    expect(effectiveToolDecision(rules, "tgwork-cloud_execute_capability")).toBe("deny");
   });
 
   test("bounds engine bodies and rejects redirects without following them", async () => {

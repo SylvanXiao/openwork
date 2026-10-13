@@ -69,16 +69,16 @@ test("materialized cloud skills must be present with their bodies and stale clou
   await withWorkspace(async (root) => {
     const cloudRoot = join(root, "state", "cloud-skills");
     const scope = join(cloudRoot, "0123456789abcdef");
-    const location = join(scope, "openwork-cloud-aaaaaaaaaaaaaaaa", "SKILL.md");
+    const location = join(scope, "tgwork-cloud-aaaaaaaaaaaaaaaa", "SKILL.md");
     const content = "---\nname: customer-briefing\ndescription: Brief\n---\n\nDo the briefing.\n";
-    const stale = join(cloudRoot, "fedcba9876543210", "openwork-cloud-bbbbbbbbbbbbbbbb", "SKILL.md");
+    const stale = join(cloudRoot, "fedcba9876543210", "tgwork-cloud-bbbbbbbbbbbbbbbb", "SKILL.md");
     let reads = 0;
     await waitForOpenWorkV2Skills(root, async () => {
       reads++;
-      if (reads === 1) return { data: [{ id: "openwork-cloud-bbbbbbbbbbbbbbbb", name: "old", location: stale, content: "old" }] };
-      if (reads === 2) return { data: [{ id: "openwork-cloud-aaaaaaaaaaaaaaaa", name: "customer-briefing", location, content: "Previous body" }] };
-      return { data: [{ id: "openwork-cloud-aaaaaaaaaaaaaaaa", name: "customer-briefing", location, content: "\nDo the briefing.\n" }] };
-    }, { root: cloudRoot, state: { root: scope, skills: [{ id: "openwork-cloud-aaaaaaaaaaaaaaaa", uri: "skill://customer-briefing/SKILL.md", location, content }] } });
+      if (reads === 1) return { data: [{ id: "tgwork-cloud-bbbbbbbbbbbbbbbb", name: "old", location: stale, content: "old" }] };
+      if (reads === 2) return { data: [{ id: "tgwork-cloud-aaaaaaaaaaaaaaaa", name: "customer-briefing", location, content: "Previous body" }] };
+      return { data: [{ id: "tgwork-cloud-aaaaaaaaaaaaaaaa", name: "customer-briefing", location, content: "\nDo the briefing.\n" }] };
+    }, { root: cloudRoot, state: { root: scope, skills: [{ id: "tgwork-cloud-aaaaaaaaaaaaaaaa", uri: "skill://customer-briefing/SKILL.md", location, content }] } });
     expect(reads).toBe(3);
   });
 });
@@ -90,7 +90,7 @@ test("v2 guidance routes organization skills through the native catalog, not Con
     expect(value.operatingInstructions).not.toContain("remote skill catalog");
     expect(value.operatingInstructions).toContain("Authorized organization skills are in the native skill catalog");
     expect(value.skillInstructions).not.toContain("provided by OpenWork Connect");
-    expect(value.skillInstructions).toContain("openwork-cloud-");
+    expect(value.skillInstructions).toContain("tgwork-cloud-");
     expect(Buffer.byteLength(JSON.stringify(value), "utf8")).toBeLessThanOrEqual(7 * 1024);
   }
 });

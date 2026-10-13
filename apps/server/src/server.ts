@@ -122,7 +122,7 @@ import {
 import {
   markOpenworkCloudMcpStale,
   migrateOpenworkCloudMcpRuntimeConfig,
-  OPENWORK_CLOUD_MCP_NAME,
+  TGWORK_CLOUD_MCP_NAME,
   reconcilePersistedOpenworkCloudMcp,
   removeOpenworkCloudMcpDesiredConfig,
   type CloudMcpHealth,
@@ -1340,7 +1340,7 @@ export async function proxyOpencodeV2Request(input: {
     const mcpResponse = await loopbackFetch(mcpUrl.toString(), { headers: internalHeaders, signal: AbortSignal.timeout(10_000) });
     const mcpPayload: unknown = mcpResponse.ok ? await mcpResponse.json() : null;
     const connectReady = isRecord(mcpPayload) && Array.isArray(mcpPayload.data) && mcpPayload.data.some((entry) =>
-      isRecord(entry) && entry.name === "openwork-cloud" && isRecord(entry.status) && entry.status.status === "connected");
+      isRecord(entry) && entry.name === "tgwork-cloud" && isRecord(entry.status) && entry.status.status === "connected");
     // Authorized organization skills are materialized fresh as native skills
     // on every admission. Skills fail closed, the conversation does not: any
     // Cloud auth/transport failure has already cleared and unregistered the
@@ -3968,10 +3968,10 @@ function createRoutes(
       summary: `Remove MCP ${name}`,
       paths: [openworkConfigPath(workspace.path)],
     });
-    const managedRemoved = name === OPENWORK_CLOUD_MCP_NAME
+    const managedRemoved = name === TGWORK_CLOUD_MCP_NAME
       ? false
       : await deleteLocalManagedMcp(config, workspace.id, name);
-    const cloudRemoval = name === OPENWORK_CLOUD_MCP_NAME
+    const cloudRemoval = name === TGWORK_CLOUD_MCP_NAME
       ? await removeOpenworkCloudMcpDesiredConfig(config)
       : null;
     const removed = cloudRemoval
@@ -6158,7 +6158,7 @@ function logPersistedCloudMcpReconcileResult(input: {
     `Cloud MCP ${input.trigger} reconciliation left connected service tools unavailable for workspace ${input.workspace.id}.`,
     {
       "workspace.id": input.workspace.id,
-      "mcp.name": "openwork-cloud",
+      "mcp.name": "tgwork-cloud",
       "mcp.trigger": input.trigger,
       "mcp.failure.code": failure?.code ?? "unknown",
       "mcp.failure.stage": failure?.stage ?? "unknown",
@@ -6214,7 +6214,7 @@ function logPersistedCloudMcpReconcileError(input: {
     `Cloud MCP ${input.trigger} reconciliation crashed for workspace ${input.workspace.id}.`,
     {
       "workspace.id": input.workspace.id,
-      "mcp.name": "openwork-cloud",
+      "mcp.name": "tgwork-cloud",
       "mcp.trigger": input.trigger,
       "mcp.failure.code": "cloud_mcp_reconcile_exception",
       "mcp.failure.message": input.error instanceof Error ? input.error.message : String(input.error),

@@ -30,8 +30,8 @@ import {
 } from "./cloud-mcp-user-state";
 
 export const OPENWORK_CLOUD_EXPECTED_TOOLS = [
-  "openwork-cloud_search_capabilities",
-  "openwork-cloud_execute_capability",
+  "tgwork-cloud_search_capabilities",
+  "tgwork-cloud_execute_capability",
 ];
 
 export type CloudMcpClient = {
@@ -420,7 +420,7 @@ export type CloudMcpEngineRefreshRunResult = {
 const engineRefreshInFlight = new Map<string, Promise<CloudMcpEngineRefreshRunResult>>();
 
 /**
- * Force the engine to drop its openwork-cloud MCP client and reconnect.
+ * Force the engine to drop its tgwork-cloud MCP client and reconnect.
  * OpenCode keeps a failed MCP failed forever (no automatic retry), so this is
  * the explicit "try again from scratch" lever: engine disconnect, then
  * re-registration from the persisted desired config, then a direct probe.

@@ -312,7 +312,7 @@ async function configuredFixture(
       ...current,
       mcp: {
         ...runtimeMcpMap(current),
-        "openwork-cloud": {
+        "tgwork-cloud": {
           ...mcpConfig,
           url: fixture.catalogUrl,
           headers: { Authorization: "Bearer member-token" },
@@ -487,7 +487,7 @@ describe("MCP Apps host transport", () => {
       resourceUri: RESOURCE_URI,
       html: RESOURCE_HTML,
     });
-    expect(Object.keys(runtimeMcpMap(await readRuntimeOpencodeConfig(config, WORKSPACE_ID)))).toEqual(["openwork-cloud"]);
+    expect(Object.keys(runtimeMcpMap(await readRuntimeOpencodeConfig(config, WORKSPACE_ID)))).toEqual(["tgwork-cloud"]);
     expect(catalogReads()).toBe(0);
   });
 
@@ -580,14 +580,14 @@ describe("MCP Apps host transport", () => {
     const { config, root, activateUpdatedResource } = await configuredFixture("openwork-mcp-app-global-gateway-");
     const fixture = (await listMcp(config, WORKSPACE_ID, root)).find(item => item.name === "fixture");
     if (!fixture) throw new Error("Fixture server missing");
-    await writeGlobalRuntimeOpencodeConfig(config, () => ({ mcp: { "openwork-cloud": fixture.config } }));
+    await writeGlobalRuntimeOpencodeConfig(config, () => ({ mcp: { "tgwork-cloud": fixture.config } }));
     const app = await resolveSameServerMcpAppResource({
       serverConfig: config, workspaceId: WORKSPACE_ID, workspaceRoot: root,
-      projectedToolName: "openwork-cloud_model_only_fixture",
+      projectedToolName: "tgwork-cloud_model_only_fixture",
       context: { sessionId: null, readOnly: false },
       launch: { toolName: "read_bound_detail", resourceUri: RESOURCE_URI },
     });
-    expect(app).toMatchObject({ serverName: "openwork-cloud", html: RESOURCE_HTML });
+    expect(app).toMatchObject({ serverName: "tgwork-cloud", html: RESOURCE_HTML });
     await activateUpdatedResource();
     expect(await callMcpAppTool({
       serverConfig: config, workspaceId: WORKSPACE_ID, workspaceRoot: root,
@@ -927,7 +927,7 @@ describe("MCP Apps host transport", () => {
     const app = await resolveConnectMcpAppResource({ serverConfig: config, workspaceId: WORKSPACE_ID, workspaceRoot: root,
       context: { sessionId: "session-a", readOnly: false }, launch: { connectionId, toolName: "render_fixture", resourceUri: RESOURCE_URI } });
     const runtime = await readRuntimeOpencodeConfig(config, WORKSPACE_ID);
-    const url = runtime.mcp?.["openwork-cloud"]?.url;
+    const url = runtime.mcp?.["tgwork-cloud"]?.url;
     if (typeof url !== "string") throw new Error("Missing fixture URL");
     await writeOpenWorkConnectMcpAppHostAuthorization(config, WORKSPACE_ID, "Bearer replacement-fixture", url);
     await expect(callMcpAppTool({ serverConfig: config, workspaceId: WORKSPACE_ID, workspaceRoot: root,

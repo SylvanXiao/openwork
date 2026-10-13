@@ -44,7 +44,7 @@ function cloudHealth(usable: boolean): OpenworkCloudMcpHealth {
     workspace: { id: WORKSPACE_ID, type: "local", directory: "/workspace", path: "/workspace" },
     desired: {
       present: usable,
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       revision: usable ? "rev_ready" : null,
       config: null,
       token: { present: usable, metadata: {} },
@@ -59,9 +59,9 @@ function cloudHealth(usable: boolean): OpenworkCloudMcpHealth {
     },
     engine: { status: usable ? "connected" : "not_checked" },
     tools: {
-      expected: ["openwork-cloud_search_capabilities", "openwork-cloud_execute_capability"],
-      present: usable ? ["openwork-cloud_search_capabilities", "openwork-cloud_execute_capability"] : [],
-      missing: usable ? [] : ["openwork-cloud_search_capabilities", "openwork-cloud_execute_capability"],
+      expected: ["tgwork-cloud_search_capabilities", "tgwork-cloud_execute_capability"],
+      present: usable ? ["tgwork-cloud_search_capabilities", "tgwork-cloud_execute_capability"] : [],
+      missing: usable ? [] : ["tgwork-cloud_search_capabilities", "tgwork-cloud_execute_capability"],
       direct: {
         checked: false,
         source: "mcp_tools_list",
@@ -73,7 +73,7 @@ function cloudHealth(usable: boolean): OpenworkCloudMcpHealth {
         checked: usable,
         provider: "openwork",
         model: "gpt-5",
-        present: usable ? ["openwork-cloud_search_capabilities", "openwork-cloud_execute_capability"] : [],
+        present: usable ? ["tgwork-cloud_search_capabilities", "tgwork-cloud_execute_capability"] : [],
         missing: [],
       },
     },
@@ -172,7 +172,7 @@ describe("managed MCP secure-storage degradation in session maintenance", () => 
       baseUrl: "https://worker.openwork.test",
       listMcp: async () => ({
         items: [{
-          name: "openwork-cloud",
+          name: "tgwork-cloud",
           config: { type: "remote", enabled: true, url: "https://api.openwork.test/mcp/agent" },
           source: "config.remote" as const,
         }],

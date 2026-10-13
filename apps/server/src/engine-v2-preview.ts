@@ -37,8 +37,8 @@ import type { ServerConfig } from "./types.js";
 const OPENCODE_V2_VERSION = constants.opencodeV2Version;
 const PREVIEW_STATE_FILE = "engine-v2-preview.json";
 const UNSET_API_KEY = "openwork-engine-v2-preview-unset";
-/** Reserved Connect MCP name; kept in sync with OPENWORK_CLOUD_MCP_NAME in cloud-mcp-health.ts. */
-const OPENWORK_CLOUD_MCP_NAME = "openwork-cloud";
+/** Reserved Connect MCP name; kept in sync with TGWORK_CLOUD_MCP_NAME in cloud-mcp-health.ts. */
+const TGWORK_CLOUD_MCP_NAME = "tgwork-cloud";
 // A cold sidecar can return HTTP 503 while its model catalog initializes for 17–20 seconds.
 const CATALOG_MIRROR_TIMEOUT_MS = 60_000;
 
@@ -338,7 +338,7 @@ export function createEngineV2Preview(options: { config: ServerConfig; env?: Pic
   const cloudSkillsRoot = join(rootDir, "cloud-skills");
   const cloudSkills = createCloudNativeSkillSync({
     root: cloudSkillsRoot,
-    readCloudConfig: () => readGlobalRuntimeMcpConfig(config, OPENWORK_CLOUD_MCP_NAME),
+    readCloudConfig: () => readGlobalRuntimeMcpConfig(config, TGWORK_CLOUD_MCP_NAME),
     register: async (directory) => {
       const active = sidecar;
       if (!active) throw new CloudNativeSkillSyncError("cloud_skill_engine_unavailable", "OpenCode v2 is not running");
@@ -546,7 +546,7 @@ export function createEngineV2Preview(options: { config: ServerConfig; env?: Pic
       const unsubscribeConfig = onRuntimeOpencodeConfigWrite((_writeConfig, workspaceId) => {
         const global = isEngineGlobalRuntimeConfigId(workspaceId);
         if (global) scheduleMirror();
-        // A replaced or removed openwork-cloud config invalidates the
+        // A replaced or removed tgwork-cloud config invalidates the
         // materialized skills before the next prompt can register a new scope.
         if (global) void cloudSkills.reconcileScope().catch((error) => {
           if (sidecar) lastError = `Cloud skills: ${errorMessage(error)}`;

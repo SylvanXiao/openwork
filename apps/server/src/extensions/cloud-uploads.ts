@@ -6,7 +6,7 @@ import { ApiError } from "../errors.js";
 import { externalFetch } from "../server-fetch.js";
 import type { ServerConfig } from "../types.js";
 
-export const OPENWORK_CLOUD_UPLOADS_EXTENSION_ID = "openwork-cloud-uploads";
+export const OPENWORK_CLOUD_UPLOADS_EXTENSION_ID = "tgwork-cloud-uploads";
 const DIRECT_UPLOAD_MAX_BYTES = 4 * 1024 * 1024;
 const DIRECT_UPLOAD_TIMEOUT_MS = 2 * 60 * 1000;
 

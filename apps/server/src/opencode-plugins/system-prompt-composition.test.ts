@@ -17,7 +17,7 @@ function occurrences(haystack: string, needle: string): number {
 async function composePrompt(status = "connected"): Promise<string[]> {
   const engineMcp = {
     async status() {
-      return { data: { "openwork-cloud": { status } } };
+      return { data: { "tgwork-cloud": { status } } };
     },
   };
   const extensions = await OpenWorkExtensionsPreview({ client: { mcp: engineMcp }, directory: "/tmp/spec" });
@@ -48,7 +48,7 @@ test("the composed OpenWork prompt is single, deduplicated, ordered, and current
   expect(prompt).toContain("read cloud/share-with-your-team/desktop-policies.mdx");
 
   expect(occurrences(prompt, "only name services that search or the remote skill catalog actually returns")).toBe(1);
-  expect(occurrences(OPENWORK_AGENT_PROMPT, "openwork-cloud_search_capabilities")).toBe(1);
+  expect(occurrences(OPENWORK_AGENT_PROMPT, "tgwork-cloud_search_capabilities")).toBe(1);
   expect(prompt).not.toContain("2-4 keyword variants");
   expect(prompt).not.toContain("A successful search proves");
   expect(occurrences(prompt, OPENWORK_CLOUD_CONNECTION_INSTRUCTION)).toBe(1);
@@ -85,14 +85,14 @@ test.each(["connected", "disabled", "needs_auth", "failed"])("the %s prompt reta
   expect(system[0]).not.toContain("google-workspace");
   expect(system[0]).not.toContain("legacyConfigured");
   expect(occurrences(system[0], "Cloud search results alone do not establish that upload is unavailable")).toBe(1);
-  expect(occurrences(system[0], "first query extension.actions with extensionId openwork-cloud-uploads")).toBe(1);
+  expect(occurrences(system[0], "first query extension.actions with extensionId tgwork-cloud-uploads")).toBe(1);
   expect(occurrences(system[0], "Only if drive_upload_file is returned and the user authorizes the upload")).toBe(1);
 });
 
 test("all OpenWork prompt hooks retain one ordered system message", async () => {
   const engineMcp = {
     async status() {
-      return { data: { "openwork-cloud": { status: "connected" } } };
+      return { data: { "tgwork-cloud": { status: "connected" } } };
     },
   };
   const extensions = await OpenWorkExtensionsPreview({ client: { mcp: engineMcp }, directory: "/tmp/spec" });

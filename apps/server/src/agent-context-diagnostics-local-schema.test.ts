@@ -91,7 +91,7 @@ describe("agent context diagnostics server-local schema parity", () => {
     const reportWithCanonicalMcp = {
       ...report,
       mcps: [{
-        name: "openwork-cloud",
+        name: "tgwork-cloud",
         source: "config.remote",
         type: "remote",
         enabled: true,
@@ -200,7 +200,7 @@ describe("agent context diagnostics server-local schema parity", () => {
       {
         ...report,
         mcps: [{
-          name: "openwork-cloud",
+          name: "tgwork-cloud",
           source: "config.remote",
           type: "remote",
           enabled: true,
@@ -216,7 +216,7 @@ describe("agent context diagnostics server-local schema parity", () => {
       {
         ...report,
         mcps: [{
-          name: "openwork-cloud",
+          name: "tgwork-cloud",
           source: "config.remote",
           type: "remote",
           enabled: true,

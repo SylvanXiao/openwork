@@ -320,7 +320,7 @@ function createChatTranscriptEvalMessages(sessionId: string) {
         },
         {
           type: "dynamic-tool",
-          toolName: "openwork-cloud_execute_capability",
+          toolName: "tgwork-cloud_execute_capability",
           toolCallId: "eval-transcript-capability",
           state: "output-available",
           input: { name: "getCapabilitiesGoogleWorkspaceCalendarEvents", body: {} },
@@ -394,7 +394,7 @@ function createConnectorToolCallEvalMessages(sessionId: string): UIMessage[] {
       role: "assistant",
       parts: [{
         type: "dynamic-tool",
-        toolName: "openwork-cloud_execute_capability",
+        toolName: "tgwork-cloud_execute_capability",
         toolCallId: "eval-connector-google-workspace",
         state: "output-available",
         input: { name: "getCapabilitiesGoogleWorkspaceCalendarEvents", body: {} },
@@ -2762,7 +2762,7 @@ export function SessionSurface(props: SessionSurfaceProps) {
         name: entry.name,
         config: entry.config as McpServerEntry["config"],
         source: entry.source,
-        origin: entry.name === "openwork-cloud" ? "openwork-connect" : "local",
+        origin: entry.name === "tgwork-cloud" ? "tgwork-connect" : "local",
       } satisfies McpServerEntry));
 
     void connectPromise.then((connect) => {
@@ -2951,8 +2951,8 @@ export function SessionSurface(props: SessionSurfaceProps) {
     const resetReconnectState = () => {
       useChatMcpReconnectStore.getState().reset();
       clearCloudInventoryCache();
-      setToolSkills((current) => current.filter((skill) => skill.origin !== "openwork-connect"));
-      setToolMcpServers((current) => current.filter((server) => server.origin !== "openwork-connect"));
+      setToolSkills((current) => current.filter((skill) => skill.origin !== "tgwork-connect"));
+      setToolMcpServers((current) => current.filter((server) => server.origin !== "tgwork-connect"));
       setToolMcpStatuses((current) => Object.fromEntries(
         Object.entries(current).filter(([key]) => !key.startsWith("openwork-connect:")),
       ));

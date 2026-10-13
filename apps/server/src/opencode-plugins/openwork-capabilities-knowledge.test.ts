@@ -55,7 +55,7 @@ describe("OpenWork capabilities knowledge plugin", () => {
     // sign-in direction (runtime steering), skill-authoring mode (steering),
     // browser and app-control mechanics (extensions plugin), and the
     // Automation listing's read-live rule (catalog section).
-    expect(knowledge).not.toContain("openwork-cloud_search_capabilities");
+    expect(knowledge).not.toContain("tgwork-cloud_search_capabilities");
     expect(knowledge).not.toContain("require the user to sign in to OpenWork first");
     expect(knowledge).not.toContain("source of truth for whether Cloud execution tools");
     expect(knowledge).not.toContain("retrieve the listed remote `create-skill` skill");

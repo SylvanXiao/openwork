@@ -1,13 +1,13 @@
 import { z } from "zod"
 
-export const OPENWORK_CLOUD_MCP_CONNECTION_ACTION_VERSION = 1 as const
-export const OPENWORK_CLOUD_MCP_CONNECTION_ACTION_KIND = "connection_action" as const
-export const OPENWORK_CLOUD_MCP_CONNECTION_ACTION_SOURCE = "openwork-cloud" as const
+export const TGWORK_CLOUD_MCP_CONNECTION_ACTION_VERSION = 1 as const
+export const TGWORK_CLOUD_MCP_CONNECTION_ACTION_KIND = "connection_action" as const
+export const TGWORK_CLOUD_MCP_CONNECTION_ACTION_SOURCE = "tgwork-cloud" as const
 
 export const openworkCloudMcpConnectionActionSchema = z.object({
-  version: z.literal(OPENWORK_CLOUD_MCP_CONNECTION_ACTION_VERSION),
-  kind: z.literal(OPENWORK_CLOUD_MCP_CONNECTION_ACTION_KIND),
-  source: z.literal(OPENWORK_CLOUD_MCP_CONNECTION_ACTION_SOURCE),
+  version: z.literal(TGWORK_CLOUD_MCP_CONNECTION_ACTION_VERSION),
+  kind: z.literal(TGWORK_CLOUD_MCP_CONNECTION_ACTION_KIND),
+  source: z.literal(TGWORK_CLOUD_MCP_CONNECTION_ACTION_SOURCE),
   connectionId: z.string().min(1),
   connectionName: z.string().min(1),
   authType: z.enum(["oauth", "apikey", "none"]),

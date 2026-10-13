@@ -154,12 +154,12 @@ async function observe(workspaceId: string, event: { type: string; properties?: 
     const task = messages.get(`${workspaceId}:${part.messageID}`);
     if (!task || task.sessionId !== part.sessionID) return;
     const name = part.state.input.name;
-    const cloudSkill = part.tool === "openwork-cloud_execute_capability" && name?.startsWith("plugin:");
+    const cloudSkill = part.tool === "tgwork-cloud_execute_capability" && name?.startsWith("plugin:");
     const skill = part.state.status === "completed" && (part.tool === "skill" || cloudSkill) ? name : undefined;
     enqueue({ id: part.id, callId: part.callID, type: skill ? "skill.loaded" : "tool.executed",
       timestamp: new Date(part.state.time.end).toISOString(), sessionId: task.sessionId, taskId: task.taskId,
       tool: part.tool, ...(skill ? { skill, skillVersion: part.state.metadata?.skillVersion } : {}),
-      mcp: part.tool.startsWith("openwork-cloud_") ? "openwork-cloud" : part.state.metadata?.mcp,
+      mcp: part.tool.startsWith("tgwork-cloud_") ? "tgwork-cloud" : part.state.metadata?.mcp,
       durationMs: Math.max(0, part.state.time.end - part.state.time.start), status: part.state.status === "completed" ? "completed" : "failed",
     });
   }

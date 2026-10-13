@@ -121,14 +121,14 @@ function startMockOpencode(initialMode: DirectProbeMode) {
       if (url.pathname === "/mcp" && request.method === "GET") {
         if (mode === "status_missing_token") {
           return Response.json({
-            "openwork-cloud": {
+            "tgwork-cloud": {
               status: "failed",
               error: "Streamable HTTP error: Error POSTing to endpoint: {\"error\":\"missing_mcp_token\",\"message\":\"Provide a Bearer token with MCP scope to access this resource.\",\"referenceId\":\"req_missing\"}",
             },
           });
         }
         return Response.json({
-          "openwork-cloud": { status: "connected" },
+          "tgwork-cloud": { status: "connected" },
           "sibling-remote": { status: "failed", error: "fetch failed" },
         });
       }
@@ -151,7 +151,7 @@ function startMockOpencode(initialMode: DirectProbeMode) {
             result: {
               capabilities: { tools: {} },
               protocolVersion: "2025-06-18",
-              serverInfo: { name: "openwork-cloud-test", version: "1.0.0" },
+              serverInfo: { name: "tgwork-cloud-test", version: "1.0.0" },
             },
           });
         }
@@ -227,7 +227,7 @@ async function setupDirectProbeHarness(mode: DirectProbeMode, workspaceIds = ["w
   const baseUrl = `http://127.0.0.1:${engine.server.port}`;
   const workspaces: WorkspaceInfo[] = [];
   for (const id of workspaceIds) {
-    const root = await createRoot(`openwork-cloud-health-${id}-`);
+    const root = await createRoot(`tgwork-cloud-health-${id}-`);
     workspaces.push({
       id,
       name: `Workspace ${id}`,
@@ -242,7 +242,7 @@ async function setupDirectProbeHarness(mode: DirectProbeMode, workspaceIds = ["w
   const config = serverConfig(primary.path, primary);
   config.workspaces = workspaces;
   config.authorizedRoots = workspaces.map((entry) => entry.path);
-  process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("openwork-cloud-health-runtime-");
+  process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("tgwork-cloud-health-runtime-");
   const directUrl = `${baseUrl}/cloud-mcp/mcp/agent`;
   const desiredConfig = {
     type: "remote",
@@ -253,7 +253,7 @@ async function setupDirectProbeHarness(mode: DirectProbeMode, workspaceIds = ["w
   };
   await writeGlobalRuntimeOpencodeConfig(config, (current) => ({
     ...current,
-    mcp: { ...current.mcp, "openwork-cloud": desiredConfig },
+    mcp: { ...current.mcp, "tgwork-cloud": desiredConfig },
   }));
   const read = async (workspaceId = primary.id, providerModel?: { provider: string; model: string }) => {
     const testWorkspace = workspaces.find((entry) => entry.id === workspaceId);
@@ -388,35 +388,35 @@ describe("cloud MCP health foundation", () => {
   });
 
   test("migrates the newest valid workspace config globally and preserves workspace state", async () => {
-    const root = await createRoot("openwork-cloud-migration-");
+    const root = await createRoot("tgwork-cloud-migration-");
     const workspaceA = { ...workspace, id: "ws_a", path: join(root, "a") };
     const workspaceB = { ...workspace, id: "ws_b", path: join(root, "b") };
     const workspaceC = { ...workspace, id: "ws_c", path: join(root, "c") };
     const config = serverConfig(root, workspaceA);
     config.workspaces = [workspaceA, workspaceB, workspaceC];
-    process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("openwork-cloud-migration-runtime-");
+    process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("tgwork-cloud-migration-runtime-");
     // Trusted origins: promotion to account-global scope refuses anything else.
     const older = { type: "remote", url: "http://127.0.0.1:4801/mcp/agent", enabled: true, headers: { Authorization: "Bearer older" }, oauth: false };
     const newer = { ...older, url: "https://api.openworklabs.com/mcp/agent", headers: { Authorization: "Bearer newer" } };
     await writeRuntimeOpencodeConfig(config, workspaceA.id, () => ({
       plugin: ["keep-a"],
-      mcp: { "openwork-cloud": older, posthog: { type: "remote", url: "https://posthog.example/mcp" } },
+      mcp: { "tgwork-cloud": older, posthog: { type: "remote", url: "https://posthog.example/mcp" } },
     }));
     await Bun.sleep(2);
     await writeRuntimeOpencodeConfig(config, workspaceB.id, () => ({
       disabled_providers: ["keep-b"],
-      mcp: { "openwork-cloud": newer, stripe: { type: "remote", url: "https://stripe.example/mcp" } },
+      mcp: { "tgwork-cloud": newer, stripe: { type: "remote", url: "https://stripe.example/mcp" } },
     }));
     await Bun.sleep(2);
     await writeRuntimeOpencodeConfig(config, workspaceC.id, () => ({
       mcp: {
-        "openwork-cloud": { ...newer, headers: {} },
+        "tgwork-cloud": { ...newer, headers: {} },
         linear: { type: "remote", url: "https://linear.example/mcp" },
       },
     }));
 
     expect(await migrateOpenworkCloudMcpRuntimeConfig(config)).toMatchObject({ config: newer, changed: true });
-    expect((await readGlobalRuntimeOpencodeConfig(config)).mcp?.["openwork-cloud"]).toEqual(newer);
+    expect((await readGlobalRuntimeOpencodeConfig(config)).mcp?.["tgwork-cloud"]).toEqual(newer);
     expect(await readRuntimeOpencodeConfig(config, workspaceA.id)).toEqual({
       plugin: ["keep-a"],
       mcp: { posthog: { type: "remote", url: "https://posthog.example/mcp" } },
@@ -428,42 +428,42 @@ describe("cloud MCP health foundation", () => {
     expect((await readRuntimeOpencodeConfig(config, workspaceC.id)).mcp).toEqual({
       linear: { type: "remote", url: "https://linear.example/mcp" },
     });
-    expect((await readEffectiveRuntimeOpencodeConfig(config, workspaceA.id)).mcp?.["openwork-cloud"]).toEqual(newer);
-    expect((await readEffectiveRuntimeOpencodeConfig(config, workspaceB.id)).mcp?.["openwork-cloud"]).toEqual(newer);
+    expect((await readEffectiveRuntimeOpencodeConfig(config, workspaceA.id)).mcp?.["tgwork-cloud"]).toEqual(newer);
+    expect((await readEffectiveRuntimeOpencodeConfig(config, workspaceB.id)).mcp?.["tgwork-cloud"]).toEqual(newer);
     expect(await migrateOpenworkCloudMcpRuntimeConfig(config)).toEqual({ config: newer, changed: false });
   });
 
   test("does not promote an untrusted legacy endpoint to account-global scope", async () => {
-    const root = await createRoot("openwork-cloud-migration-untrusted-");
+    const root = await createRoot("tgwork-cloud-migration-untrusted-");
     const workspaceA = { ...workspace, id: "ws_a", path: join(root, "a") };
     const config = serverConfig(root, workspaceA);
     config.workspaces = [workspaceA];
-    process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("openwork-cloud-migration-untrusted-runtime-");
+    process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("tgwork-cloud-migration-untrusted-runtime-");
     // Valid shape, untrusted origin: a planted or stale workspace row must stay
     // workspace-scoped instead of silently reconfiguring every workspace.
     const untrusted = { type: "remote", url: "https://evil.example/mcp/agent", enabled: true, headers: { Authorization: "Bearer planted" }, oauth: false };
-    await writeRuntimeOpencodeConfig(config, workspaceA.id, () => ({ mcp: { "openwork-cloud": untrusted } }));
+    await writeRuntimeOpencodeConfig(config, workspaceA.id, () => ({ mcp: { "tgwork-cloud": untrusted } }));
 
     const result = await migrateOpenworkCloudMcpRuntimeConfig(config);
 
     expect(result).toEqual({ config: null, changed: false });
-    expect((await readGlobalRuntimeOpencodeConfig(config)).mcp?.["openwork-cloud"]).toBeUndefined();
+    expect((await readGlobalRuntimeOpencodeConfig(config)).mcp?.["tgwork-cloud"]).toBeUndefined();
     // Not promoted and not destroyed: the entry keeps its pre-migration
     // workspace-scoped blast radius.
-    expect((await readRuntimeOpencodeConfig(config, workspaceA.id)).mcp?.["openwork-cloud"]).toEqual(untrusted);
+    expect((await readRuntimeOpencodeConfig(config, workspaceA.id)).mcp?.["tgwork-cloud"]).toEqual(untrusted);
   });
 
   test("does not mutate legacy rows while the server is read-only", async () => {
-    const root = await createRoot("openwork-cloud-readonly-migration-");
+    const root = await createRoot("tgwork-cloud-readonly-migration-");
     const config = serverConfig(root, workspace);
-    process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("openwork-cloud-readonly-migration-runtime-");
+    process.env.OPENWORK_RUNTIME_DB = await createRuntimeDbPath("tgwork-cloud-readonly-migration-runtime-");
     const desired = { type: "remote", url: "http://127.0.0.1:4802/mcp/agent", enabled: true, headers: { Authorization: "Bearer token" }, oauth: false };
-    await writeRuntimeOpencodeConfig(config, workspace.id, () => ({ mcp: { "openwork-cloud": desired } }));
+    await writeRuntimeOpencodeConfig(config, workspace.id, () => ({ mcp: { "tgwork-cloud": desired } }));
     config.readOnly = true;
 
     expect(await migrateOpenworkCloudMcpRuntimeConfig(config)).toEqual({ config: desired, changed: false });
-    expect((await readGlobalRuntimeOpencodeConfig(config)).mcp?.["openwork-cloud"]).toBeUndefined();
-    expect((await readRuntimeOpencodeConfig(config, workspace.id)).mcp?.["openwork-cloud"]).toEqual(desired);
+    expect((await readGlobalRuntimeOpencodeConfig(config)).mcp?.["tgwork-cloud"]).toBeUndefined();
+    expect((await readRuntimeOpencodeConfig(config, workspace.id)).mcp?.["tgwork-cloud"]).toEqual(desired);
   });
 
   test("keeps delivery state independent for two directories sharing global desired state", () => {
@@ -484,52 +484,52 @@ describe("cloud MCP health foundation", () => {
 
   test("diagnoses project and global OpenCode tool denies for exact Cloud IDs", () => {
     const denies = diagnoseMcpToolDeniesFromConfigs({
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       toolIds: [...OPENWORK_CLOUD_EXPECTED_TOOLS],
       projectConfig: {
         tools: {
-          "openwork-cloud_search_capabilities": false,
+          "tgwork-cloud_search_capabilities": false,
         },
       },
       globalConfig: {
         permission: [
-          { permission: "tool", pattern: "openwork-cloud_execute_capability", action: "deny" },
+          { permission: "tool", pattern: "tgwork-cloud_execute_capability", action: "deny" },
         ],
       },
     });
 
     expect(denies.map((deny) => deny.source).sort()).toEqual(["config.global", "config.project"]);
     expect(denies.map((deny) => deny.matched).sort()).toEqual([
-      "openwork-cloud_execute_capability",
-      "openwork-cloud_search_capabilities",
+      "tgwork-cloud_execute_capability",
+      "tgwork-cloud_search_capabilities",
     ]);
   });
 
   test("project tool allows override global denies for matching Cloud tool IDs", () => {
     const denies = diagnoseMcpToolDeniesFromConfigs({
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       toolIds: [...OPENWORK_CLOUD_EXPECTED_TOOLS],
       projectConfig: {
         tools: {
-          "openwork-cloud_search_capabilities": true,
+          "tgwork-cloud_search_capabilities": true,
         },
       },
       globalConfig: {
-        tools: { deny: ["openwork-cloud_*"] },
+        tools: { deny: ["tgwork-cloud_*"] },
       },
     });
 
     expect(denies).toHaveLength(1);
     expect(denies[0]).toMatchObject({
       source: "config.global",
-      pattern: "openwork-cloud_*",
-      matched: "openwork-cloud_execute_capability",
+      pattern: "tgwork-cloud_*",
+      matched: "tgwork-cloud_execute_capability",
     });
   });
 
   test("plugin canary denies are not reported as Cloud tool denies", () => {
     const denies = diagnoseMcpToolDeniesFromConfigs({
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       toolIds: [...OPENWORK_CLOUD_EXPECTED_TOOLS],
       projectConfig: {
         tools: {
@@ -649,7 +649,7 @@ describe("cloud MCP health foundation", () => {
     };
     await writeGlobalRuntimeOpencodeConfig(harness.config, (current) => ({
       ...current,
-      mcp: { ...current.mcp, "openwork-cloud": changedConfig },
+      mcp: { ...current.mcp, "tgwork-cloud": changedConfig },
     }));
     const changedAuthToolIds = harness.blockToolIds();
     const changedAuthCheck = harness.read("ws_a");
@@ -750,9 +750,11 @@ describe("cloud MCP health foundation", () => {
     expect(health.engineInspection.checked).toBe(true);
     expect(health.engineInspection.cloudPresent).toBe(true);
     expect(health.engineInspection.serverCount).toBe(2);
+    // The engine map is name-ordered, so the Connect entry sorts after
+    // "sibling-remote" now that it is named tgwork-cloud.
     expect(health.engineInspection.servers).toEqual([
-      { name: "openwork-cloud", status: "connected" },
       { name: "sibling-remote", status: "failed", error: "fetch failed" },
+      { name: "tgwork-cloud", status: "connected" },
     ]);
   });
 
@@ -767,7 +769,7 @@ describe("cloud MCP health foundation", () => {
       expect(step.latencyMs).toBeGreaterThanOrEqual(0);
     }
     expect(trace?.steps[0]?.httpStatus).toBe(200);
-    expect(trace?.serverInfo).toEqual({ name: "openwork-cloud-test", version: "1.0.0" });
+    expect(trace?.serverInfo).toEqual({ name: "tgwork-cloud-test", version: "1.0.0" });
     expect(trace?.protocolVersion).toBe("2025-06-18");
     expect(health.durationMs).toBeGreaterThanOrEqual(0);
   });

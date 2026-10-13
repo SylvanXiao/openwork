@@ -11,8 +11,8 @@ export const CLOUD_MCP_AUTH_RESOLUTION_TIMEOUT_MS = 12_000;
 
 const REQUIRED_DIRECT_TOOL_IDS = ["search_capabilities", "execute_capability"];
 const REQUIRED_PROJECTED_TOOL_IDS = [
-  "openwork-cloud_search_capabilities",
-  "openwork-cloud_execute_capability",
+  "tgwork-cloud_search_capabilities",
+  "tgwork-cloud_execute_capability",
 ];
 
 export type CloudMcpSubmissionIssue = Pick<

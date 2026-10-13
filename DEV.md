@@ -149,12 +149,13 @@ pnpm --filter openwork-server build
 > upstream header-strip list in `server.ts`), otherwise the local boot will 401
 > again.
 
-**Note:** the `openwork-cloud` MCP entry still auto-points at the hosted Den
-(`app.openworklabs.com`) and will log a non-fatal
-`Engine MCP sync failed ... openwork-cloud` / `Cloud MCP startup reconciliation
-left connected service tools unavailable` warning when you are offline / not
-signed in. That warning does **not** block boot — it only means the cloud-only
-connected-service tools are unavailable in local-only mode.
+**Note:** the Connect MCP entry is named `tgwork-cloud` and is only provisioned
+when a cloud control plane is actually configured (`VITE_DEN_BASE_URL`, or a
+custom Den URL saved in settings). With no cloud configured it has no endpoint,
+so local-only boots no longer attempt a cloud MCP sync — no
+`Engine MCP sync failed ...` warning, and no retry churn against anyone else's
+hosted gateway. Point `VITE_DEN_BASE_URL` at your own control plane to bring the
+connected-service tools back.
 
 Fix: pre-stage the binary and skip the download.
 

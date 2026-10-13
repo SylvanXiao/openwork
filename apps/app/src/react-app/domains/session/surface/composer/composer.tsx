@@ -162,7 +162,7 @@ function isImageAttachment(attachment: ComposerAttachment) {
 }
 
 function isLocalCapability(origin: SkillCard["origin"] | McpServerEntry["origin"]) {
-  return origin !== "openwork-connect";
+  return origin !== "tgwork-connect";
 }
 
 function formatPluginObjectType(type: string) {
@@ -807,7 +807,7 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
       origin: "local" as const,
     })),
     ...skills.filter((skill) =>
-      skill.origin === "openwork-connect" || !localCommandSkillNames.has(skill.name)
+      skill.origin === "tgwork-connect" || !localCommandSkillNames.has(skill.name)
     ),
   ];
   const connectionInventory = useMemo(
@@ -935,7 +935,7 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
     const skill = typeof input === "string"
       ? { name: input, path: "", origin: "local" as const }
       : input;
-    if (skill.origin === "openwork-connect") {
+    if (skill.origin === "tgwork-connect") {
       const slug = skillSlashCommandName(skill);
       const token = encodeConnectSkillToken({
         slug,
@@ -975,11 +975,11 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
   };
 
   const applyPluginFileSelection = (file: CloudImportedPluginFile) => {
-    if (file.skillOrigin === "openwork-connect") {
+    if (file.skillOrigin === "tgwork-connect") {
       applySkillSelection({
         name: file.skillName ?? file.title,
         path: file.path,
-        origin: "openwork-connect",
+        origin: "tgwork-connect",
         marketplaceName: file.marketplaceName,
         pluginName: file.pluginName,
         connectCapabilityName: file.connectCapabilityName,
@@ -1657,7 +1657,7 @@ export const ReactSessionComposer = memo(function ReactSessionComposer(props: Co
                                         ) : null}
                                       </div>
                                       {skill.description ? <div className="truncate text-xs text-gray-10">{skill.description}</div> : null}
-                                      {skill.origin === "openwork-connect" ? (
+                                      {skill.origin === "tgwork-connect" ? (
                                         <div className="truncate text-[10px] text-gray-9">
                                           {[skill.marketplaceName, skill.pluginName].filter(Boolean).join(" · ")}
                                         </div>

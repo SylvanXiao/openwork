@@ -184,7 +184,7 @@ beforeEach(async () => {
     process.env[name] = value;
   }
 
-  const fixtureRoot = await mkdtemp(join(tmpdir(), "openwork-cloud-sync-drain-"));
+  const fixtureRoot = await mkdtemp(join(tmpdir(), "tgwork-cloud-sync-drain-"));
   root = fixtureRoot;
   savedEnv.set("OPENWORK_RUNTIME_DB", process.env.OPENWORK_RUNTIME_DB);
   savedEnv.set("OPENWORK_ENV_STORE", process.env.OPENWORK_ENV_STORE);

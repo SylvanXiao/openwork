@@ -576,7 +576,7 @@ describe("runtime MCP engine sync", () => {
     let maxRegistrationsInFlight = 0;
     try {
       const mock = startMockOpencode({
-        liveMcpStatusByName: () => ({ "openwork-cloud": { status: "connected" } }),
+        liveMcpStatusByName: () => ({ "tgwork-cloud": { status: "connected" } }),
         mcpResponseForName: (name) => {
           registrationNames.push(name);
           registrationsInFlight += 1;
@@ -599,7 +599,7 @@ describe("runtime MCP engine sync", () => {
 
       const startupSync = syncAllWorkspacesRuntimeMcpToEngine(openwork.config);
       await startupRegistrationReached;
-      const explicitReconcile = fetch(`${openwork.base}/workspace/ws_1/mcp/openwork-cloud/reconcile`, {
+      const explicitReconcile = fetch(`${openwork.base}/workspace/ws_1/mcp/tgwork-cloud/reconcile`, {
         method: "POST",
         headers: auth(openwork.token),
         body: JSON.stringify({
@@ -623,7 +623,7 @@ describe("runtime MCP engine sync", () => {
       expect(reconcileResponse.status).toBe(200);
       await reconcileResponse.text();
       expect(registrationNames.filter((name) => name === "posthog")).toHaveLength(1);
-      expect(registrationNames.filter((name) => name === "openwork-cloud").length).toBeGreaterThanOrEqual(1);
+      expect(registrationNames.filter((name) => name === "tgwork-cloud").length).toBeGreaterThanOrEqual(1);
       expect(maxRegistrationsInFlight).toBe(1);
     } finally {
       releaseStartupRegistration(Response.json({ posthog: { status: "connected" } }));
@@ -1216,7 +1216,7 @@ describe("runtime MCP engine sync", () => {
       await writeRuntimeOpencodeConfig(config, "ws_2", (current) => ({ ...current, mcp: { stripe: POSTHOG_CONFIG } }));
       await writeGlobalRuntimeOpencodeConfig(config, (current) => ({
         ...current,
-        mcp: { ...current.mcp, "openwork-cloud": POSTHOG_CONFIG },
+        mcp: { ...current.mcp, "tgwork-cloud": POSTHOG_CONFIG },
       }));
 
       await syncAllWorkspacesRuntimeMcpToEngine(config);
@@ -1225,7 +1225,7 @@ describe("runtime MCP engine sync", () => {
       const byName = new Map(syncs.map((entry) => [(entry.body as { name?: string } | null)?.name, entry.search]));
       expect(byName.get("posthog")).toContain(`directory=${encodeURIComponent(rootA)}`);
       expect(byName.get("stripe")).toContain(`directory=${encodeURIComponent(rootB)}`);
-      const cloudSyncs = syncs.filter((entry) => (entry.body as { name?: string } | null)?.name === "openwork-cloud");
+      const cloudSyncs = syncs.filter((entry) => (entry.body as { name?: string } | null)?.name === "tgwork-cloud");
       expect(cloudSyncs.map((entry) => entry.search).sort()).toEqual([
         `?directory=${encodeURIComponent(rootA)}`,
         `?directory=${encodeURIComponent(rootB)}`,

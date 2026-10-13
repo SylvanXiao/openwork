@@ -1,5 +1,5 @@
 // OpenWork Cloud skills as native OpenCode v2 skills. The host reads the
-// authorized skill index and every SKILL.md body fresh from the openwork-cloud
+// authorized skill index and every SKILL.md body fresh from the tgwork-cloud
 // MCP connection, materializes them into an engine-private directory, and
 // registers only that directory through the generated config `skills` list.
 // The agent never sees a Connect hop for skills: the native skill tool loads
@@ -12,7 +12,7 @@ import { z } from "zod";
 import { openMcpResourceReader, type McpFetch } from "./connect-mcp-transport.js";
 import { externalFetch } from "./server-fetch.js";
 
-export const CLOUD_NATIVE_SKILL_ID_PREFIX = "openwork-cloud-";
+export const CLOUD_NATIVE_SKILL_ID_PREFIX = "tgwork-cloud-";
 const SKILL_INDEX_URI = "skill://index.json";
 const MAX_INDEX_BYTES = 1024 * 1024;
 const MAX_SKILLS = 200;

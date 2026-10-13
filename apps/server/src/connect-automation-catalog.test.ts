@@ -77,7 +77,7 @@ describe("Automation catalog instruction", () => {
     expect(none).toContain("owns no Automations");
     expect(none).toContain("automation.propose");
 
-    // No usable openwork-cloud connection: say nothing rather than assert none exist.
+    // No usable tgwork-cloud connection: say nothing rather than assert none exist.
     expect(renderOpenWorkAutomationInstruction(null)).toBe("");
   });
 });

@@ -90,7 +90,7 @@ function diagnosticRuntimeConfig(): RuntimeOpencodeConfig {
     default_agent: `openwork ${DYNAMIC_BEARER_CANARY}`,
     plugin: [`audit-label ${DYNAMIC_SECRET_ASSIGNMENT_CANARY}`],
     mcp: {
-      "openwork-cloud": cloudConfig(),
+      "tgwork-cloud": cloudConfig(),
       "non-cloud-canary": {
         type: "remote",
         url: "https://non-cloud.invalid/mcp?token=CANARY_QUERY_SECRET",
@@ -130,12 +130,12 @@ function effectiveEngineInspection(
     hidden?: boolean;
     prompt?: string;
     pluginSpecs?: string[];
-    decisions?: Partial<Record<"openwork-cloud_search_capabilities" | "openwork-cloud_execute_capability", "allow" | "ask" | "deny">>;
+    decisions?: Partial<Record<"tgwork-cloud_search_capabilities" | "tgwork-cloud_execute_capability", "allow" | "ask" | "deny">>;
   },
 ): InspectAgentDiagnosticsEngine {
   const decisions = {
-    "openwork-cloud_search_capabilities": "allow" as const,
-    "openwork-cloud_execute_capability": "allow" as const,
+    "tgwork-cloud_search_capabilities": "allow" as const,
+    "tgwork-cloud_execute_capability": "allow" as const,
     ...options?.decisions,
   };
   const canonicalConfig = buildOpenworkRuntimeConfigObjectFromSnapshot(runtime);
@@ -366,8 +366,8 @@ function startRecordingServer() {
           mode: "primary",
           prompt: canonicalAgents.openwork?.prompt,
           permission: [
-            { permission: "openwork-cloud_search_capabilities", pattern: "*", action: "allow" },
-            { permission: "openwork-cloud_execute_capability", pattern: "*", action: "allow" },
+            { permission: "tgwork-cloud_search_capabilities", pattern: "*", action: "allow" },
+            { permission: "tgwork-cloud_execute_capability", pattern: "*", action: "allow" },
           ],
           options: {},
         }]);
@@ -621,7 +621,7 @@ describe("agent context diagnostics analyzer", () => {
     expect(report.overall).toBe("warning");
     expect(report.firstFailedCheck).toBeNull();
     expect(report.observedCloudToolIds).toEqual(["search_capabilities", "execute_capability"]);
-    expect(report.mcps.find((mcp) => mcp.name === "openwork-cloud")?.path).toBe("/private-prefix/mcp/agent");
+    expect(report.mcps.find((mcp) => mcp.name === "tgwork-cloud")?.path).toBe("/private-prefix/mcp/agent");
     expect(report.workspace.name).toBe("[redacted-sensitive-label]");
     expect(report.agent.evidenceSource).toBe("effective-engine");
     expect(report.agent.defaultAgent).toBe("openwork");
@@ -643,14 +643,14 @@ describe("agent context diagnostics analyzer", () => {
       name: "[redacted-sensitive-label]",
     }));
     expect(report.mcps).toContainEqual(expect.objectContaining({
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       source: "config.remote",
       origin: "http://127.0.0.1:43123",
       path: "/private-prefix/mcp/agent",
       syncStatus: "connected",
     }));
     expect(report.mcps).toContainEqual(expect.objectContaining({
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       source: "engine.config",
       syncStatus: "not-applicable",
     }));
@@ -694,7 +694,7 @@ describe("agent context diagnostics analyzer", () => {
     expect(agentContextDiagnosticsReportSchema.safeParse({
       ...report,
       mcps: report.mcps.filter((mcp) =>
-        !(mcp.source === "config.remote" && mcp.name === "openwork-cloud"),
+        !(mcp.source === "config.remote" && mcp.name === "tgwork-cloud"),
       ),
     }).success).toBe(false);
     expect(fetchCalls).toHaveLength(4);
@@ -782,7 +782,7 @@ describe("agent context diagnostics analyzer", () => {
         url: `https://bounded-${index}.invalid/mcp`,
       };
     }
-    manyMcps["openwork-cloud"] = cloudConfig();
+    manyMcps["tgwork-cloud"] = cloudConfig();
     runtime.mcp = manyMcps;
     const fixture = await createFixture({ runtime });
     const fetchCalls: CatalogFetchCall[] = [];
@@ -800,7 +800,7 @@ describe("agent context diagnostics analyzer", () => {
 
     expect(report.mcps).toHaveLength(200);
     expect(report.mcps).toContainEqual(expect.objectContaining({
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       source: "config.remote",
       path: "/private-prefix/mcp/agent",
       syncStatus: "connected",
@@ -829,7 +829,7 @@ describe("agent context diagnostics analyzer", () => {
       dependencies: {
         fetchImpl: catalogFetch(["search_capabilities", "execute_capability"], fetchCalls),
         inspectEffectiveEngine: effectiveEngineInspection(diagnosticRuntimeConfig(), {
-          decisions: { "openwork-cloud_search_capabilities": "deny" },
+          decisions: { "tgwork-cloud_search_capabilities": "deny" },
         }),
       },
     });
@@ -853,7 +853,7 @@ describe("agent context diagnostics analyzer", () => {
       details: { requestPerformed: true },
     });
     expect(report.mcps.find(
-      (mcp) => mcp.name === "openwork-cloud" && mcp.source === "engine.config",
+      (mcp) => mcp.name === "tgwork-cloud" && mcp.source === "engine.config",
     )).toMatchObject({
       source: "engine.config",
       disabledByTools: true,
@@ -873,7 +873,7 @@ describe("agent context diagnostics analyzer", () => {
       dependencies: {
         fetchImpl: catalogFetch(["search_capabilities", "execute_capability"], fetchCalls),
         inspectEffectiveEngine: effectiveEngineInspection(diagnosticRuntimeConfig(), {
-          decisions: { "openwork-cloud_search_capabilities": "ask" },
+          decisions: { "tgwork-cloud_search_capabilities": "ask" },
         }),
       },
     }));
@@ -980,7 +980,7 @@ describe("agent context diagnostics analyzer", () => {
 
     const disabled = await createFixture({
       runtime: {
-        mcp: { "openwork-cloud": { ...cloudConfig(), enabled: false } },
+        mcp: { "tgwork-cloud": { ...cloudConfig(), enabled: false } },
       },
     });
     const disabledReport = await runAgentContextDiagnostics({
@@ -998,7 +998,7 @@ describe("agent context diagnostics analyzer", () => {
   test("names the trusted-origins environment variable for untrusted cloud endpoints", async () => {
     const runtime = diagnosticRuntimeConfig();
     if (!runtime.mcp) throw new Error("Expected the diagnostics MCP fixture.");
-    runtime.mcp["openwork-cloud"] = {
+    runtime.mcp["tgwork-cloud"] = {
       ...cloudConfig(),
       url: "https://den.customer.example/custom/mcp/agent",
     };
@@ -1041,7 +1041,7 @@ describe("agent context diagnostics analyzer", () => {
   test("probes an on-prem endpoint this installation is activated against", async () => {
     const runtime = diagnosticRuntimeConfig();
     if (!runtime.mcp) throw new Error("Expected the diagnostics MCP fixture.");
-    runtime.mcp["openwork-cloud"] = {
+    runtime.mcp["tgwork-cloud"] = {
       ...cloudConfig(),
       url: "https://den.customer.example/custom/mcp/agent",
     };
@@ -1092,7 +1092,7 @@ describe("agent context diagnostics analyzer", () => {
     ]);
     expect(fetchCalls.some((call) => openWorkHostedOrigins.has(new URL(call.url).origin))).toBe(false);
     expect(report.mcps).toContainEqual(expect.objectContaining({
-      name: "openwork-cloud",
+      name: "tgwork-cloud",
       source: "config.remote",
       origin: "https://den.customer.example",
       path: "/custom/mcp/agent",
@@ -1102,7 +1102,7 @@ describe("agent context diagnostics analyzer", () => {
   test("distinguishes an activation origin that does not match the configured cloud MCP", async () => {
     const runtime = diagnosticRuntimeConfig();
     if (!runtime.mcp) throw new Error("Expected the diagnostics MCP fixture.");
-    runtime.mcp["openwork-cloud"] = {
+    runtime.mcp["tgwork-cloud"] = {
       ...cloudConfig(),
       url: "https://den.customer.example/custom/mcp/agent",
     };
@@ -1504,7 +1504,7 @@ describe("agent context diagnostics analyzer", () => {
       workspace: fixture.workspace,
       request: emptyObservedRequest,
       inspectRegistration: (name) => {
-        if (name === "openwork-cloud") {
+        if (name === "tgwork-cloud") {
           return { status: "failed", source: "engine_status", recordAgeMs: 1_000, errorSummary: endpointError };
         }
         if (name === "non-cloud-canary") {
@@ -1521,7 +1521,7 @@ describe("agent context diagnostics analyzer", () => {
     const failedRegistrations = checkById(report, "engine-mcp-sync").details.failedRegistrations;
     expect(failedRegistrations).toEqual([
       expect.objectContaining({
-        name: "openwork-cloud",
+        name: "tgwork-cloud",
         errorSummary: "failed to connect to [url] unable to verify the first certificate",
         transportCause: "tls_incomplete_chain",
       }),
@@ -1539,7 +1539,7 @@ describe("agent context diagnostics analyzer", () => {
     const port = await startSelfSignedTlsServer();
     const runtime = diagnosticRuntimeConfig();
     if (!runtime.mcp) throw new Error("Expected the diagnostics MCP fixture.");
-    runtime.mcp["openwork-cloud"] = {
+    runtime.mcp["tgwork-cloud"] = {
       ...cloudConfig(),
       url: `https://127.0.0.1:${port}/mcp/agent`,
     };
@@ -1606,7 +1606,7 @@ describe("agent context diagnostics analyzer", () => {
         status: "failed",
         source: "transport_failure",
         recordAgeMs: 61_000,
-        errorSummary: name === "openwork-cloud" ? "unable to verify the first certificate" : null,
+        errorSummary: name === "tgwork-cloud" ? "unable to verify the first certificate" : null,
       }),
       dependencies: {
         fetchImpl: catalogFetch(["search_capabilities", "execute_capability"], fetchCalls),
@@ -1622,7 +1622,7 @@ describe("agent context diagnostics analyzer", () => {
     });
     expect(check.details.failedRegistrations).toEqual([
       {
-        name: "openwork-cloud",
+        name: "tgwork-cloud",
         status: "failed",
         source: "transport_failure",
         recordAgeMs: 61_000,
@@ -1692,7 +1692,7 @@ describe("agent context diagnostics analyzer", () => {
   test("reports a missing credential without putting authorization-shaped text in the report", async () => {
     const runtime = diagnosticRuntimeConfig();
     if (!runtime.mcp) throw new Error("Expected the diagnostics MCP fixture.");
-    runtime.mcp["openwork-cloud"] = { ...cloudConfig(), headers: {} };
+    runtime.mcp["tgwork-cloud"] = { ...cloudConfig(), headers: {} };
     const fixture = await createFixture({ runtime });
     const fetchCalls: CatalogFetchCall[] = [];
 
@@ -1719,12 +1719,12 @@ describe("agent context diagnostics analyzer", () => {
     const fixture = await createFixture();
     await writeFile(join(fixture.workspaceRoot, "opencode.jsonc"), JSON.stringify({
       permission: {
-        "openwork-cloud_*": "allow",
+        "tgwork-cloud_*": "allow",
       },
       agent: {
         openwork: {
           permission: {
-            "openwork-cloud_search_capabilities": "deny",
+            "tgwork-cloud_search_capabilities": "deny",
           },
         },
       },
@@ -1763,7 +1763,7 @@ describe("agent context diagnostics analyzer", () => {
       details: { requestPerformed: true },
     });
     expect(report.mcps.find((mcp) => (
-      mcp.name === "openwork-cloud" && mcp.source === "config.remote"
+      mcp.name === "tgwork-cloud" && mcp.source === "config.remote"
     ))?.disabledByTools).toBe(true);
     expect(report.safety.cloudCatalogToolsListPerformed).toBe(true);
     expect(fetchCalls).toHaveLength(4);
@@ -1773,7 +1773,7 @@ describe("agent context diagnostics analyzer", () => {
     const fixture = await createFixture();
     await writeFile(join(fixture.workspaceRoot, "opencode.jsonc"), JSON.stringify({
       permission: {
-        "openwork-cloud_*": ["deny"],
+        "tgwork-cloud_*": ["deny"],
       },
     }), "utf8");
     const fetchCalls: CatalogFetchCall[] = [];
@@ -1974,14 +1974,14 @@ describe("agent context diagnostics analyzer", () => {
     await startOpenwork(fixture.config);
     await syncAllWorkspacesRuntimeMcpToEngine(fixture.config);
 
-    expect(inspectEngineMcpRegistration(fixture.config, fixture.workspace, "openwork-cloud", exact)).toBe("connected");
-    expect(inspectEngineMcpRegistration(fixture.config, fixture.workspace, "openwork-cloud", {
+    expect(inspectEngineMcpRegistration(fixture.config, fixture.workspace, "tgwork-cloud", exact)).toBe("connected");
+    expect(inspectEngineMcpRegistration(fixture.config, fixture.workspace, "tgwork-cloud", {
       headers: { Authorization: CLOUD_BEARER },
       enabled: true,
       url: CLOUD_ENDPOINT,
       type: "remote",
     })).toBe("connected");
-    expect(inspectEngineMcpRegistration(fixture.config, fixture.workspace, "openwork-cloud", {
+    expect(inspectEngineMcpRegistration(fixture.config, fixture.workspace, "tgwork-cloud", {
       ...exact,
       headers: { Authorization: "Bearer CHANGED_TOKEN" },
     })).toBe("not-recorded");
@@ -2014,7 +2014,7 @@ describe("agent context diagnostics route", () => {
     expect(inspectEngineMcpRegistration(
       fixture.config,
       fixture.workspace,
-      "openwork-cloud",
+      "tgwork-cloud",
       cloudConfig(),
     )).toBe("connected");
     const engineRequestCountBeforeDiagnostics = engine.requests.length;

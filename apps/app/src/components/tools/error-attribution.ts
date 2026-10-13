@@ -19,9 +19,9 @@ export type ChatToolReconnectProgress =
 export type ChatToolReconnectResult = "connected"
 
 const OPENWORK_CLOUD_CAPABILITY_TOOLS = new Set([
-  "openwork-cloud_search_capabilities",
-  "openwork-cloud_execute_capability",
-  "openwork-cloud_connection_action",
+  "tgwork-cloud_search_capabilities",
+  "tgwork-cloud_execute_capability",
+  "tgwork-cloud_connection_action",
 ])
 
 const MAX_PARSED_RESULT_LENGTH = 64 * 1_024
@@ -82,7 +82,7 @@ export function connectionCardPayloadFromChatToolResult(
   input?: unknown,
 ): ConnectionActionPayload | null {
   if (!OPENWORK_CLOUD_CAPABILITY_TOOLS.has(toolName)) return null
-  if (toolName === "openwork-cloud_search_capabilities" && (!isRecord(input) || input.intent !== "connect")) return null
+  if (toolName === "tgwork-cloud_search_capabilities" && (!isRecord(input) || input.intent !== "connect")) return null
   const parsed = parseResultRecord(result)
   if (!parsed) return null
   const candidates = [parsed, parsed.connectionAction, parsed.connectionStatus,
@@ -111,7 +111,7 @@ export function reconnectActionFromChatToolResult(
   // Discovery may offer authorization only for an explicit setup request;
   // finding an unavailable connection is not itself a reason to prompt.
   if (!OPENWORK_CLOUD_CAPABILITY_TOOLS.has(toolName)) return null
-  if (toolName === "openwork-cloud_search_capabilities" && (!isRecord(input) || input.intent !== "connect")) return null
+  if (toolName === "tgwork-cloud_search_capabilities" && (!isRecord(input) || input.intent !== "connect")) return null
 
   const parsed = parseResultRecord(result)
   if (!parsed) return null

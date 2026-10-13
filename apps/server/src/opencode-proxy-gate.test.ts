@@ -143,7 +143,7 @@ describe("proxyOpencodeRequest read-only guard", () => {
 
   test("native Cloud catalog reads expose metadata, not private bodies or paths, to shared clients", async () => {
     const cloud = {
-      id: "openwork-cloud-0123456789abcdef", name: "briefing", description: "Prepare a briefing", slash: true,
+      id: "tgwork-cloud-0123456789abcdef", name: "briefing", description: "Prepare a briefing", slash: true,
       content: "OWNER_PRIVATE_INSTRUCTIONS", location: "/private/cloud-skills/scope/SKILL.md",
       futurePrivateField: "OWNER_PRIVATE_INSTRUCTIONS",
     };

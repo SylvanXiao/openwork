@@ -111,7 +111,7 @@ describe("OpenWork provider adapters", () => {
       ref: "skill:skl_customer_briefing",
       title: "Customer briefing",
       description: "Prepare a customer briefing from connected sources.",
-      provider: { id: "openwork-cloud", kind: "connect" },
+      provider: { id: "tgwork-cloud", kind: "connect" },
       loading: "catalog",
     }]);
     expect(connect?.affordances.map((affordance) => ({
@@ -120,11 +120,11 @@ describe("OpenWork provider adapters", () => {
     }))).toEqual([
       {
         id: "connect.capabilities.search",
-        executor: { kind: "tool", tool: "openwork-cloud_search_capabilities" },
+        executor: { kind: "tool", tool: "tgwork-cloud_search_capabilities" },
       },
       {
         id: "connect.capability.execute",
-        executor: { kind: "tool", tool: "openwork-cloud_execute_capability" },
+        executor: { kind: "tool", tool: "tgwork-cloud_execute_capability" },
       },
     ]);
     expect(
@@ -136,7 +136,7 @@ describe("OpenWork provider adapters", () => {
   test("includes only MCP providers observed from the engine", () => {
     const contributions = buildOpenworkProviderContributions([], [
       { name: "notion", status: "connected" },
-      { name: "openwork-cloud", status: "connected" },
+      { name: "tgwork-cloud", status: "connected" },
     ]);
 
     expect(contributions.map((contribution) => contribution.featureId)).toEqual([

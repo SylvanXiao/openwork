@@ -41,7 +41,7 @@ function cloudMcp() {
 }
 
 async function tempRoot() {
-  const root = join(tmpdir(), `openwork-cloud-uploads-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const root = join(tmpdir(), `tgwork-cloud-uploads-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   roots.push(root);
   await mkdir(root, { recursive: true });
   return root;
@@ -377,7 +377,7 @@ test("Gmail idle cancels the real loopback request before remote multipart dispa
     process.env.OPENWORK_SERVER_TOKEN = "fixture-host-token";
     const plugin = await OpenWorkExtensionsPreview({ directory: root }, {});
     const input = {
-      tool: "openwork-cloud_execute_capability", sessionID: "ses_cancel", callID: "call_cancel",
+      tool: "tgwork-cloud_execute_capability", sessionID: "ses_cancel", callID: "call_cancel",
       args: { name: "native:emc_selected:postCapabilitiesGoogleWorkspaceGmailDrafts", body: { ...fields, attachments: ["notes.txt"] } },
     };
     const output = { content: [{ type: "text", text: JSON.stringify({ ok: false, error: "file_input_requires_host", created: false, message: "Host upload required." }) }] };

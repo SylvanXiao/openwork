@@ -101,7 +101,7 @@ function staleLaunch(): McpAppHostError {
 async function launchFingerprint(input: { serverConfig: ServerConfig; workspaceId: string }, serverName: string, config: Record<string, unknown>): Promise<string> {
   const managed = await localManagedMcpAppIdentity(input.serverConfig, input.workspaceId, serverName, config.url);
   const runtimeRevisions = readRuntimeMcpConfigRevisions(input.serverConfig, input.workspaceId,
-    serverName.startsWith(CONNECT_MCP_APP_HOST_NAME_PREFIX) ? "openwork-cloud" : serverName);
+    serverName.startsWith(CONNECT_MCP_APP_HOST_NAME_PREFIX) ? "tgwork-cloud" : serverName);
   const privateRevision = serverName.startsWith(CONNECT_MCP_APP_HOST_NAME_PREFIX)
     ? await readOpenWorkConnectMcpAppHostAuthorizationRevision(input.serverConfig, input.workspaceId) : null;
   return createHash("sha256").update(JSON.stringify({ config, managed, runtimeRevisions, privateRevision })).digest("hex");

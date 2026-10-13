@@ -182,8 +182,8 @@ describe("openwork runtime config file", () => {
     expect(prompt).not.toContain("getMemorySearch");
     // Connect tool names appear exactly once each, in the base prompt's own
     // routing paragraph; the diagnostics prompt markers key on them.
-    expect(prompt.match(/openwork-cloud_search_capabilities/g)).toHaveLength(1);
-    expect(prompt.match(/openwork-cloud_execute_capability/g)).toHaveLength(1);
+    expect(prompt.match(/tgwork-cloud_search_capabilities/g)).toHaveLength(1);
+    expect(prompt.match(/tgwork-cloud_execute_capability/g)).toHaveLength(1);
     expect(prompt).not.toContain("2-4 keyword variants");
     // Skill capture defers to the runtime skill-authoring mode instead of
     // contradicting it with a workspace-only default.

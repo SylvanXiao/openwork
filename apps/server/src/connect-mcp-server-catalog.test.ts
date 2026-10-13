@@ -107,7 +107,7 @@ describe("OpenWork Connect MCP server catalog", () => {
     };
     expect(await readOpenWorkConnectMcpAppHostAuthorizationReady(readOnlyConfig, "ws_1", cloudMcp)).toBe(false);
     expect(existsSync(dbPath)).toBe(false);
-    await writeRuntimeOpencodeConfig(config, "ws_1", () => ({ mcp: { "openwork-cloud": cloudMcp } }));
+    await writeRuntimeOpencodeConfig(config, "ws_1", () => ({ mcp: { "tgwork-cloud": cloudMcp } }));
     const sqlite = new Database(dbPath, { readonly: true, create: false });
     try {
       const schema = sqlite.query("SELECT type, name, sql FROM sqlite_master ORDER BY name").all();
@@ -190,7 +190,7 @@ describe("OpenWork Connect MCP server catalog", () => {
     const config = await fixtureConfig();
     await writeRuntimeOpencodeConfig(config, "ws_1", () => ({
       mcp: {
-        "openwork-cloud": { type: "remote", url: "https://api.openworklabs.com/mcp/agent" },
+        "tgwork-cloud": { type: "remote", url: "https://api.openworklabs.com/mcp/agent" },
         "user-server": { type: "remote", url: "https://user.example/mcp" },
         "openwork-connect-stale": { type: "remote", url: "https://cloud.example/stale" },
       },
@@ -216,7 +216,7 @@ describe("OpenWork Connect MCP server catalog", () => {
       directNames: [],
       removedNames: ["openwork-connect-stale"],
     });
-    expect(runtime.mcp?.["openwork-cloud"]).toEqual({ type: "remote", url: "https://api.openworklabs.com/mcp/agent" });
+    expect(runtime.mcp?.["tgwork-cloud"]).toEqual({ type: "remote", url: "https://api.openworklabs.com/mcp/agent" });
     expect(runtime.mcp?.["user-server"]).toEqual({ type: "remote", url: "https://user.example/mcp" });
     expect(runtime.mcp?.["openwork-connect-stale"]).toBeUndefined();
     expect(Object.keys(runtime.mcp ?? {}).some((name) => name.startsWith("openwork-connect-"))).toBe(false);
@@ -342,7 +342,7 @@ describe("OpenWork Connect MCP server catalog", () => {
     const requests: Array<{ url: string; headers: Headers; body: Record<string, unknown> }> = [];
     await writeRuntimeOpencodeConfig(config, "ws_1", () => ({
       mcp: {
-        "openwork-cloud": { type: "remote", url: "https://api.openworklabs.com/mcp/agent" },
+        "tgwork-cloud": { type: "remote", url: "https://api.openworklabs.com/mcp/agent" },
       },
     }));
     await writeOpenWorkConnectMcpAppHostAuthorization(
@@ -364,7 +364,7 @@ describe("OpenWork Connect MCP server catalog", () => {
     const connectionId = "emc_01lastknowngood";
     await writeRuntimeOpencodeConfig(config, "ws_1", () => ({
       mcp: {
-        "openwork-cloud": { type: "remote", url: "https://api.openworklabs.com/mcp/agent" },
+        "tgwork-cloud": { type: "remote", url: "https://api.openworklabs.com/mcp/agent" },
       },
     }));
     await writeOpenWorkConnectMcpAppHostAuthorization(

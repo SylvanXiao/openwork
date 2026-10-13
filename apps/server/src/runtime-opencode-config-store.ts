@@ -20,8 +20,8 @@ export type RuntimeOpencodeConfig = {
 
 export const ENGINE_GLOBAL_RUNTIME_CONFIG_ID = "__openwork_engine_global__";
 
-/** Reserved Connect MCP name; kept in sync with OPENWORK_CLOUD_MCP_NAME in cloud-mcp-health.ts. */
-const OPENWORK_CLOUD_MCP_RESERVED_NAME = "openwork-cloud";
+/** Reserved Connect MCP name; kept in sync with TGWORK_CLOUD_MCP_NAME in cloud-mcp-health.ts. */
+const TGWORK_CLOUD_MCP_RESERVED_NAME = "tgwork-cloud";
 
 export function isEngineGlobalRuntimeConfigId(workspaceId: string): boolean {
   return workspaceId === ENGINE_GLOBAL_RUNTIME_CONFIG_ID;
@@ -248,9 +248,9 @@ export function mergeRuntimeOpencodeConfigLayers(
   };
   // The Connect MCP is account-scoped: the global row is authoritative, so a
   // stale legacy per-workspace copy must not shadow it. Mirrors
-  // OPENWORK_CLOUD_MCP_NAME in cloud-mcp-health.ts (import would be cyclic).
-  const globalCloudMcp = runtimeMcpMap(base)[OPENWORK_CLOUD_MCP_RESERVED_NAME];
-  if (globalCloudMcp) mcp[OPENWORK_CLOUD_MCP_RESERVED_NAME] = globalCloudMcp;
+  // TGWORK_CLOUD_MCP_NAME in cloud-mcp-health.ts (import would be cyclic).
+  const globalCloudMcp = runtimeMcpMap(base)[TGWORK_CLOUD_MCP_RESERVED_NAME];
+  if (globalCloudMcp) mcp[TGWORK_CLOUD_MCP_RESERVED_NAME] = globalCloudMcp;
   const basePermission = isRecord(base.permission) ? base.permission : {};
   const overlayPermission = isRecord(overlay.permission) ? overlay.permission : {};
   const externalDirectory = {

@@ -107,12 +107,12 @@ describe("passive MCP layer inspection", () => {
     try {
       await writeFile(globalConfigPath, JSON.stringify({
         permission: {
-          "openwork-cloud_search_capabilities": "deny",
+          "tgwork-cloud_search_capabilities": "deny",
         },
         mode: {
           openwork: {
             permission: {
-              "openwork-cloud_execute_capability": "deny",
+              "tgwork-cloud_execute_capability": "deny",
             },
           },
         },
@@ -121,12 +121,12 @@ describe("passive MCP layer inspection", () => {
         // Current permission rules outrank the deprecated top-level tools map
         // even when the legacy value comes from a later project layer.
         tools: {
-          "openwork-cloud_search_capabilities": true,
+          "tgwork-cloud_search_capabilities": true,
         },
         agent: {
           openwork: {
             permission: {
-              "openwork-cloud_execute_capability": "allow",
+              "tgwork-cloud_execute_capability": "allow",
             },
           },
         },
@@ -134,16 +134,16 @@ describe("passive MCP layer inspection", () => {
 
       const inspection = await inspectMcpLayersFromRuntimeSnapshot(root, {
         mcp: {
-          "openwork-cloud": { type: "remote", url: "https://cloud.example/mcp" },
+          "tgwork-cloud": { type: "remote", url: "https://cloud.example/mcp" },
         },
       }, {
         globalConfigPath,
         toolPolicy: {
           agentName: "openwork",
-          mcpName: "openwork-cloud",
+          mcpName: "tgwork-cloud",
           toolIds: [
-            "openwork-cloud_search_capabilities",
-            "openwork-cloud_execute_capability",
+            "tgwork-cloud_search_capabilities",
+            "tgwork-cloud_execute_capability",
           ],
         },
       });
@@ -152,12 +152,12 @@ describe("passive MCP layer inspection", () => {
         scope: "passive-static-subset",
         status: "available",
         inspectedToolIds: [
-          "openwork-cloud_search_capabilities",
-          "openwork-cloud_execute_capability",
+          "tgwork-cloud_search_capabilities",
+          "tgwork-cloud_execute_capability",
         ],
         deniedToolIds: [
-          "openwork-cloud_search_capabilities",
-          "openwork-cloud_execute_capability",
+          "tgwork-cloud_search_capabilities",
+          "tgwork-cloud_execute_capability",
         ],
       });
       expect(inspection.items[0]?.disabledByTools).toBe(true);
@@ -173,7 +173,7 @@ describe("passive MCP layer inspection", () => {
       await writeFile(globalConfigPath, "{}", "utf8");
       await writeFile(join(root, "opencode.jsonc"), JSON.stringify({
         permission: {
-          "openwork-cloud_search_capabilities": {
+          "tgwork-cloud_search_capabilities": {
             "restricted-resource": "deny",
           },
         },
@@ -181,16 +181,16 @@ describe("passive MCP layer inspection", () => {
 
       const inspection = await inspectMcpLayersFromRuntimeSnapshot(root, {
         mcp: {
-          "openwork-cloud": { type: "remote", url: "https://cloud.example/mcp" },
+          "tgwork-cloud": { type: "remote", url: "https://cloud.example/mcp" },
         },
       }, {
         globalConfigPath,
         toolPolicy: {
           agentName: "openwork",
-          mcpName: "openwork-cloud",
+          mcpName: "tgwork-cloud",
           toolIds: [
-            "openwork-cloud_search_capabilities",
-            "openwork-cloud_execute_capability",
+            "tgwork-cloud_search_capabilities",
+            "tgwork-cloud_execute_capability",
           ],
         },
       });

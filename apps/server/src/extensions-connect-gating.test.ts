@@ -225,8 +225,8 @@ describe("Cloud-only Google Workspace extension retirement", () => {
         expect(actionKeys(await listActions(base))).toEqual([
           "openai-image-generation/image_generate",
           "openai-image-generation/status",
-          "openwork-cloud-uploads/drive_upload_file",
-          "openwork-cloud-uploads/gmail_create_draft_with_attachments",
+          "tgwork-cloud-uploads/drive_upload_file",
+          "tgwork-cloud-uploads/gmail_create_draft_with_attachments",
         ]);
         // A stale installed client can still request the retired extension id directly.
         expect(await listActions(base, "google-workspace")).toEqual([]);
@@ -259,7 +259,7 @@ describe("Cloud-only Google Workspace extension retirement", () => {
     const { base, config } = await boot(true);
     await writeRuntimeOpencodeConfig(config, "ws_1", (current) => ({
       ...current,
-      mcp: { ...current.mcp, "openwork-cloud": { type: "remote", url: "https://cloud.example.test/mcp/agent" } },
+      mcp: { ...current.mcp, "tgwork-cloud": { type: "remote", url: "https://cloud.example.test/mcp/agent" } },
     }));
     const stateSchema = z.object({
       cloudHealth: z.object({

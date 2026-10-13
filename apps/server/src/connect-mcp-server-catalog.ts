@@ -210,8 +210,8 @@ function modelFacingHeaders(cloudMcp: Record<string, unknown>): Record<string, s
 /**
  * Model-facing runtime entries for the directly exposed connections in an
  * index. They reuse the ordinary member credential already carried by the
- * `openwork-cloud` entry; the private App-host credential never leaves the
- * App host. `oauth: false` matches the `openwork-cloud` entry so an expired
+ * `tgwork-cloud` entry; the private App-host credential never leaves the
+ * App host. `oauth: false` matches the `tgwork-cloud` entry so an expired
  * bearer token during rotation yields a plain 401 instead of the engine
  * starting an interactive OAuth flow. Without a member credential there is
  * nothing to project.
@@ -370,8 +370,8 @@ export async function refreshOpenWorkConnectMcpAppHostCatalog(
   workspaceId: string,
   fetcher?: McpFetch,
 ): Promise<{ status: "synced" | "unavailable"; appHostNames: string[]; diagnostic: ConnectMcpCatalogDiagnostic }> {
-  const cloudMcp = await readGlobalRuntimeMcpConfig(config, "openwork-cloud")
-    ?? await readRuntimeMcpConfig(config, workspaceId, "openwork-cloud");
+  const cloudMcp = await readGlobalRuntimeMcpConfig(config, "tgwork-cloud")
+    ?? await readRuntimeMcpConfig(config, workspaceId, "tgwork-cloud");
   if (!cloudMcp) {
     return { status: "unavailable", appHostNames: [], diagnostic: "discovery_unavailable" };
   }

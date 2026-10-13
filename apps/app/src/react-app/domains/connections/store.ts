@@ -705,7 +705,7 @@ export function createConnectionsStore(options: {
     if (builtIn) entry = builtIn;
     // Cloud repair uses the signed-in organization's reconciler below, not
     // caller-supplied MCP configuration. Existing service access stays usable.
-    if (entry.managedBy !== "openwork-connect") {
+    if (entry.managedBy !== "tgwork-connect") {
       const error = mcpMutationDenied(Boolean(builtIn));
       if (error) return { ok: false, error };
     }
@@ -798,7 +798,7 @@ export function createConnectionsStore(options: {
     try {
       mutateState((current) => ({ ...current, mcpStatus: null, mcpConnectingName: entry.name }));
 
-      if (entry.managedBy === "openwork-connect") {
+      if (entry.managedBy === "tgwork-connect") {
         if (slug !== CLOUD_MCP_SERVER_NAME) {
           throw new Error("TGWork Connect MCP metadata is invalid.");
         }
@@ -1081,7 +1081,7 @@ export function createConnectionsStore(options: {
   /**
    * Background reconciliation for the Den cloud MCP: when the desktop is
    * signed in to TGWork Cloud with an active org, keep the
-   * `openwork-cloud` MCP entry configured with a fresh first-party token.
+   * `tgwork-cloud` MCP entry configured with a fresh first-party token.
    * Quiet by design — a failed mint never opens the OAuth modal.
    *
    * `force` bypasses the freshness marker: used by the user-facing Refresh

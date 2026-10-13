@@ -69,7 +69,7 @@ async function responseRecord(response: Response, label: string): Promise<Record
 }
 
 async function createRoot(): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "openwork-cloud-provider-sync-"));
+  const root = await mkdtemp(join(tmpdir(), "tgwork-cloud-provider-sync-"));
   roots.push(root);
   process.env.OPENWORK_RUNTIME_DB = join(root, "runtime.sqlite");
   process.env.OPENWORK_ENV_STORE = join(root, "env.json");

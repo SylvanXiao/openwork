@@ -2,10 +2,10 @@ import { CLOUD_MCP_SYNC_MARKER_STORAGE_KEY } from "../../../app/lib/den";
 
 /** Durable, scoped records for the auto-managed TGWork Cloud MCP. */
 
-export const CLOUD_MCP_SERVER_NAME = "openwork-cloud";
+export const CLOUD_MCP_SERVER_NAME = "tgwork-cloud";
 /**
  * OpenCode MCP entries the local server projects for org connections an admin
- * exposed directly. They are owned by the `openwork-cloud` reconcile and are
+ * exposed directly. They are owned by the `tgwork-cloud` reconcile and are
  * represented in the UI by their org connection card, never as local MCPs.
  */
 export const CONNECT_DIRECT_MCP_SERVER_NAME_PREFIX = "openwork-direct-";
